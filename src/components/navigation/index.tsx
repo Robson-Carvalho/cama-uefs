@@ -3,27 +3,10 @@ import { Button } from "../ui/button";
 import { Linkedin } from "lucide-react";
 
 import { Anchor } from "../anchor";
-import { List } from "../list";
 
 interface INavigationProps {
   styles?: string;
 }
-
-const mock = [
-  {
-    _id: "678efedc3f87c9db69a10825",
-    classID: "678efedc3f87c9db69a10825",
-    className: "Big O",
-    classPath: "big-o",
-    topics: [
-      {
-        _id: "678fab3c8bdada61c427745e",
-        name: "Análise assintótica",
-        path: "analise",
-      },
-    ],
-  },
-];
 
 const Navigation = ({ styles }: INavigationProps) => {
   return (
