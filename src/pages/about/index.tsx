@@ -3,7 +3,7 @@ import { MarkdownRenderer } from "@/components/markdownRenderer";
 import { BodyLayout } from "@/layouts/Body";
 import { markdownContent } from "./content";
 
-const Home = () => {
+const About = () => {
   return (
     <>
       <Header />
@@ -14,4 +14,4 @@ const Home = () => {
   );
 };
 
-export { Home };
+export { About };

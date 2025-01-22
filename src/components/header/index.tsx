@@ -3,14 +3,13 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "../ui/button";
-import { Linkedin } from "lucide-react";
+
+import { Navigation } from "../navigation";
 
 const Header = () => {
   return (
@@ -45,23 +44,10 @@ const Menu = () => {
           <DrawerTitle>Navegação</DrawerTitle>
           <DrawerDescription>Selecione o conteúdo desejado.</DrawerDescription>
 
-          <ScrollArea className="h-[400px]  w-full py-4">
-            <div className="flex flex-col items-start"></div>
+          <ScrollArea className="h-[400px] w-full py-4">
+            <Navigation />
           </ScrollArea>
         </DrawerHeader>
-
-        <DrawerFooter>
-          <Button variant="outline">
-            <Link
-              to="https://www.linkedin.com/in/robson-carvalho-souza/"
-              target="_blank"
-              className="flex flex-row gap-2 justify-center"
-            >
-              <Linkedin />
-              Developed by Robson Carvalho.
-            </Link>
-          </Button>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
