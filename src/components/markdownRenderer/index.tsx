@@ -45,7 +45,7 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
         a: ({ node, ...props }) => (
           <a
             {...props}
-            className="underline underline-offset-2 text-[#4775d1] hover:text-[#212630] transition-colors"
+            className="underline underline-offset-2 font-medium text-[#346DDB] hover:text-[#58595C] transition-colors"
           />
         ),
 
