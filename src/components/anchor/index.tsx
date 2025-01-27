@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 interface IAnchorProps {
   text: string;
@@ -8,10 +7,6 @@ interface IAnchorProps {
 
 const Anchor = ({ text, path }: IAnchorProps) => {
   const navigate = useNavigate();
-
-  const location = useLocation();
-
-  useEffect(() => {}, [location.pathname]);
 
   return (
     <a

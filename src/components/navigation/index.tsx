@@ -3,12 +3,34 @@ import { Button } from "../ui/button";
 import { Linkedin } from "lucide-react";
 
 import { Anchor } from "../anchor";
+import { ContainerList } from "../list/containerList";
+import { IClassItem } from "../list/interfaces";
+import { useEffect, useState } from "react";
+import { api } from "@/services/api";
 
 interface INavigationProps {
   styles?: string;
 }
 
 const Navigation = ({ styles }: INavigationProps) => {
+  const [map, setMap] = useState<IClassItem[]>([]);
+
+  useEffect(() => {
+    if (map.length === 0) {
+      const getMap = async () => {
+        try {
+          const { data } = await api.get("/class/content/map");
+          setMap(data);
+          localStorage.setItem("classMap", JSON.stringify(data));
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      getMap();
+    }
+  }, [map]);
+
   return (
     <aside
       className={`${styles} group page-no-toc:hidden grow-0 shrink-0 basis-full lg:basis-72 relative lg:sticky top-0 lg:top-16 lg:h-[calc(100vh_-_4rem)] z-[1] pt-6 pb-4 sidebar-filled:lg:pr-6 navigation-open:flex lg:flex flex-col gap-4 navigation-open:border-b border-dark/2 dark:border-light/2`}
@@ -21,6 +43,8 @@ const Navigation = ({ styles }: INavigationProps) => {
           <li className="flex flex-col">
             <Anchor path="/about" text="Sobre" />
           </li>
+
+          {map.length > 0 ? <ContainerList data={map} /> : null}
         </ul>
 
         <Button variant="outline">
