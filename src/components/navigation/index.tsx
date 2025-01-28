@@ -4,32 +4,15 @@ import { Linkedin } from "lucide-react";
 
 import { Anchor } from "../anchor";
 import { ContainerList } from "../list/containerList";
-import { IClassItem } from "../list/interfaces";
-import { useEffect, useState } from "react";
-import { api } from "@/services/api";
+
+import { useData } from "@/contexts/data/useData";
 
 interface INavigationProps {
   styles?: string;
 }
 
 const Navigation = ({ styles }: INavigationProps) => {
-  const [map, setMap] = useState<IClassItem[]>([]);
-
-  useEffect(() => {
-    if (map.length === 0) {
-      const getMap = async () => {
-        try {
-          const { data } = await api.get("/class/content/map");
-          setMap(data);
-          localStorage.setItem("classMap", JSON.stringify(data));
-        } catch (err) {
-          console.error(err);
-        }
-      };
-
-      getMap();
-    }
-  }, [map]);
+  const { data } = useData();
 
   return (
     <aside
@@ -44,7 +27,7 @@ const Navigation = ({ styles }: INavigationProps) => {
             <Anchor path="/about" text="Sobre" />
           </li>
 
-          {map.length > 0 ? <ContainerList data={map} /> : null}
+          {data.length > 0 ? <ContainerList data={data} /> : null}
         </ul>
 
         <Button variant="outline">
