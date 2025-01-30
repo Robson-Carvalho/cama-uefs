@@ -6,6 +6,9 @@ import { NotFound } from "./pages/notFound";
 import { About } from "./pages/about";
 
 import { DataProvider } from "./contexts/data/dataProvider";
+import { AdminSignIn } from "./pages/admin/signIn";
+import { AdminDashboard } from "./pages/admin/dashboard";
+import { RecoverPassword } from "./pages/admin/recoverPassword";
 
 const App = () => {
   return (
@@ -13,9 +16,21 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route index element={<Home />} />
+
           <Route path="/:class/:topic" element={<Content />} />
+
           <Route path="/about" element={<About />} />
+
+          <Route path="/admin/login" element={<AdminSignIn />} />
+
+          <Route path="/admin/recover/password" element={<RecoverPassword />} />
+
+          <Route path="/admin" element={<AdminDashboard />} />
+
+          <Route path="/about" element={<About />} />
+
           <Route path="404" element={<NotFound />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
         <ToastContainer />
