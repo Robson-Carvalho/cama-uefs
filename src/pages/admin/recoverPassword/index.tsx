@@ -45,7 +45,7 @@ const RecoverPassword = () => {
   return (
     <>
       <Header />
-      <div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4 sm:px-6 md:px-8">
+      <div className="flex items-center justify-center min-h-[calc(80vh-64px)] px-4 sm:px-6 md:px-8">
         <Card className="w-full max-w-md shadow-lg rounded-2xl p-6">
           <CardHeader>
             <CardTitle className="text-2xl text-center font-bold">
