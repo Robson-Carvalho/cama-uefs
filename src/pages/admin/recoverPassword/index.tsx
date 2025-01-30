@@ -28,14 +28,15 @@ const RecoverPassword = () => {
         toast.success("Verifique seu e-mail.");
         return;
       }
-
-      if (data.status === 404) {
+    } catch (error: any) {
+      if (error.status === 404) {
         toast.warning("E-mail inválido.");
         return;
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Erro inesperado.");
+      if (error.status === 500) {
+        toast.error("Erro inesperado.");
+        return;
+      }
     } finally {
       setLoading(false);
     }
