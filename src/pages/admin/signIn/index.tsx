@@ -2,19 +2,55 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FormEvent, useState } from "react";
+import { api } from "@/services/api";
+import { toast } from "react-toastify";
 
 const AdminSignIn = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleLogin = (e: FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
 
     try {
-    } catch (error) {
+      if (!email) {
+        toast.warning("E-mail não informado.");
+        return;
+      }
+
+      if (!password) {
+        toast.warning("Senha não informada.");
+        return;
+      }
+
+      const data = await api.post("/auth/login", { email, password });
+
+      if (data.status === 200) {
+        toast.success("Seja bem-vindo!");
+        navigate("/admin");
+      }
+    } catch (error: any) {
+      if (error.status === 404) {
+        toast.warning("E-mail e/ou senha inválido.");
+        return;
+      }
+
+      if (error.status === 401) {
+        toast.warning("E-mail e/ou senha inválido.");
+        return;
+      }
+
+      if (error.status === 500) {
+        toast.warning("Erro inesperado.");
+        return;
+      }
     } finally {
       setLoading(false);
     }
@@ -36,19 +72,33 @@ const AdminSignIn = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   Email
                 </label>
-                <Input type="email" placeholder="Digite seu email" required />
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  placeholder="Digite seu email"
+                  required
+                />
               </div>
               <div className="flex flex-col gap-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Senha
                 </label>
                 <Input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   type="password"
                   placeholder="Digite sua senha"
                   required
                 />
               </div>
-              <Button className="w-full" type="submit">
+              <Button
+                disabled={loading}
+                className={`${
+                  loading === true ? "cursor-progress" : ""
+                } w-full`}
+                type="submit"
+              >
                 Entrar
               </Button>
             </form>
