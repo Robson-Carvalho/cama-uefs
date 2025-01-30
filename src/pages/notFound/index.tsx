@@ -1,5 +1,5 @@
 import { Header } from "@/components/header";
-import { BodyLayout } from "@/layouts/Body";
+import { BodyLayout } from "@/layouts/BodyLayout";
 
 const NotFound = () => {
   return (

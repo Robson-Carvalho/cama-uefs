@@ -22,6 +22,7 @@ const Header = () => {
           </p>
         </Link>
 
+
         <div className="lg:hidden">
           <Menu />
         </div>
