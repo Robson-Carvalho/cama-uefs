@@ -1,8 +1,10 @@
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth/useAuth";
+
 import { useNavigate } from "react-router";
 
 const AdminDashboard = () => {
-  const { payload, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -12,8 +14,7 @@ const AdminDashboard = () => {
 
   return (
     <>
-      <p>dash - {payload?.admin?.name}</p>
-      <button onClick={() => handleLogout()}>sair</button>
+      <Button onClick={() => handleLogout()}>sair</Button>
     </>
   );
 };
