@@ -14,12 +14,27 @@ api.interceptors.request.use(
   (config) => {
     const payload = LocalStorage.getInstance().get<IPayload>("cama-uefs-admin");
 
-    config.headers.Authorization = payload?.token;
+    if (payload) {
+      config.headers.Authorization = payload.token;
+    }
 
     return config;
   },
   (err) => {
     return Promise.reject(err);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 403) {
+      LocalStorage.getInstance().remove("cama-uefs-admin");
+      window.location.reload();
+    }
+    return Promise.reject(error);
   }
 );
 
