@@ -1,50 +1,58 @@
-# React + TypeScript + Vite
+<p align="center">
+  <img alt="image preview" src=".github/images/cama uefs.png">
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<div style="display: flex; flex-direction: row; margin: 48px 0; gap: 8px; justify-content: center; align-items: center;">
+  <img  src="https://img.shields.io/static/v1?label=license&message=MIT" alt="License">
 
-Currently, two official plugins are available:
+  <img src="https://img.shields.io/github/forks/Robson-Carvalho/cama-uefs?label=forks&message=MIT&color=D73035&labelColor=D73035" alt="Forks">
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+  <img src="https://img.shields.io/github/stars/Robson-Carvalho/cama-uefs?label=stars&message=MIT&color=D73035&labelColor=D73035" alt="Stars">
+</div>
 
-## Expanding the ESLint configuration
+<h1 align="center">
+     CAMA UEFS 💡
+</h1>
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+<br>
 
-- Configure the top-level `parserOptions` property like this:
+## 📖 Descrição do projeto
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+CAMA UEFS foi desenvolvido com o objetivo de auxiliar os alunos que estão se preparando para a Olimpíada Brasileira de Informática (OBI). O projeto faz parte do programa de treinamento para a OBI (PIBX/PROEX) da UEFS, no qual participo como bolsista.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+O programa oferece suporte a estudantes do ensino médio, proporcionando um ambiente de aprendizado desafiador para aprimorar habilidades em lógica de programação, algoritmos e resolução de problemas. A plataforma contém materiais didáticos, desafios e recursos para auxiliar no preparo dos participantes para a competição.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## 🧪 Tecnologias
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+Este projeto foi desenvolvido utilizando as seguintes tecnologias:
+
+- [TypeScript](https://www.typescriptlang.org/)
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React Router](https://reactrouter.com/)
+- [Axios](https://axios-http.com/)
+- [ESLint](https://eslint.org/)
+
+## 🤝 Contribua
+
+Contribuições são bem-vindas! Se você deseja melhorar este projeto, siga os passos abaixo:
+
+- Faça um fork do repositório.
+
+- Crie uma branch para sua funcionalidade (**git checkout -b minha-funcionalidade**).
+
+- Commit suas mudanças (**git commit -m 'Adicionando nova funcionalidade'**).
+
+- Envie para o branch principal (**git push origin minha-funcionalidade**).
+
+- Abra um Pull Request.
+
+## 📝 Licença
+
+Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](./LICENSE) para mais detalhes.
+
+## 🧑‍💻 Autor
+
+Desenvolvido por [Robson Carvalho de Souza](https://www.linkedin.com/in/robson-carvalho-souza/).
+
