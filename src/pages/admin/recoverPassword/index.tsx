@@ -2,14 +2,23 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { api } from "@/services/api";
 import { toast } from "react-toastify";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "@/contexts/auth/useAuth";
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const { authenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authenticated) {
+      navigate("/admin");
+    }
+  }, []);
 
   const recoverPassword = async (e: FormEvent) => {
     e.preventDefault();
@@ -63,7 +72,6 @@ const RecoverPassword = () => {
                   value={email}
                   type="email"
                   placeholder="Digite seu email"
-                  required
                 />
               </div>
               <Button

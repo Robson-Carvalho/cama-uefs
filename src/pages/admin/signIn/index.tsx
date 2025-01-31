@@ -3,53 +3,45 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router";
-import { FormEvent, useState } from "react";
-import { api } from "@/services/api";
+import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "@/contexts/auth/useAuth";
 
 const AdminSignIn = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
+  const { authenticated } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authenticated) {
+      navigate("/admin");
+    }
+  }, []);
+
+  const { login } = useAuth();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
 
+    if (!email) {
+      toast.warning("E-mail não informado.");
+      return;
+    }
+
+    if (!password) {
+      toast.warning("Senha não informada.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      if (!email) {
-        toast.warning("E-mail não informado.");
-        return;
-      }
+      const status = (await login(email, password)) as number;
 
-      if (!password) {
-        toast.warning("Senha não informada.");
-        return;
-      }
-
-      const data = await api.post("/auth/login", { email, password });
-
-      if (data.status === 200) {
-        toast.success("Seja bem-vindo!");
+      if (status === 200) {
         navigate("/admin");
-      }
-    } catch (error: any) {
-      if (error.status === 404) {
-        toast.warning("E-mail e/ou senha inválido.");
-        return;
-      }
-
-      if (error.status === 401) {
-        toast.warning("E-mail e/ou senha inválido.");
-        return;
-      }
-
-      if (error.status === 500) {
-        toast.warning("Erro inesperado.");
-        return;
       }
     } finally {
       setLoading(false);
@@ -77,7 +69,6 @@ const AdminSignIn = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   type="email"
                   placeholder="Digite seu email"
-                  required
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -89,7 +80,6 @@ const AdminSignIn = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   type="password"
                   placeholder="Digite sua senha"
-                  required
                 />
               </div>
               <Button

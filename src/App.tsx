@@ -9,33 +9,42 @@ import { DataProvider } from "./contexts/data/dataProvider";
 import { AdminSignIn } from "./pages/admin/signIn";
 import { AdminDashboard } from "./pages/admin/dashboard";
 import { RecoverPassword } from "./pages/admin/recoverPassword";
+import { AuthProvider } from "./contexts/auth/authProvider";
+import { PrivateRoute } from "./components/privateRoute";
 
 const App = () => {
   return (
-    <DataProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route index element={<Home />} />
+    <AuthProvider>
+      <DataProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route index element={<Home />} />
 
-          <Route path="/:class/:topic" element={<Content />} />
+            <Route path="/:class/:topic" element={<Content />} />
 
-          <Route path="/about" element={<About />} />
+            <Route path="/about" element={<About />} />
 
-          <Route path="/admin/login" element={<AdminSignIn />} />
+            <Route path="/admin/login" element={<AdminSignIn />} />
 
-          <Route path="/admin/recover/password" element={<RecoverPassword />} />
+            <Route
+              path="/admin/recover/password"
+              element={<RecoverPassword />}
+            />
 
-          <Route path="/admin" element={<AdminDashboard />} />
+            <Route element={<PrivateRoute />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
 
-          <Route path="/about" element={<About />} />
+            <Route path="/about" element={<About />} />
 
-          <Route path="404" element={<NotFound />} />
+            <Route path="404" element={<NotFound />} />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <ToastContainer />
-      </BrowserRouter>
-    </DataProvider>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <ToastContainer />
+        </BrowserRouter>
+      </DataProvider>
+    </AuthProvider>
   );
 };
 
