@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth/useAuth";
 
 import { useNavigate } from "react-router";
@@ -11,7 +12,11 @@ const AdminDashboard = () => {
     navigate("/admin/login");
   };
 
-  return <></>;
+  return (
+    <>
+      <Button onClick={() => handleLogout()}>sair</Button>
+    </>
+  );
 };
 
 export { AdminDashboard };
