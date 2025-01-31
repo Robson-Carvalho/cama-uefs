@@ -1,21 +1,23 @@
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth/useAuth";
-
-import { useNavigate } from "react-router";
+import { Header } from "../components/header";
 
 const AdminDashboard = () => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/admin/login");
-  };
-
+  const { payload } = useAuth();
   return (
-    <>
-      <Button onClick={() => handleLogout()}>sair</Button>
-    </>
+    <div className="flex flex-col h-screen">
+      <Header />
+
+      <main className=" flex flex-col gap-12 max-w-[1536px] w-full mx-auto py-3 px-4 sm:px-6 md:px-8 p-4">
+        <section>
+          <h2 className="text-2xl font-semibold">
+            Olá, {payload?.admin.name.split(" ")[0]}! Bem-vindo ao Painel
+            Administrativo da CAMA UEFS.
+          </h2>
+        </section>
+
+        <section className="">classes</section>
+      </main>
+    </div>
   );
 };
 

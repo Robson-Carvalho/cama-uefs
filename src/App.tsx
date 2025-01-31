@@ -11,6 +11,7 @@ import { AdminDashboard } from "./pages/admin/dashboard";
 import { RecoverPassword } from "./pages/admin/recoverPassword";
 import { AuthProvider } from "./contexts/auth/authProvider";
 import { PrivateRoute } from "./components/privateRoute";
+import { AdminSettings } from "./pages/admin/settings";
 
 const App = () => {
   return (
@@ -33,6 +34,10 @@ const App = () => {
 
             <Route element={<PrivateRoute />}>
               <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
+
+            <Route element={<PrivateRoute />}>
+              <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
 
             <Route path="/about" element={<About />} />
