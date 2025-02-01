@@ -42,6 +42,8 @@ const App = () => {
               <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
 
+{/*
+ */}
             <Route element={<PrivateRoute />}>
               <Route path="/admin/class/:id" element={<Class />} />
             </Route>
