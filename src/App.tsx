@@ -12,6 +12,8 @@ import { RecoverPassword } from "./pages/admin/recoverPassword";
 import { AuthProvider } from "./contexts/auth/authProvider";
 import { PrivateRoute } from "./components/privateRoute";
 import { AdminSettings } from "./pages/admin/settings";
+import { Topic } from "./pages/admin/topic";
+import { Class } from "./pages/admin/class";
 
 const App = () => {
   return (
@@ -38,6 +40,14 @@ const App = () => {
 
             <Route element={<PrivateRoute />}>
               <Route path="/admin/settings" element={<AdminSettings />} />
+            </Route>
+
+            <Route element={<PrivateRoute />}>
+              <Route path="/admin/class/:id" element={<Class />} />
+            </Route>
+
+            <Route element={<PrivateRoute />}>
+              <Route path="/admin/topic/:id" element={<Topic />} />
             </Route>
 
             <Route path="/about" element={<About />} />
