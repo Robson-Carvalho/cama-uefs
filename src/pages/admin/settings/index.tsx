@@ -7,10 +7,10 @@ import { toast } from "react-toastify";
 import { api } from "@/services/api";
 
 const AdminSettings = () => {
+  const { payload } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const { payload } = useAuth();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -56,8 +56,8 @@ const AdminSettings = () => {
     <div className="flex flex-col h-screen">
       <Header />
 
-      <main className="flex flex-col gap-12 max-w-[1536px] w-full mx-auto py-3 px-4 sm:px-6 md:px-8 p-4">
-        <section>
+      <main className="flex flex-col gap-4 max-w-[1536px] w-full mx-auto py-3 px-4 sm:px-6 md:px-8 p-4">
+        <section className="mt-8">
           <h2 className="text-2xl font-semibold">Configurações</h2>
         </section>
 
