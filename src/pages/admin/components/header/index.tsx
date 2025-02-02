@@ -1,5 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
+import {
+  DialogHeader,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/auth/useAuth";
 import {
   Dialog,
@@ -38,15 +42,17 @@ const Logout = () => {
           <DialogDescription>Tem certeza de que deseja sair?</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <div className="mt-6 w-full flex justify-center">
-            <Button
-              variant="destructive"
-              className="flex-grow"
-              onClick={handleLogout}
-            >
-              Sair
-            </Button>
-          </div>
+          <DialogClose className="w-full">
+            <div className="mt-6 w-full flex justify-center">
+              <Button
+                variant="destructive"
+                className="flex-grow"
+                onClick={handleLogout}
+              >
+                Sair
+              </Button>
+            </div>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

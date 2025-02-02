@@ -118,6 +118,7 @@ const AdminSettings = () => {
               </Button>
 
               <Button
+                type="button"
                 variant="outline"
                 className="w-fit"
                 onClick={() => {
