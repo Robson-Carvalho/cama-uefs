@@ -46,7 +46,9 @@ const Content = () => {
             <Skeleton className="h-24 w-max-[1440px]" />
           </div>
         ) : (
-          <MarkdownRenderer content={content} />
+          <MarkdownRenderer
+            content={content.length >= 2 ? content : `## Em construção! 🚧`}
+          />
         )}
       </BodyLayout>
     </>

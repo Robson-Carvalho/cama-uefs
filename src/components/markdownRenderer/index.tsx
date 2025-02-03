@@ -20,7 +20,7 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
 
   return (
     <Markdown
-      className="prose dark:prose-invert font-[Inter] space-y-4"
+      className="prose dark:prose-invert font-[Roboto] space-y-4"
       rehypePlugins={[rehypeHighlight]}
       components={{
         h1: ({ node, ...props }) => (
