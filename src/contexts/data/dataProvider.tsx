@@ -10,6 +10,7 @@ interface IDataProvider {
 
 const DataProvider = ({ children }: IDataProvider) => {
   const [map, setMap] = useState<IClassItem[] | []>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getMap = async () => {
@@ -20,14 +21,20 @@ const DataProvider = ({ children }: IDataProvider) => {
       } catch (err) {
         const error = err as AxiosError;
         console.log(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     getMap();
   }, []);
 
+  if (!map) {
+    return <p>po</p>;
+  }
+
   return (
-    <DataContext.Provider value={{ data: map }}>
+    <DataContext.Provider value={{ data: map, loading }}>
       {children}
     </DataContext.Provider>
   );

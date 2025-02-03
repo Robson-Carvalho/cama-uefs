@@ -14,6 +14,7 @@ import { PrivateRoute } from "./components/privateRoute";
 import { AdminSettings } from "./pages/admin/settings";
 import { Topic } from "./pages/admin/topic";
 import { Class } from "./pages/admin/class";
+import { LoadPage } from "./components/loadPage";
 
 const App = () => {
   return (
@@ -21,11 +22,19 @@ const App = () => {
       <DataProvider>
         <BrowserRouter>
           <Routes>
-            <Route index element={<Home />} />
+            <Route element={<LoadPage />}>
+              <Route index element={<Home />} />
 
-            <Route path="/:class/:topic" element={<Content />} />
+              <Route path="/:class/:topic" element={<Content />} />
 
-            <Route path="/about" element={<About />} />
+              <Route path="/about" element={<About />} />
+
+              <Route path="/about" element={<About />} />
+
+              <Route path="404" element={<NotFound />} />
+
+              <Route path="*" element={<NotFound />} />
+            </Route>
 
             <Route path="/admin/login" element={<AdminSignIn />} />
 
@@ -36,25 +45,10 @@ const App = () => {
 
             <Route element={<PrivateRoute />}>
               <Route path="/admin" element={<AdminDashboard />} />
-            </Route>
-
-            <Route element={<PrivateRoute />}>
               <Route path="/admin/settings" element={<AdminSettings />} />
-            </Route>
-
-            <Route element={<PrivateRoute />}>
               <Route path="/admin/class/:id" element={<Class />} />
-            </Route>
-
-            <Route element={<PrivateRoute />}>
               <Route path="/admin/topic/:id" element={<Topic />} />
             </Route>
-
-            <Route path="/about" element={<About />} />
-
-            <Route path="404" element={<NotFound />} />
-
-            <Route path="*" element={<NotFound />} />
           </Routes>
           <ToastContainer />
         </BrowserRouter>

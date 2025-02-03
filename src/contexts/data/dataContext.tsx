@@ -3,6 +3,7 @@ import { createContext } from "react";
 
 interface IDataContext {
   data: IClassItem[];
+  loading: boolean;
 }
 
 const DataContext = createContext<IDataContext>({} as IDataContext);
