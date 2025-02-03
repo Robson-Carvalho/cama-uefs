@@ -26,7 +26,7 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
         h1: ({ node, ...props }) => (
           <h1
             {...props}
-            className="text-4xl font-bold flex items-center gap-4 font-[Inter]"
+            className="text-3xl font-bold flex items-center gap-4 font-[Inter]"
           />
         ),
         h2: ({ node, ...props }) => (
@@ -44,6 +44,7 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
 
         a: ({ node, ...props }) => (
           <a
+            target="_blank"
             {...props}
             className="underline underline-offset-2 font-medium text-[#346DDB] hover:text-[#58595C] transition-colors"
           />

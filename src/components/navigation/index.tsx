@@ -23,9 +23,11 @@ const Navigation = ({ styles }: INavigationProps) => {
           <li className="flex flex-col">
             <Anchor path="/" text="Treinamento para OBI" />
           </li>
+          {/*
           <li className="flex flex-col">
             <Anchor path="/about" text="Sobre" />
           </li>
+          */}
 
           {data.length > 0 ? <ContainerList data={data} /> : null}
         </ul>
