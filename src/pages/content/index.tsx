@@ -9,9 +9,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 const Content = () => {
   const navigate = useNavigate();
   const [content, setContent] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const location = useLocation();
 
   useEffect(() => {
+    setLoading(true);
+
     const getContent = async () => {
       try {
         const { data } = await api.get(`/topic${location.pathname}`);
@@ -22,6 +25,8 @@ const Content = () => {
         if (err.status === 404) {
           navigate("/404");
         }
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -32,7 +37,7 @@ const Content = () => {
     <>
       <Header />
       <BodyLayout>
-        {content === "" ? (
+        {loading ? (
           <div className="flex flex-col gap-4">
             <Skeleton className="h-12 w-max-[1440px]" />
             <Skeleton className="h-24 w-max-[1440px]" />

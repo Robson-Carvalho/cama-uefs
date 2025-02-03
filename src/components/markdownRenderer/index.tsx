@@ -30,15 +30,15 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
           />
         ),
         h2: ({ node, ...props }) => (
-          <h2 {...props} className="text-2xl font-bold mt-10 mb-10 " />
+          <h2 {...props} className=" text-2xl font-bold my-2 " />
         ),
         h3: ({ node, ...props }) => (
-          <h3 {...props} className="text-xl font-bold mt-10 mb-10" />
+          <h3 {...props} className="text-xl font-bold my-2" />
         ),
         p: ({ node, ...props }) => (
           <p
             {...props}
-            className="w-full decoration-primary/6  page-api-block:ml-0 text-justify"
+            className="w-full decoration-primary/6 page-api-block:ml-0 text-justify"
           />
         ),
 
