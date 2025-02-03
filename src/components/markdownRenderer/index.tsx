@@ -20,28 +20,24 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
 
   return (
     <Markdown
-      className="prose dark:prose-invert space-y-8"
+      className="prose dark:prose-invert font-[Inter] space-y-4"
       rehypePlugins={[rehypeHighlight]}
       components={{
         h1: ({ node, ...props }) => (
-          <h1
-            {...props}
-            className="text-3xl font-bold flex items-center gap-4 font-[Inter]"
-          />
+          <h1 {...props} className="text-3xl font-bold flex items-center" />
         ),
         h2: ({ node, ...props }) => (
-          <h2 {...props} className=" text-2xl font-bold my-2 " />
+          <h2 {...props} className=" text-2xl font-bold my-2" />
         ),
         h3: ({ node, ...props }) => (
-          <h3 {...props} className="text-xl font-bold my-2" />
+          <h3 {...props} className=" text-xl font-bold my-2" />
         ),
         p: ({ node, ...props }) => (
           <p
             {...props}
-            className="w-full decoration-primary/6 page-api-block:ml-0 text-justify"
+            className=" w-full decoration-primary/6 page-api-block:ml-0 text-justify"
           />
         ),
-
         a: ({ node, ...props }) => (
           <a
             target="_blank"
@@ -49,7 +45,6 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
             className="underline underline-offset-2 font-medium text-[#346DDB] hover:text-[#58595C] transition-colors"
           />
         ),
-
         code: ({ node, className, children, ...props }) => {
           const match = /language-(\w+)/.exec(className || "");
           const codeContent = String(children).trim();
@@ -90,6 +85,18 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
               </figcaption>
             </figure>
           );
+        },
+        ul: ({ node, ...props }) => {
+          return (
+            <ul
+              style={{ listStyleType: "square", paddingLeft: "20px" }}
+              {...props}
+            ></ul>
+          );
+        },
+        // Renderizando os itens da lista <li> de forma personalizada
+        li: ({ node, ...props }) => {
+          return <li style={{ marginBottom: "5px" }} {...props}></li>;
         },
       }}
     >
