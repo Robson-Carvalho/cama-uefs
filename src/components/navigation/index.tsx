@@ -9,9 +9,10 @@ import { useData } from "@/contexts/data/useData";
 
 interface INavigationProps {
   styles?: string;
+  onClose: () => void;
 }
 
-const Navigation = ({ styles }: INavigationProps) => {
+const Navigation = ({ styles, onClose }: INavigationProps) => {
   const { data } = useData();
 
   return (
@@ -23,13 +24,10 @@ const Navigation = ({ styles }: INavigationProps) => {
           <li className="flex flex-col">
             <Anchor path="/" text="Treinamento para OBI" />
           </li>
-          {/*
-          <li className="flex flex-col">
-            <Anchor path="/about" text="Sobre" />
-          </li>
-          */}
 
-          {data.length > 0 ? <ContainerList data={data} /> : null}
+          {data.length > 0 ? (
+            <ContainerList onClose={onClose} data={data} />
+          ) : null}
         </ul>
 
         <Button variant="outline">

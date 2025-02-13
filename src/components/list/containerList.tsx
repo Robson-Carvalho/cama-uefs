@@ -3,14 +3,15 @@ import { Wrapper } from "./wrapper";
 
 interface IContainerList {
   data: IClassItem[];
+  onClose: () => void;
 }
 
-const ContainerList = ({ data }: IContainerList) => {
+const ContainerList = ({ data, onClose }: IContainerList) => {
   return (
     <>
       {data.map((data) => {
         if (data.topics.length > 0) {
-          return <Wrapper key={data._id} data={data} />;
+          return <Wrapper onClose={onClose} key={data._id} data={data} />;
         }
       })}
     </>

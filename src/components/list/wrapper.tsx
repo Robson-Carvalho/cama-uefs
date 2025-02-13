@@ -7,9 +7,10 @@ import { useLocation } from "react-router";
 
 interface IWrapperProps {
   data: IClassItem;
+  onClose: () => void;
 }
 
-const Wrapper = ({ data }: IWrapperProps) => {
+const Wrapper = ({ data, onClose }: IWrapperProps) => {
   const location = useLocation();
 
   const path = location.pathname.split("/")[1];
@@ -52,6 +53,7 @@ const Wrapper = ({ data }: IWrapperProps) => {
             <div className="pl-4">
               {data.topics.map((topic) => (
                 <Li
+                  onClose={onClose}
                   key={topic.path}
                   path={`/${data.classPath}/${topic.path}`}
                   text={topic.name}

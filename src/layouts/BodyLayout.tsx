@@ -7,7 +7,7 @@ interface BodyProps {
 const BodyLayout = ({ children }: BodyProps) => {
   return (
     <div className="flex flex-col lg:flex-row px-4 sm:px-6 md:px-8 max-w-screen-2xl mx-auto page-full-width:max-w-full min-h-[calc(100vh-64px)]">
-      <Navigation styles="hidden h-screen " />
+      <Navigation onClose={() => {}} styles="hidden h-screen " />
 
       <div
         id="content"
