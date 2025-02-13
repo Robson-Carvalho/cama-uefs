@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Navigation } from "../navigation";
+import { Button } from "../ui/button";
+import { useState } from "react";
 
 const Header = () => {
   return (
@@ -22,34 +24,35 @@ const Header = () => {
           </p>
         </Link>
 
-
-        <div className="lg:hidden">
-          <Menu />
-        </div>
+        <Menu className="lg:hidden" />
       </nav>
     </header>
   );
 };
 
-const Menu = () => {
-  return (
-    <Drawer>
-      <DrawerTrigger>
-        <p className="rounded-md border px-4 py-2 block lg:hidden text-pretty line-clamp-3 tracking-tight max-w-[18ch] font-normal ms-3 text-base/tight lg:text-lg/tight text-dark dark:text-light">
-          Menu
-        </p>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Navegação</DrawerTitle>
-          <DrawerDescription>Selecione o conteúdo desejado.</DrawerDescription>
+const Menu = ({ className }: { className: string }) => {
+  const [open, setOpen] = useState<boolean>(false);
 
-          <ScrollArea className="h-[400px] w-full py-4">
-            <Navigation />
-          </ScrollArea>
-        </DrawerHeader>
-      </DrawerContent>
-    </Drawer>
+  return (
+    <div className={className}>
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger>
+          <Button variant="outline">Menu</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Navegação</DrawerTitle>
+            <DrawerDescription>
+              Selecione o conteúdo desejado.
+            </DrawerDescription>
+
+            <ScrollArea className="h-[400px] w-full py-4">
+              <Navigation onClose={() => setOpen(false)} />
+            </ScrollArea>
+          </DrawerHeader>
+        </DrawerContent>
+      </Drawer>
+    </div>
   );
 };
 

@@ -24,7 +24,10 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
       rehypePlugins={[rehypeHighlight]}
       components={{
         h1: ({ node, ...props }) => (
-          <h1 {...props} className="text-3xl font-bold flex items-center" />
+          <h1
+            {...props}
+            className="text-3xl font-bold flex items-center pb-4"
+          />
         ),
         h2: ({ node, ...props }) => (
           <h2 {...props} className=" text-2xl font-bold my-2" />
@@ -86,6 +89,7 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
             </figure>
           );
         },
+
         ul: ({ node, ...props }) => {
           return (
             <ul
