@@ -3,6 +3,7 @@ import { createContext } from "react";
 
 interface IDataContext {
   data: IClassItem[];
+  views: number;
   loading: boolean;
 }
 

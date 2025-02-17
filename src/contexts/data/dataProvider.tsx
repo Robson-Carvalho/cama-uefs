@@ -10,14 +10,18 @@ interface IDataProvider {
 
 const DataProvider = ({ children }: IDataProvider) => {
   const [map, setMap] = useState<IClassItem[] | []>([]);
+  const [views, setViews] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getMap = async () => {
       try {
-        const { data } = await api.get("/class/content/map");
+        const content = await api.get("/class/content/map");
+        const views = await api.get("/view");
+        await api.post("/view");
 
-        setMap(data);
+        setViews(views.data.views);
+        setMap(content.data);
       } catch (err) {
         const error = err as AxiosError;
         console.log(error.message);
@@ -30,11 +34,11 @@ const DataProvider = ({ children }: IDataProvider) => {
   }, []);
 
   if (!map) {
-    return <p>po</p>;
+    return <></>;
   }
 
   return (
-    <DataContext.Provider value={{ data: map, loading }}>
+    <DataContext.Provider value={{ views, data: map, loading }}>
       {children}
     </DataContext.Provider>
   );
