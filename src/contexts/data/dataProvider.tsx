@@ -18,7 +18,6 @@ const DataProvider = ({ children }: IDataProvider) => {
       try {
         const content = await api.get("/class/content/map");
         const views = await api.get("/view");
-        await api.post("/view");
 
         setViews(views.data.views);
         setMap(content.data);
