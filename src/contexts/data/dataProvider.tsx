@@ -17,9 +17,7 @@ const DataProvider = ({ children }: IDataProvider) => {
     const getMap = async () => {
       try {
         const content = await api.get("/class/content/map");
-        const views = await api.get("/view");
 
-        setViews(views.data.views);
         setMap(content.data);
       } catch (err) {
         const error = err as AxiosError;

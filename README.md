@@ -55,4 +55,3 @@ Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](./LIC
 ## 🧑‍💻 Autor
 
 Desenvolvido por [Robson Carvalho de Souza](https://www.linkedin.com/in/robson-carvalho-souza/).
-
