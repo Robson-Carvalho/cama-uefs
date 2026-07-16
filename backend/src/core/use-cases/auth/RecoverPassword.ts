@@ -19,7 +19,7 @@ class RecoverPassword {
     const newPasswordHash = await Encryption.getInstance().hash(newPassword);
 
     await this._adminRepository.update(
-      admin._id.toString(),
+      admin.id,
       admin.name,
       admin.email,
       newPasswordHash

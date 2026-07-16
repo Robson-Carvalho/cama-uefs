@@ -1,11 +1,11 @@
 interface ITopic {
   id: string;
-  class_id: string;
+  classId: string;
   title: string;
   path: string;
   content: string;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export { ITopic };

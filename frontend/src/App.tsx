@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import { ToastContainer } from "react-toastify";
 import { Home } from "./pages/home";
+import { Estudos } from "./pages/estudos";
 import { Content } from "./pages/content";
 import { NotFound } from "./pages/notFound";
 import { About } from "./pages/about";
@@ -24,6 +25,7 @@ const App = () => {
           <Routes>
             <Route element={<LoadPage />}>
               <Route index element={<Home />} />
+              <Route path="/estudos" element={<Estudos />} />
 
               <Route path="/:class/:topic" element={<Content />} />
 

@@ -29,12 +29,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: development
     container_name: obi-uefs-backend
     restart: unless-stopped
     environment:
       NODE_ENV: ${NODE_ENV:-development}
-      PORT: ${BACKEND_PORT:-3333}
+      PORT: ${BACKEND_PORT:-3001}
       DATABASE_URL: postgres://${POSTGRES_USER:-obi_admin}:${POSTGRES_PASSWORD:-obi_secret}@postgres:5432/${POSTGRES_DB:-obi_uefs}
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
@@ -42,8 +41,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-obi_admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-obi_secret}
       JWT_SECRET: ${JWT_SECRET:-change_me_in_production}
+      SALT_ROUNDS: ${SALT_ROUNDS:-10}
+      NODEMAILER_EMAIL_USER: ${NODEMAILER_EMAIL_USER:-}
+      NODEMAILER_PASSWORD: ${NODEMAILER_PASSWORD:-}
+      EMAIL_USER: ${EMAIL_USER:-}
     ports:
-      - "${BACKEND_PORT:-3333}:3333"
+      - "${BACKEND_PORT:-3001}:3001"
     volumes:
       # Código-fonte (hot-reload)
       - ./backend:/app
@@ -62,11 +65,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: development
     container_name: obi-uefs-frontend
     restart: unless-stopped
     environment:
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:3333}
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
     volumes:

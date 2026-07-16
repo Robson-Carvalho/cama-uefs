@@ -27,12 +27,12 @@ class SignIn {
     }
 
     const token: string = (await JWT.getInstance().sign(
-      admin._id.toString()
+      admin.id
     )) as string;
 
     const payload: IPayload = {
       admin: {
-        id: admin._id.toString(),
+        id: admin.id,
         name: admin.name,
         email: admin.email,
       },

@@ -20,32 +20,32 @@ const MarkdownRenderer = ({ content }: IRenderMarkdownProps) => {
 
   return (
     <Markdown
-      className="prose dark:prose-invert font-[Roboto] space-y-4"
+      className="prose dark:prose-invert max-w-none prose-p:leading-relaxed prose-headings:font-heading prose-a:text-primary prose-a:no-underline hover:prose-a:underline space-y-6"
       rehypePlugins={[rehypeHighlight]}
       components={{
         h1: ({ node, ...props }) => (
           <h1
             {...props}
-            className="text-3xl font-bold flex items-center pb-4"
+            className="text-4xl font-extrabold flex items-center pb-4 text-foreground tracking-tight"
           />
         ),
         h2: ({ node, ...props }) => (
-          <h2 {...props} className=" text-2xl font-bold my-2" />
+          <h2 {...props} className="text-3xl font-bold my-4 text-foreground tracking-tight" />
         ),
         h3: ({ node, ...props }) => (
-          <h3 {...props} className=" text-xl font-bold my-2" />
+          <h3 {...props} className="text-2xl font-bold my-3 text-foreground tracking-tight" />
         ),
         p: ({ node, ...props }) => (
           <p
             {...props}
-            className=" w-full decoration-primary/6 page-api-block:ml-0 text-justify"
+            className="w-full text-base sm:text-lg text-muted-foreground mb-4"
           />
         ),
         a: ({ node, ...props }) => (
           <a
             target="_blank"
             {...props}
-            className="underline underline-offset-2 font-medium text-[#346DDB] hover:text-[#58595C] transition-colors"
+            className="font-medium text-primary hover:text-primary/80 transition-colors underline underline-offset-4"
           />
         ),
         code: ({ node, className, children, ...props }) => {

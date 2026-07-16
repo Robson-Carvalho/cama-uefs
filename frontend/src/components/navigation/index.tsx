@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { Button } from "../ui/button";
-import { Linkedin } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 import { Anchor } from "../anchor";
 import { ContainerList } from "../list/containerList";
@@ -22,24 +22,13 @@ const Navigation = ({ styles, onClose }: INavigationProps) => {
       <div className="w-full flex flex-col justify-center gap-8">
         <ul className="flex flex-col gap-y-0.5 sidebar-list-line:border-l border-dark/3 dark:border-light/2">
           <li className="flex flex-col">
-            <Anchor path="/" text="Treinamento para OBI" />
+            <Anchor path="/estudos" text="Início da Plataforma" />
           </li>
 
           {data.length > 0 ? (
             <ContainerList onClose={onClose} data={data} />
           ) : null}
         </ul>
-
-        <Button variant="outline">
-          <Link
-            to="https://www.linkedin.com/in/robson-carvalho-souza/"
-            target="_blank"
-            className="flex flex-row gap-2 justify-center"
-          >
-            <Linkedin />
-            Developed by Robson Carvalho.
-          </Link>
-        </Button>
       </div>
     </aside>
   );
