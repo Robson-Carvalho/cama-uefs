@@ -1,0 +1,99 @@
+services:
+  # ─────────────────────────────────────────
+  # Banco de dados relacional – PostgreSQL
+  # ─────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: obi-uefs-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-obi_uefs}
+      POSTGRES_USER: ${POSTGRES_USER:-obi_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-obi_secret}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-obi_admin} -d ${POSTGRES_DB:-obi_uefs}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - obi-network
+
+  # ─────────────────────────────────────────
+  # Backend – Node.js / Express / TypeScript
+  # ─────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: obi-uefs-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${BACKEND_PORT:-3333}
+      DATABASE_URL: postgres://${POSTGRES_USER:-obi_admin}:${POSTGRES_PASSWORD:-obi_secret}@postgres:5432/${POSTGRES_DB:-obi_uefs}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-obi_uefs}
+      POSTGRES_USER: ${POSTGRES_USER:-obi_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-obi_secret}
+      JWT_SECRET: ${JWT_SECRET:-change_me_in_production}
+    ports:
+      - "${BACKEND_PORT:-3333}:3333"
+    volumes:
+      # Código-fonte (hot-reload)
+      - ./backend:/app
+      # Volume nomeado para node_modules — evita sobrescrever com o host
+      - backend_node_modules:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - obi-network
+
+  # ─────────────────────────────────────────
+  # Frontend – React / Vite / TypeScript
+  # ─────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: obi-uefs-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3333}
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      # Código-fonte (hot-reload)
+      - ./frontend:/app
+      # Volume nomeado para node_modules — evita sobrescrever com o host
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - obi-network
+
+# ─────────────────────────────────────────
+# Volumes nomeados
+# ─────────────────────────────────────────
+volumes:
+  postgres_data:
+    name: obi-uefs-postgres-data
+  backend_node_modules:
+    name: obi-uefs-backend-node-modules
+  frontend_node_modules:
+    name: obi-uefs-frontend-node-modules
+
+# ─────────────────────────────────────────
+# Rede isolada
+# ─────────────────────────────────────────
+networks:
+  obi-network:
+    name: obi-uefs-network
+    driver: bridge
