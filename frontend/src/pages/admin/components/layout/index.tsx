@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation, Outlet } from "react-router";
-import { Menu, LogOut, Home, Settings, Users } from "lucide-react";
+import { Menu, LogOut, Home, Settings, Users, UserCog, FileSignature } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -22,7 +22,9 @@ const AdminLayout = () => {
 
   const navItems = [
     { name: "Dashboard", path: "/admin", icon: <Home className="w-5 h-5" /> },
-    ...(payload?.admin?.role === "ADMIN" ? [{ name: "Instrutores", path: "/admin/instructors", icon: <Users className="w-5 h-5" /> }] : []),
+    { name: "Colaboradores", path: "/admin/collaborators", icon: <Users className="w-5 h-5" /> },
+    { name: "Revisões", path: "/admin/revisions", icon: <FileSignature className="w-5 h-5" /> },
+    ...(payload?.admin?.role === "ADMIN" ? [{ name: "Instrutores", path: "/admin/instructors", icon: <UserCog className="w-5 h-5" /> }] : []),
     { name: "Configurações", path: "/admin/settings", icon: <Settings className="w-5 h-5" /> },
   ];
 

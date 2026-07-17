@@ -8,9 +8,10 @@ class Create {
     title: string,
     content: string,
     path: string,
-    classID: string
+    classID: string,
+    userId: string
   ): Promise<ITopic | null> {
-    return await this._topicRepository.create(title, content, path, classID);
+    return await this._topicRepository.create(title, content, path, classID, userId);
   }
 }
 

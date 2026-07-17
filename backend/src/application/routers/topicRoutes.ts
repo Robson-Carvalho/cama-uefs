@@ -22,6 +22,30 @@ router.get(
 );
 
 router.get(
+  "/revisions/all",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    topicController.getAllRevisions(req, res, next);
+  }
+);
+
+router.get(
+  "/revisions/mine",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    topicController.getMyRevisions(req, res, next);
+  }
+);
+
+router.get(
+  "/revision/:id",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    topicController.getRevisionById(req, res, next);
+  }
+);
+
+router.get(
   "/:id",
   AuthMiddleware,
   (req: Request, res: Response, next: NextFunction) => {
@@ -30,9 +54,31 @@ router.get(
 );
 
 router.get(
+  "/:id/revisions",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    topicController.getRevisions(req, res, next);
+  }
+);
+
+router.get(
   "/:classPath/:topicPath",
   (req: Request, res: Response, next: NextFunction) => {
     topicController.getTopicByClassAndPath(req, res, next);
+  }
+);
+
+router.post(
+  "/:classPath/:topicPath/like",
+  (req: Request, res: Response, next: NextFunction) => {
+    topicController.like(req, res, next);
+  }
+);
+
+router.post(
+  "/:classPath/:topicPath/unlike",
+  (req: Request, res: Response, next: NextFunction) => {
+    topicController.unlike(req, res, next);
   }
 );
 
@@ -73,6 +119,26 @@ router.delete(
   AuthMiddleware,
   (req: Request, res: Response, next: NextFunction) => {
     topicController.delete(req, res, next);
+  }
+);
+
+
+
+
+
+router.post(
+  "/revision/:id/accept",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    topicController.acceptRevision(req, res, next);
+  }
+);
+
+router.post(
+  "/revision/:id/reject",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    topicController.rejectRevision(req, res, next);
   }
 );
 

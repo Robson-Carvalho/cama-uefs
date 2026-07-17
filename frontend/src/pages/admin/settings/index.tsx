@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, Mail, User } from "lucide-react";
+import { Lock, Mail, User, Eye, EyeOff } from "lucide-react";
 import { useSettings } from "@/hooks/useSettings";
 
 const AdminSettings = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const {
     payload,
     name, setName, loadingName, handleNameSubmit,
@@ -127,26 +131,44 @@ const AdminSettings = () => {
                   <label className="text-sm font-semibold text-slate-700">
                     Nova Senha
                   </label>
-                  <Input
-                    type="password"
-                    placeholder="Digite a nova senha"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="focus-visible:ring-amber-500"
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Digite a nova senha"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="focus-visible:ring-amber-500 pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-700">
                     Confirmar Nova Senha
                   </label>
-                  <Input
-                    type="password"
-                    placeholder="Confirme a nova senha"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="focus-visible:ring-amber-500"
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirme a nova senha"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="focus-visible:ring-amber-500 pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
               </div>
 

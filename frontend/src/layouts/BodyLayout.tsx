@@ -16,7 +16,7 @@ const BodyLayout = ({ children }: BodyProps) => {
         id="content"
         className="flex-1 relative py-8 px-4 sm:px-8 lg:px-12 w-full mx-auto"
       >
-        <div className="prose dark:prose-invert prose-headings:font-heading prose-headings:font-semibold prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl max-w-4xl mx-auto bg-card p-6 sm:p-10 rounded-2xl shadow-sm border border-border/50 animate-fade-in-up">
+        <div className="prose dark:prose-invert prose-headings:font-heading prose-headings:font-semibold prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl max-w-5xl mx-auto bg-card p-6 sm:p-10 rounded-2xl shadow-sm border border-border/50 animate-fade-in-up">
           {children}
         </div>
       </main>

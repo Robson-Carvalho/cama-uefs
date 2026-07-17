@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { TopicFactory } from "../factories/TopicFactory";
-import { InternalServerError, ValidationError } from "../../core/errors/Errors";
+import { UnauthorizedError, InternalServerError, ValidationError } from "../../core/errors/Errors";
+import { TopicRevisionRepository } from "../../infrastructure/repositories/TopicRevisionRepository";
+
+const revisionRepo = new TopicRevisionRepository();
 
 class TopicController {
   private _get = TopicFactory.getGetUseCase();
@@ -14,6 +17,9 @@ class TopicController {
   private _reorder = TopicFactory.getReorderUseCase();
   private _getTopicByClassAndPath =
     TopicFactory.getTopicByClassAndPathUseCase();
+  private _like = TopicFactory.getLikeTopicUseCase();
+  private _unlike = TopicFactory.getUnlikeTopicUseCase();
+  private _incrementView = TopicFactory.getIncrementViewTopicUseCase();
 
   async getByClassId(req: Request, res: Response, next: NextFunction) {
     try {
@@ -50,7 +56,14 @@ class TopicController {
         return res.status(404).json({ message: "Topic not found" });
       }
 
-      return res.status(200).json(topic);
+      await this._incrementView.execute(classPath, topicPath);
+      
+      const topicWithView = {
+        ...topic,
+        views: (topic as any).views !== undefined ? (topic as any).views + 1 : 1
+      };
+
+      return res.status(200).json(topicWithView);
     } catch (e) {
       if (!(e instanceof InternalServerError)) {
         return next(e);
@@ -126,7 +139,7 @@ class TopicController {
         throw new ValidationError("A ID da aula é obrigatória.");
       }
 
-      const topic = await this._create.execute(title, content, path, classID);
+      const topic = await this._create.execute(title, content, path, classID, (req as any).user_id);
 
       return res.status(201).json(topic);
     } catch (e: any) {
@@ -169,8 +182,13 @@ class TopicController {
         path,
         classID,
         orderValue,
+        (req as any).user_id,
         isPublished
       );
+
+      if ((updatedTopic as any)?._isRevision) {
+        return res.status(202).json({ message: "Sua modificação foi enviada para aprovação do autor original.", isRevision: true });
+      }
 
       return res.status(200).json(updatedTopic);
     } catch (e: any) {
@@ -215,6 +233,104 @@ class TopicController {
       }
 
       return next(new InternalServerError(e.message));
+    }
+  }
+
+  async like(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { classPath, topicPath } = req.params;
+      const updated = await this._like.execute(classPath, topicPath);
+      if (!updated) {
+        return res.status(404).json({ message: "Topic not found" });
+      }
+      return res.status(200).json(updated);
+    } catch (e) {
+      if (!(e instanceof InternalServerError)) {
+        return next(e);
+      }
+      return next(new InternalServerError("Erro interno"));
+    }
+  }
+
+  async unlike(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { classPath, topicPath } = req.params;
+      const updated = await this._unlike.execute(classPath, topicPath);
+      if (!updated) {
+        return res.status(404).json({ message: "Topic not found" });
+      }
+      return res.status(200).json(updated);
+    } catch (e) {
+      if (!(e instanceof InternalServerError)) {
+        return next(e);
+      }
+      return next(new InternalServerError("Erro interno"));
+    }
+  }
+
+  async getRevisions(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const revisions = await revisionRepo.getPendingByTopicId(id);
+      return res.status(200).json(revisions);
+    } catch (e) {
+      return next(new InternalServerError("Erro interno"));
+    }
+  }
+
+  async getAllRevisions(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = (req as any).user_id;
+      const role = (req as any).user_role;
+      const revisions = await revisionRepo.getAllPending(userId, role);
+      return res.status(200).json(revisions);
+    } catch (e) {
+      return next(new InternalServerError("Erro interno"));
+    }
+  }
+
+  async getMyRevisions(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = (req as any).user_id;
+      const revisions = await revisionRepo.getMyRevisions(userId);
+      return res.status(200).json(revisions);
+    } catch (e) {
+      return next(new InternalServerError("Erro interno"));
+    }
+  }
+
+  async getRevisionById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const revision = await revisionRepo.getById(id);
+      if (!revision) {
+        return res.status(404).json({ message: "Revisão não encontrada." });
+      }
+      return res.status(200).json(revision);
+    } catch (e) {
+      return next(new InternalServerError("Erro interno"));
+    }
+  }
+
+  async acceptRevision(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const userId = (req as any).user_id;
+      await revisionRepo.accept(id, userId);
+      return res.status(200).json({ message: "Revisão aceita." });
+    } catch (e: any) {
+      return res.status(400).json({ message: e.message });
+    }
+  }
+
+  async rejectRevision(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const userId = (req as any).user_id;
+      await revisionRepo.reject(id, userId);
+      return res.status(200).json({ message: "Revisão rejeitada." });
+    } catch (e: any) {
+      return res.status(400).json({ message: e.message });
     }
   }
 }

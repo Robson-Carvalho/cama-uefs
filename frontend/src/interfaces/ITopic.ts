@@ -6,6 +6,7 @@ interface ITopic {
   content: string;
   order: number;
   isPublished: boolean;
+  authorId?: string;
   createdAt: string;
   updatedAt: string;
 }

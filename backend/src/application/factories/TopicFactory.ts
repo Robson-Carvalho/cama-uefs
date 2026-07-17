@@ -8,6 +8,9 @@ import { Reorder } from "../../core/use-cases/topic/Reorder";
 import { GetByPath } from "../../core/use-cases/topic/GetByPath";
 import { GetTopicByClassAndPath } from "../../core/use-cases/topic/GetTopicByClassAndPath";
 import { GetByClassId } from "../../core/use-cases/topic/GetByClassId";
+import { LikeTopic } from "../../core/use-cases/topic/LikeTopic";
+import { UnlikeTopic } from "../../core/use-cases/topic/UnlikeTopic";
+import { IncrementViewTopic } from "../../core/use-cases/topic/IncrementViewTopic";
 
 class TopicFactory {
   private static _topicRepository = new TopicRepository();
@@ -50,6 +53,18 @@ class TopicFactory {
 
   static getReorderUseCase() {
     return new Reorder(this._topicRepository);
+  }
+
+  static getLikeTopicUseCase() {
+    return new LikeTopic(this._topicRepository);
+  }
+
+  static getUnlikeTopicUseCase() {
+    return new UnlikeTopic(this._topicRepository);
+  }
+
+  static getIncrementViewTopicUseCase() {
+    return new IncrementViewTopic(this._topicRepository);
   }
 }
 

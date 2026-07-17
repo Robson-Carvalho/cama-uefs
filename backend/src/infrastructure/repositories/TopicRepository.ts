@@ -10,6 +10,10 @@ class TopicRepository implements ITopicRepository {
       const total = await prisma.topic.count({ where: { classId: id } });
       const data = await prisma.topic.findMany({
         where: { classId: id },
+        include: {
+          author: { select: { name: true, email: true } },
+          coAuthors: { select: { name: true, email: true } },
+        },
         orderBy: [{ order: "asc" }, { createdAt: "asc" }],
         skip: skip || 0,
         take: take || 10,
@@ -23,7 +27,13 @@ class TopicRepository implements ITopicRepository {
 
   async get(): Promise<ITopic[] | []> {
     try {
-      return await prisma.topic.findMany({ orderBy: [{ order: "asc" }, { createdAt: "asc" }] });
+      return await prisma.topic.findMany({ 
+        include: {
+          author: { select: { name: true, email: true } },
+          coAuthors: { select: { name: true, email: true } },
+        },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }] 
+      });
     } catch (error) {
       console.error("Error fetching topics:", error);
       return [];
@@ -32,7 +42,13 @@ class TopicRepository implements ITopicRepository {
 
   async getById(id: string): Promise<ITopic | null> {
     try {
-      return await prisma.topic.findUnique({ where: { id } });
+      return await prisma.topic.findUnique({ 
+        where: { id },
+        include: {
+          author: { select: { name: true, email: true } },
+          coAuthors: { select: { name: true, email: true } },
+        }
+      });
     } catch (error) {
       console.error("Error fetching topic by ID:", error);
       return null;
@@ -41,7 +57,13 @@ class TopicRepository implements ITopicRepository {
 
   async getByPath(path: string): Promise<ITopic | null> {
     try {
-      return await prisma.topic.findFirst({ where: { path } });
+      return await prisma.topic.findFirst({ 
+        where: { path },
+        include: {
+          author: { select: { name: true, email: true } },
+          coAuthors: { select: { name: true, email: true } },
+        }
+      });
     } catch (error) {
       console.error("Error fetching topic by path:", error);
       return null;
@@ -68,6 +90,10 @@ class TopicRepository implements ITopicRepository {
             isPublished: true,
           },
         },
+        include: {
+          author: { select: { name: true, email: true } },
+          coAuthors: { select: { name: true, email: true } },
+        }
       });
       
       if (topic) {
@@ -84,11 +110,12 @@ class TopicRepository implements ITopicRepository {
     title: string,
     content: string,
     path: string,
-    classId: string
+    classId: string,
+    userId: string
   ): Promise<ITopic | null> {
     try {
       const newTopic = await prisma.topic.create({
-        data: { title, content, path, classId },
+        data: { title, content, path, classId, authorId: userId },
       });
       await cacheService.del("site:contentMap"); // O menu lateral (mapa) precisa ser atualizado
       await cacheService.delByPrefix("site:topic:"); // Invalida todos os tópicos (garante consistência imediata)
@@ -109,16 +136,53 @@ class TopicRepository implements ITopicRepository {
     path: string,
     classId: string,
     order: number,
+    userId: string,
     isPublished?: boolean
   ): Promise<ITopic | null> {
     try {
-      const updatedTopic = await prisma.topic.update({
-        where: { id },
-        data: { title, content, path, classId, order, ...(isPublished !== undefined && { isPublished }) },
+      const result = await prisma.$transaction(async (tx) => {
+        // Lock the row to prevent race conditions (e.g. double clicks)
+        await tx.$queryRaw`SELECT id FROM topics WHERE id = ${id} FOR UPDATE`;
+
+        const topic = await tx.topic.findUnique({ where: { id }, include: { coAuthors: true } });
+        if (!topic) return null;
+
+        const pendingCount = await tx.topicRevision.count({
+          where: { topicId: id, status: "PENDING" }
+        });
+
+        if (pendingCount > 0) {
+          const titleMatch = topic.title.trim() === title.trim();
+          const contentMatch = topic.content.trim() === content.trim();
+
+          if (!titleMatch || !contentMatch) {
+            throw new Error("Este tópico possui revisões pendentes. Nenhuma nova alteração de texto pode ser feita até que as atuais sejam avaliadas.");
+          }
+        }
+
+        if (topic.authorId && userId !== topic.authorId) {
+          await tx.topicRevision.create({
+            data: { topicId: id, revisorId: userId, title, content, path, status: "PENDING", originalContent: topic.content }
+          });
+          return { ...topic, _isRevision: true } as any;
+        }
+
+        return await tx.topic.update({
+          where: { id },
+          data: { 
+            title, 
+            content, 
+            path, 
+            classId, 
+            order, 
+            ...(isPublished !== undefined && { isPublished })
+          },
+        });
       });
+
       await cacheService.del("site:contentMap");
       await cacheService.delByPrefix("site:topic:");
-      return updatedTopic;
+      return result;
     } catch (error: any) {
       console.error("Error updating topic:", error);
       if (error.code === "P2002") {
@@ -154,6 +218,66 @@ class TopicRepository implements ITopicRepository {
     } catch (error) {
       console.error("Error deleting topic:", error);
       throw error;
+    }
+  }
+
+  async incrementViews(classPath: string, topicPath: string): Promise<void> {
+    try {
+      const topic = await prisma.topic.findFirst({
+        where: { path: topicPath, class: { path: classPath } }
+      });
+      if (topic) {
+        await prisma.topic.update({
+          where: { id: topic.id },
+          data: { views: { increment: 1 } }
+        });
+        const cacheKey = `site:topic:${classPath}:${topicPath}`;
+        await cacheService.del(cacheKey);
+      }
+    } catch (e) {
+      console.error("Error incrementing views:", e);
+    }
+  }
+
+  async like(classPath: string, topicPath: string): Promise<ITopic | null> {
+    try {
+      const topic = await prisma.topic.findFirst({
+        where: { path: topicPath, class: { path: classPath } }
+      });
+      if (topic) {
+        const updated = await prisma.topic.update({
+          where: { id: topic.id },
+          data: { likes: { increment: 1 } }
+        });
+        const cacheKey = `site:topic:${classPath}:${topicPath}`;
+        await cacheService.del(cacheKey);
+        return updated;
+      }
+      return null;
+    } catch (e) {
+      console.error("Error liking topic:", e);
+      return null;
+    }
+  }
+
+  async unlike(classPath: string, topicPath: string): Promise<ITopic | null> {
+    try {
+      const topic = await prisma.topic.findFirst({
+        where: { path: topicPath, class: { path: classPath } }
+      });
+      if (topic && topic.likes > 0) {
+        const updated = await prisma.topic.update({
+          where: { id: topic.id },
+          data: { likes: { decrement: 1 } }
+        });
+        const cacheKey = `site:topic:${classPath}:${topicPath}`;
+        await cacheService.del(cacheKey);
+        return updated;
+      }
+      return topic;
+    } catch (e) {
+      console.error("Error unliking topic:", e);
+      return null;
     }
   }
 }

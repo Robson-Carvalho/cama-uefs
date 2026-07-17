@@ -13,7 +13,8 @@ interface ITopicRepository {
     title: string,
     content: string,
     path: string,
-    classId: string
+    classId: string,
+    userId: string
   ): Promise<ITopic | null>;
   update(
     id: string,
@@ -22,10 +23,14 @@ interface ITopicRepository {
     path: string,
     classId: string,
     order: number,
+    userId: string,
     isPublished?: boolean
   ): Promise<ITopic | null>;
   updateOrder(items: { id: string; order: number }[]): Promise<void>;
   delete(id: string): Promise<void>;
+  incrementViews(classPath: string, topicPath: string): Promise<void>;
+  like(classPath: string, topicPath: string): Promise<ITopic | null>;
+  unlike(classPath: string, topicPath: string): Promise<ITopic | null>;
 }
 
 export { ITopicRepository };

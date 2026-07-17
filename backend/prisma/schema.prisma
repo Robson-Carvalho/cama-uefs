@@ -18,8 +18,11 @@ model Admin {
   password  String
   role      Role     @default(INSTRUCTOR)
   active    Boolean  @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  authoredTopics   Topic[]         @relation("TopicAuthor")
+  coAuthoredTopics Topic[]         @relation("TopicCoAuthors")
+  topicRevisions   TopicRevision[] @relation("TopicRevisor")
 
   @@map("admins")
 }
@@ -44,11 +47,41 @@ model Topic {
   path        String
   content     String
   order       Int      @default(0)
+  views       Int      @default(0)
+  likes       Int      @default(0)
   isPublished Boolean  @default(true) @map("is_published")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   class       Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  authorId    String?         @map("author_id")
+  author      Admin?          @relation("TopicAuthor", fields: [authorId], references: [id])
+  coAuthors   Admin[]         @relation("TopicCoAuthors")
+  revisions   TopicRevision[] @relation("TopicRevisions")
 
   @@unique([classId, path])
   @@map("topics")
+}
+
+model TopicRevision {
+  id          String   @id @default(uuid())
+  topicId     String   @map("topic_id")
+  revisorId   String   @map("revisor_id")
+  title       String
+  content     String
+  originalContent String @default("") @map("original_content")
+  path        String
+  status      RevisionStatus @default(PENDING)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  topic       Topic    @relation("TopicRevisions", fields: [topicId], references: [id], onDelete: Cascade)
+  revisor     Admin    @relation("TopicRevisor", fields: [revisorId], references: [id])
+
+  @@map("topic_revisions")
+}
+
+enum RevisionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

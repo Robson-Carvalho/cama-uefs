@@ -20,6 +20,9 @@ import { Class } from "./pages/admin/class";
 import { LoadPage } from "./components/loadPage";
 import { AdminLayout } from "./pages/admin/components/layout";
 import { Studies } from "./pages/studies ";
+import { Collaborators } from "./pages/admin/collaborators";
+import { Revisions } from "./pages/admin/revisions";
+import { RevisionDetail } from "./pages/admin/revisions/detail";
 
 const App = () => {
   return (
@@ -62,10 +65,13 @@ const App = () => {
             <Route element={<PrivateRoute />}>
               <Route element={<AdminLayout />}>
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/collaborators" element={<Collaborators />} />
                 <Route path="/admin/instructors" element={<Instructors />} />
                 <Route path="/admin/settings" element={<AdminSettings />} />
                 <Route path="/admin/class/:id" element={<Class />} />
                 <Route path="/admin/topic/:id" element={<Topic />} />
+                <Route path="/admin/revisions" element={<Revisions />} />
+                <Route path="/admin/revisions/:id" element={<RevisionDetail />} />
               </Route>
             </Route>
           </Routes>

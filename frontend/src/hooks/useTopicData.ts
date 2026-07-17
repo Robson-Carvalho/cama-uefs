@@ -12,6 +12,7 @@ interface UseTopicDataProps {
 export const useTopicData = ({ id }: UseTopicDataProps) => {
   const [topic, setTopic] = useState<ITopic | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [revisions, setRevisions] = useState<any[]>([]);
 
   const navigate = useNavigate();
 
@@ -24,6 +25,13 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
       try {
         const { data } = await api.get(`/topic/${id}`);
         setTopic(data);
+        
+        try {
+          const revs = await api.get(`/topic/${id}/revisions`);
+          setRevisions(revs.data);
+        } catch (e) {
+          console.error("Erro ao carregar revisões", e);
+        }
       } catch (error: any) {
         if (error.status === 404) {
           toast.warning("Tópico não encontrado.");
@@ -62,6 +70,11 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
         isPublished: topic.isPublished,
       });
 
+      if (data.status === 202) {
+        toast.info(data.data.message || "Revisão enviada para aprovação do autor.");
+        return true;
+      }
+      
       if (data.status === 200) {
         toast.success("Atualizado com sucesso!");
         return true;
@@ -75,6 +88,13 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
       } else {
         handleApiError(error, "Erro interno. Tente novamente mais tarde.");
       }
+      
+      // If there was an error (e.g. pending revisions race condition), refetch revisions to update UI
+      try {
+        const revs = await api.get(`/topic/${id}/revisions`);
+        setRevisions(revs.data);
+      } catch (e) {}
+
       return false;
     }
   };
@@ -99,11 +119,36 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
     }
   };
 
+  const handleAcceptRevision = async (revId: string) => {
+    try {
+      await api.post(`/topic/revision/${revId}/accept`);
+      toast.success("Revisão aceita!");
+      setRevisions(prev => prev.filter(r => r.id !== revId));
+      const { data } = await api.get(`/topic/${id}`);
+      setTopic(data);
+    } catch (err) {
+      toast.error("Erro ao aceitar revisão");
+    }
+  };
+
+  const handleRejectRevision = async (revId: string) => {
+    try {
+      await api.post(`/topic/revision/${revId}/reject`);
+      toast.success("Revisão rejeitada!");
+      setRevisions(prev => prev.filter(r => r.id !== revId));
+    } catch (err) {
+      toast.error("Erro ao rejeitar revisão");
+    }
+  };
+
   return {
     topic,
     setTopic,
     loading,
+    revisions,
     handleUpdate,
     handleDelete,
+    handleAcceptRevision,
+    handleRejectRevision
   };
 };
