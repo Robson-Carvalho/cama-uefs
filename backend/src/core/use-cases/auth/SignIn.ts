@@ -34,10 +34,17 @@ class SignIn {
       throw new UnauthorizedError("E-mail ou senha inválidos.");
     }
 
-    const token: string = (await this._jwt.sign({
+    const token: string = (await this._jwt.signWithExpiration({
       id: admin.id,
       role: admin.role,
-    })) as string;
+      type: 'access'
+    }, "2h")) as string;
+
+    const refreshToken: string = (await this._jwt.signWithExpiration({
+      id: admin.id,
+      role: admin.role,
+      type: 'refresh'
+    }, "7d")) as string;
 
     const payload: IPayload = {
       admin: {
@@ -48,6 +55,7 @@ class SignIn {
         active: admin.active,
       },
       token,
+      refreshToken,
     };
 
     return payload as IPayload;

@@ -187,7 +187,7 @@ class TopicController {
       );
 
       if ((updatedTopic as any)?._isRevision) {
-        return res.status(202).json({ message: "Sua modificação foi enviada para aprovação do autor original.", isRevision: true });
+        return res.status(202).json({ message: "Sua modificação foi enviada para aprovação.", isRevision: true });
       }
 
       return res.status(200).json(updatedTopic);
@@ -203,8 +203,10 @@ class TopicController {
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+      const userId = (req as any).user_id;
+      const userRole = (req as any).user_role;
 
-      await this._delete.execute(id);
+      await this._delete.execute(id, userId, userRole);
 
       return res.status(204).send();
     } catch (e: any) {

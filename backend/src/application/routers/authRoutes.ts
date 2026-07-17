@@ -10,6 +10,10 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
   authController.signIn(req, res, next);
 });
 
+router.post("/refresh", (req: Request, res: Response, next: NextFunction) => {
+  authController.refreshToken(req, res, next);
+});
+
 router.post(
   "/recover/password",
   (req: Request, res: Response, next: NextFunction) => {

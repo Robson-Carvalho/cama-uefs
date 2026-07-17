@@ -2,18 +2,27 @@ import { Request, Response, NextFunction } from "express";
 import { CustomError } from "../../core/errors/CustomError";
 
 function errorHandler(
-  err: CustomError,
+  err: Error | CustomError,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const status = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
+  if (err instanceof CustomError) {
+    res.status(err.statusCode).json({
+      status: "error",
+      statusCode: err.statusCode,
+      message: err.message,
+    });
+    return;
+  }
 
-  res.status(status).json({
+  // Se não for um CustomError (ex: erro cru do Prisma ou do Node), logamos no console mas ocultamos do usuário final
+  console.error("Unhandled Exception:", err);
+
+  res.status(500).json({
     status: "error",
-    statusCode: status,
-    message,
+    statusCode: 500,
+    message: "Erro interno do servidor. Tente novamente mais tarde.",
   });
 }
 

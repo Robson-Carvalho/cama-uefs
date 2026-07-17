@@ -99,6 +99,29 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
     }
   };
 
+  const handleUpdateVisibility = async (newVisibility: boolean) => {
+    if (!topic) return false;
+    try {
+      setLoading(true);
+      await api.put(`/topic/${topic.id}`, {
+        title: topic.title,
+        content: topic.content,
+        path: generateSlug(topic.title),
+        classID: topic.classId,
+        order: topic.order,
+        isPublished: newVisibility,
+      });
+      setTopic({ ...topic, isPublished: newVisibility });
+      toast.success(newVisibility ? "Tópico publicado!" : "Tópico ocultado!");
+      return true;
+    } catch (error: any) {
+      toast.error("Erro ao atualizar visibilidade.");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDelete = async () => {
     if (!topic) return false;
 
@@ -112,9 +135,7 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
       navigate(`/admin/class/${topic.classId}`);
       return true;
     } catch (error: any) {
-      if (error.status === 500) {
-        handleApiError(error, "Erro inesperado.");
-      }
+      handleApiError(error, "Erro ao tentar apagar tópico.");
       return false;
     }
   };
@@ -149,6 +170,7 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
     handleUpdate,
     handleDelete,
     handleAcceptRevision,
-    handleRejectRevision
+    handleRejectRevision,
+    handleUpdateVisibility
   };
 };

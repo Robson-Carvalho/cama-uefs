@@ -6,6 +6,7 @@ import { JWT } from "../../infrastructure/utils/JWT";
 type TokenPaylod = {
   id: string;
   role: string;
+  type?: string;
   iat: number;
   exp: number;
 };
@@ -28,13 +29,20 @@ const AuthMiddleware = async (
   try {
     const decoded = await jwtService.verify(token);
 
-    const { id, role } = decoded as TokenPaylod;
+    const { id, role, type } = decoded as TokenPaylod;
+
+    if (type && type !== 'access') {
+      return next(new ForbiddenError("Token inválido para esta operação."));
+    }
 
     req.user_id = id;
     (req as any).user_role = role;
 
     next();
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === "TokenExpiredError") {
+      return next(new ForbiddenError("Token expirado")); // Específico para o frontend saber que expirou e chamar o refresh
+    }
     return next(new ForbiddenError("Token invalid"));
   }
 };

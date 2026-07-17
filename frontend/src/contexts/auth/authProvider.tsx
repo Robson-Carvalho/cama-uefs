@@ -30,7 +30,19 @@ const AuthProvider = ({ children }: IAuthProvider) => {
       setLoading(false);
     };
 
+    const handleSessionExpired = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      toast.error(customEvent.detail || "Sessão expirada. Faça login novamente.");
+      logout();
+    };
+
+    window.addEventListener("sessionExpired", handleSessionExpired);
+
     loadingStoreData();
+
+    return () => {
+      window.removeEventListener("sessionExpired", handleSessionExpired);
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<number> => {

@@ -24,7 +24,7 @@ const Topic = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { topic, setTopic, loading, revisions, handleUpdate, handleDelete, handleAcceptRevision, handleRejectRevision } = useTopicData({ id });
+  const { topic, setTopic, loading, revisions, handleUpdate, handleDelete, handleUpdateVisibility } = useTopicData({ id });
   const { payload } = useAuth();
 
   const hasPendingRevisions = revisions.some(r => r.status === "PENDING");
@@ -168,8 +168,8 @@ const Topic = () => {
                       type="checkbox" 
                       className="sr-only peer"
                       checked={topic.isPublished ?? true}
-                      disabled={!canEditVisibility}
-                      onChange={(e) => setTopic({ ...topic, isPublished: e.target.checked })}
+                      disabled={!canEditVisibility || loading}
+                      onChange={(e) => handleUpdateVisibility(e.target.checked)}
                     />
                     <div className="relative w-11 h-6 min-w-[44px] bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 group-hover:after:scale-95"></div>
                     <span className="ml-3 text-sm font-semibold text-slate-700 flex flex-col gap-0.5">

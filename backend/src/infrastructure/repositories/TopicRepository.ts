@@ -152,12 +152,7 @@ class TopicRepository implements ITopicRepository {
         });
 
         if (pendingCount > 0) {
-          const titleMatch = topic.title.trim() === title.trim();
-          const contentMatch = topic.content.trim() === content.trim();
-
-          if (!titleMatch || !contentMatch) {
-            throw new Error("Este tópico possui revisões pendentes. Nenhuma nova alteração de texto pode ser feita até que as atuais sejam avaliadas.");
-          }
+          throw new ValidationError("Este tópico possui revisões pendentes. Nenhuma nova alteração pode ser feita até que as atuais sejam avaliadas.");
         }
 
         if (topic.authorId && userId !== topic.authorId) {
@@ -188,7 +183,7 @@ class TopicRepository implements ITopicRepository {
       if (error.code === "P2002") {
         throw new ValidationError("Já existe um tópico com este título nesta aula (o caminho gerado já está em uso).");
       }
-      return null;
+      throw error;
     }
   }
 

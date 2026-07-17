@@ -7,6 +7,7 @@ interface IPayload {
     active: boolean;
   };
   token: string;
+  refreshToken: string;
 }
 
 export type { IPayload };

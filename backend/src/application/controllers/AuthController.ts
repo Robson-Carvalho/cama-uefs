@@ -4,6 +4,7 @@ import { AuthFactory } from "../factories/AuthFactory";
 
 class AuthController {
   private _signIn = AuthFactory.getSignInUseCase();
+  private _refreshToken = AuthFactory.getRefreshTokenUseCase();
   private _recoverPassword = AuthFactory.getRecoverPasswordUseCase();
   private _resetPassword = AuthFactory.getResetPasswordUseCase();
 
@@ -16,6 +17,24 @@ class AuthController {
       if (!password) next(new ValidationError("A senha é obrigatória."));
 
       const payload = await this._signIn.execute(email, password);
+
+      res.status(200).json(payload);
+    } catch (e: any) {
+      if (!(e instanceof InternalServerError)) {
+        return next(e);
+      }
+
+      next(new InternalServerError(e.message));
+    }
+  }
+
+  async refreshToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { refreshToken } = req.body;
+
+      if (!refreshToken) next(new ValidationError("O refresh token é obrigatório."));
+
+      const payload = await this._refreshToken.execute(refreshToken);
 
       res.status(200).json(payload);
     } catch (e: any) {

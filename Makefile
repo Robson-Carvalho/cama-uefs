@@ -125,6 +125,17 @@ db-studio: ## Abre o Prisma Studio (porta 5555)
 	$(DC) exec backend npx prisma studio --browser none
 
 # ------------------------------------------------------------
+# Testes
+# ------------------------------------------------------------
+.PHONY: test
+test: ## Roda todos os testes automatizados isolados no backend
+	$(DC) exec -e DATABASE_URL="postgres://obi_admin:obi_secret@postgres:5432/obi_uefs?schema=test" backend npx vitest run
+
+.PHONY: test-watch
+test-watch: ## Roda os testes no modo watch (desenvolvimento)
+	$(DC) exec -e DATABASE_URL="postgres://obi_admin:obi_secret@postgres:5432/obi_uefs?schema=test" backend npx vitest
+
+# ------------------------------------------------------------
 # Limpeza
 # ------------------------------------------------------------
 .PHONY: clean
