@@ -34,19 +34,18 @@ const AdminLayout = () => {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold">
             💡
           </div>
-          <span className="font-bold text-xl tracking-tight">Admin</span>
+          <span className="font-bold text-xl tracking-tight">CAMA/UEFS</span>
         </div>
-        
+
         <nav className="flex-1 px-4 py-4 space-y-2">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
-                location.pathname === item.path
+              className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${location.pathname === item.path
                   ? "bg-primary/10 text-primary font-medium"
                   : "text-muted-foreground hover:bg-neutral-100 hover:text-foreground"
-              }`}
+                }`}
             >
               {item.icon}
               <span>{item.name}</span>
@@ -97,11 +96,10 @@ const AdminLayout = () => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
-                      location.pathname === item.path
+                    className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${location.pathname === item.path
                         ? "bg-primary/10 text-primary font-medium"
                         : "text-muted-foreground hover:bg-neutral-100 hover:text-foreground"
-                    }`}
+                      }`}
                   >
                     {item.icon}
                     <span>{item.name}</span>

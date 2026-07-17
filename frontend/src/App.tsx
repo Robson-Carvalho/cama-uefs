@@ -10,6 +10,8 @@ import { DataProvider } from "./contexts/data/dataProvider";
 import { AdminSignIn } from "./pages/admin/signIn";
 import { AdminDashboard } from "./pages/admin/dashboard";
 import { RecoverPassword } from "./pages/admin/recoverPassword";
+import { ConfirmRecoverPassword } from "./pages/admin/recoverPassword/confirm";
+import { ConfirmEmailChange } from "./pages/admin/settings/confirm-email";
 import { AuthProvider } from "./contexts/auth/authProvider";
 import { PrivateRoute } from "./components/privateRoute";
 import { AdminSettings } from "./pages/admin/settings";
@@ -44,6 +46,16 @@ const App = () => {
             <Route
               path="/admin/recover/password"
               element={<RecoverPassword />}
+            />
+
+            <Route
+              path="/admin/recoverPassword/confirm"
+              element={<ConfirmRecoverPassword />}
+            />
+
+            <Route
+              path="/admin/settings/confirm-email"
+              element={<ConfirmEmailChange />}
             />
 
             <Route element={<PrivateRoute />}>

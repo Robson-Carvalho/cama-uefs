@@ -1,6 +1,7 @@
 import { RecoverPassword } from "../../core/use-cases/auth/RecoverPassword";
 import { SignIn } from "../../core/use-cases/auth/SignIn";
 
+import { ResetPassword } from "../../core/use-cases/auth/ResetPassword";
 import { AdminRepository } from "../../infrastructure/repositories/AdminRepository";
 import { Encryption } from "../../infrastructure/utils/Encryption";
 import { JWT } from "../../infrastructure/utils/JWT";
@@ -21,7 +22,11 @@ class AuthFactory {
   }
 
   static getRecoverPasswordUseCase() {
-    return new RecoverPassword(this._adminRepository, this._mailer, this._encryption);
+    return new RecoverPassword(this._adminRepository, this._mailer, this._jwt);
+  }
+
+  static getResetPasswordUseCase() {
+    return new ResetPassword(this._adminRepository, this._encryption, this._jwt);
   }
 }
 

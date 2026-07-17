@@ -17,4 +17,11 @@ router.post(
   }
 );
 
+router.post(
+  "/reset/password",
+  (req: Request, res: Response, next: NextFunction) => {
+    authController.resetPassword(req, res, next);
+  }
+);
+
 export { router as authRoutes };

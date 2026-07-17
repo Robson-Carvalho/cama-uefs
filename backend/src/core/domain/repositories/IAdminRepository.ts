@@ -9,7 +9,7 @@ interface IAdminRepository {
     id: string,
     name: string,
     email: string,
-    password: string
+    password?: string
   ): Promise<void>;
   delete(id: string): Promise<void>;
 }

@@ -10,6 +10,8 @@ class AdminController {
   private _create = AdminFactory.getCreateUseCase();
   private _update = AdminFactory.getUpdateUseCase();
   private _delete = AdminFactory.getDeleteUseCase();
+  private _requestEmailChange = AdminFactory.getRequestEmailChangeUseCase();
+  private _confirmEmailChange = AdminFactory.getConfirmEmailChangeUseCase();
 
   async get(req: Request, res: Response, next: NextFunction) {
     try {
@@ -99,10 +101,6 @@ class AdminController {
         throw new ValidationError("Email required");
       }
 
-      if (!password) {
-        throw new ValidationError("Password required");
-      }
-
       await this._update.execute(id, name, email, password);
 
       return res.status(200).send();
@@ -127,6 +125,45 @@ class AdminController {
         return next(e);
       }
 
+      return next(new InternalServerError("Internal server error"));
+    }
+  }
+
+  async requestEmailChange(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { newEmail } = req.body;
+
+      if (!newEmail) {
+        throw new ValidationError("New email required");
+      }
+
+      await this._requestEmailChange.execute(id, newEmail);
+
+      return res.status(200).send();
+    } catch (e: any) {
+      if (!(e instanceof InternalServerError)) {
+        return next(e);
+      }
+      return next(new InternalServerError("Internal server error"));
+    }
+  }
+
+  async confirmEmailChange(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { token } = req.body;
+
+      if (!token) {
+        throw new ValidationError("Token required");
+      }
+
+      await this._confirmEmailChange.execute(token);
+
+      return res.status(200).send();
+    } catch (e: any) {
+      if (!(e instanceof InternalServerError)) {
+        return next(e);
+      }
       return next(new InternalServerError("Internal server error"));
     }
   }

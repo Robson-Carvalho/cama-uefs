@@ -1,5 +1,5 @@
+import { JWT } from "../../../infrastructure/utils/JWT";
 import { Mailer } from "../../../infrastructure/services/email/Mailer";
-import { Encryption } from "../../../infrastructure/utils/Encryption";
 import { IAdminRepository } from "../../domain/repositories/IAdminRepository";
 import { IAdmin } from "../../dtos/AdminDTOs";
 import { NotFoundError } from "../../errors/Errors";
@@ -8,7 +8,7 @@ class RecoverPassword {
   constructor(
     private _adminRepository: IAdminRepository,
     private _mailer: Mailer,
-    private _encryption: Encryption
+    private _jwt: JWT
   ) {}
 
   async execute(email: string): Promise<void> {
@@ -18,23 +18,16 @@ class RecoverPassword {
       throw new NotFoundError("Admin not found with e-mail.");
     }
 
-    const newPassword = Math.floor(100000 + Math.random() * 900000).toString();
-
-    const newPasswordHash = await this._encryption.hash(newPassword);
-
-    await this._adminRepository.update(
-      admin.id,
-      admin.name,
-      admin.email,
-      newPasswordHash
-    );
+    const token = this._jwt.signWithExpiration({ email: admin.email, action: 'recover_password' }, "15m");
+    const link = `${process.env.FRONTEND_URL || "http://localhost:3000"}/admin/recoverPassword/confirm?token=${token}`;
 
     await this._mailer.recoverPassword(
       admin.name,
       admin.email,
-      newPassword
+      link
     );
   }
 }
+
 
 export { RecoverPassword };

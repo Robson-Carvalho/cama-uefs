@@ -67,7 +67,7 @@ class AdminRepository implements IAdminRepository {
     id: string,
     name: string,
     email: string,
-    password: string
+    password?: string
   ): Promise<void> {
     try {
       await prisma.admin.update({

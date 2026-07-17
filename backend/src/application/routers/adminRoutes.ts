@@ -50,4 +50,19 @@ router.put(
   }
 );
 
+router.post(
+  "/:id/request-email-change",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    adminController.requestEmailChange(req, res, next);
+  }
+);
+
+router.post(
+  "/confirm-email-change",
+  (req: Request, res: Response, next: NextFunction) => {
+    adminController.confirmEmailChange(req, res, next);
+  }
+);
+
 export { router as adminRoutes };

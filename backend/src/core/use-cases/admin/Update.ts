@@ -11,9 +11,9 @@ class Update {
     _id: string,
     name: string,
     email: string,
-    password: string
+    password?: string
   ): Promise<void> {
-    const hashPassword = await this._encryption.hash(password);
+    const hashPassword = password ? await this._encryption.hash(password) : undefined;
 
     await this._adminRepository.update(_id, name, email, hashPassword);
   }

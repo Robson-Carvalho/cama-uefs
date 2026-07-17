@@ -13,6 +13,13 @@ class JWT {
     return token;
   }
 
+  public signWithExpiration(payload: any, expiresIn: string | number) {
+    const token = jwt.sign(payload, this.jwtSecret, {
+      expiresIn: expiresIn as any,
+    });
+    return token;
+  }
+
   public verify(token: string) {
     const decoded = jwt.verify(token, this.jwtSecret);
 
