@@ -93,6 +93,38 @@ export const useDashboardData = () => {
     }
   };
 
+  const handleMoveToPageClass = async (classId: string, direction: 'prev' | 'next') => {
+    setClasses(classes.filter(c => c.id !== classId));
+
+    try {
+      const res = await api.get('/class?limit=1000');
+      const allClasses: IClass[] = res.data.data;
+      
+      const itemIndex = allClasses.findIndex(c => c.id === classId);
+      if (itemIndex === -1) return;
+      
+      const item = allClasses.splice(itemIndex, 1)[0];
+      
+      let newIndex = 0;
+      if (direction === 'prev') {
+        newIndex = Math.max(0, (page - 2) * limit + (limit - 1));
+      } else {
+        newIndex = Math.min(allClasses.length, page * limit);
+      }
+      
+      allClasses.splice(newIndex, 0, item);
+      
+      const items = allClasses.map((c, idx) => ({ id: c.id, order: idx }));
+      
+      await api.put('/class/reorder', { items });
+      toast.success(`Aula movida para a página ${direction === 'prev' ? page - 1 : page + 1}`);
+    } catch (error: any) {
+      toast.error('Erro ao mover a aula');
+    } finally {
+      setReload(prev => !prev);
+    }
+  };
+
   return {
     classes,
     loading,
@@ -101,5 +133,6 @@ export const useDashboardData = () => {
     totalPages,
     handleCreateClass,
     handleReorderClass,
+    handleMoveToPageClass,
   };
 };

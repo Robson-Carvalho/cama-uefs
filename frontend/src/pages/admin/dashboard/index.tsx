@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { useDashboardData } from "@/hooks/useDashboardData";
 
 const AdminDashboard = () => {
-  const { classes, loading, page, setPage, totalPages, handleCreateClass, handleReorderClass } = useDashboardData();
+  const { classes, loading, page, setPage, totalPages, handleCreateClass, handleReorderClass, handleMoveToPageClass } = useDashboardData();
 
   const [title, setTitle] = useState<string>("");
 
@@ -85,7 +85,13 @@ const AdminDashboard = () => {
           <section>
             {classes.length ? (
               <>
-                <Classes classes={classes} onReorder={handleReorderClass} />
+                <Classes 
+                  classes={classes} 
+                  onReorder={handleReorderClass} 
+                  onMoveToPage={handleMoveToPageClass}
+                  page={page}
+                  totalPages={totalPages}
+                />
                 <div className="flex justify-center items-center gap-4 mt-8">
                   <Button
                     variant="outline"

@@ -166,6 +166,40 @@ export const useClassData = ({ id }: UseClassDataProps) => {
     }
   };
 
+  const handleMoveToPageTopic = async (topicId: string, direction: 'prev' | 'next') => {
+    if (topics) {
+      setTopics(topics.filter(t => t.id !== topicId));
+    }
+
+    try {
+      const res = await api.get(`/topic/class/${id}?limit=1000`);
+      const allTopics: ITopic[] = res.data.data;
+      
+      const itemIndex = allTopics.findIndex(t => t.id === topicId);
+      if (itemIndex === -1) return;
+      
+      const item = allTopics.splice(itemIndex, 1)[0];
+      
+      let newIndex = 0;
+      if (direction === 'prev') {
+        newIndex = Math.max(0, (page - 2) * limit + (limit - 1));
+      } else {
+        newIndex = Math.min(allTopics.length, page * limit);
+      }
+      
+      allTopics.splice(newIndex, 0, item);
+      
+      const items = allTopics.map((t, idx) => ({ id: t.id, order: idx }));
+      
+      await api.put('/topic/reorder', { items });
+      toast.success(`Tópico movido para a página ${direction === 'prev' ? page - 1 : page + 1}`);
+    } catch (error: any) {
+      toast.error('Erro ao mover o tópico');
+    } finally {
+      setReload(prev => !prev);
+    }
+  };
+
   return {
     _class,
     topics,
@@ -178,5 +212,6 @@ export const useClassData = ({ id }: UseClassDataProps) => {
     handleUpdateClass,
     handleDeleteClass,
     handleReorderTopic,
+    handleMoveToPageTopic,
   };
 };

@@ -30,7 +30,8 @@ const Class = () => {
     handleCreateTopic, 
     handleUpdateClass, 
     handleDeleteClass,
-    handleReorderTopic
+    handleReorderTopic,
+    handleMoveToPageTopic
   } = useClassData({ id });
 
   const [titleTopic, setTitleTopic] = useState<string>("");
@@ -220,7 +221,13 @@ const Class = () => {
           <section>
             {topics?.length ? (
               <>
-                <Topics topics={topics} onReorder={handleReorderTopic} />
+                <Topics 
+                  topics={topics} 
+                  onReorder={handleReorderTopic} 
+                  onMoveToPage={handleMoveToPageTopic}
+                  page={page}
+                  totalPages={totalPages}
+                />
                 <div className="flex justify-center items-center gap-4 mt-8">
                   <Button
                     variant="outline"

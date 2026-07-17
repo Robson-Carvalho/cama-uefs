@@ -1,28 +1,59 @@
 import { ITopic } from "@/interfaces/ITopic";
 import { useNavigate } from "react-router";
-import { FileText, ChevronRight, GripVertical } from "lucide-react";
+import { FileText, ChevronRight, GripVertical, ChevronUp, ChevronDown } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 interface ITopicsProps {
   topics: ITopic[] | [];
   onReorder?: (topics: ITopic[]) => void;
+  onMoveToPage?: (topicId: string, direction: 'prev' | 'next') => void;
+  page?: number;
+  totalPages?: number;
 }
 
-const Topics = ({ topics, onReorder }: ITopicsProps) => {
+const Topics = ({ topics, onReorder, onMoveToPage, page = 1, totalPages = 1 }: ITopicsProps) => {
   const navigate = useNavigate();
 
   const handleDragEnd = (result: any) => {
-    if (!result.destination || !onReorder) return;
+    if (!result.destination) return;
     
-    const items = Array.from(topics);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    if (result.destination.droppableId === 'previous-page' && onMoveToPage) {
+      onMoveToPage(result.draggableId, 'prev');
+      return;
+    }
     
-    onReorder(items);
+    if (result.destination.droppableId === 'next-page' && onMoveToPage) {
+      onMoveToPage(result.draggableId, 'next');
+      return;
+    }
+    
+    if (result.destination.droppableId === 'topics-list' && onReorder) {
+      const items = Array.from(topics);
+      const [reorderedItem] = items.splice(result.source.index, 1);
+      items.splice(result.destination.index, 0, reorderedItem);
+      onReorder(items);
+    }
   };
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
+      
+      {page > 1 && (
+        <Droppable droppableId="previous-page">
+          {(provided, snapshot) => (
+            <div 
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={`flex flex-col items-center justify-center p-4 mb-4 rounded-xl border-2 border-dashed transition-all duration-300 ${snapshot.isDraggingOver ? 'bg-indigo-50 border-indigo-500 text-indigo-700 scale-[1.02] shadow-md' : 'bg-slate-50 border-slate-300 text-slate-400'}`}
+            >
+              <ChevronUp className="w-6 h-6 mb-1 opacity-70" />
+              <span className="text-sm font-medium">Solte aqui para enviar para a página anterior</span>
+              <div className="hidden">{provided.placeholder}</div>
+            </div>
+          )}
+        </Droppable>
+      )}
+
       <Droppable droppableId="topics-list">
         {(provided) => (
           <div 
@@ -73,6 +104,23 @@ const Topics = ({ topics, onReorder }: ITopicsProps) => {
           </div>
         )}
       </Droppable>
+
+      {page < totalPages && (
+        <Droppable droppableId="next-page">
+          {(provided, snapshot) => (
+            <div 
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={`flex flex-col items-center justify-center p-4 mt-4 rounded-xl border-2 border-dashed transition-all duration-300 ${snapshot.isDraggingOver ? 'bg-indigo-50 border-indigo-500 text-indigo-700 scale-[1.02] shadow-md' : 'bg-slate-50 border-slate-300 text-slate-400'}`}
+            >
+              <ChevronDown className="w-6 h-6 mb-1 opacity-70" />
+              <span className="text-sm font-medium">Solte aqui para enviar para a próxima página</span>
+              <div className="hidden">{provided.placeholder}</div>
+            </div>
+          )}
+        </Droppable>
+      )}
+
     </DragDropContext>
   );
 };
