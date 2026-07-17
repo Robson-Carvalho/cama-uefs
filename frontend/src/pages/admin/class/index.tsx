@@ -19,11 +19,24 @@ import { useClassData } from "@/hooks/useClassData";
 const Class = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { _class, topics, loading, handleCreateTopic, handleUpdateClass, handleDeleteClass } = useClassData({ id });
+  const { 
+    _class, 
+    topics, 
+    loading, 
+    topicsLoading,
+    page,
+    setPage,
+    totalPages,
+    handleCreateTopic, 
+    handleUpdateClass, 
+    handleDeleteClass,
+    handleReorderTopic
+  } = useClassData({ id });
 
   const [titleTopic, setTitleTopic] = useState<string>("");
 
   const [titleClass, setTitleClass] = useState<string>("");
+  const [orderClass, setOrderClass] = useState<number>(0);
 
   const onSubmitCreateTopic = async (e: FormEvent) => {
     e.preventDefault();
@@ -35,7 +48,7 @@ const Class = () => {
 
   const onSubmitUpdateClass = async (e: FormEvent) => {
     e.preventDefault();
-    const success = await handleUpdateClass(titleClass);
+    const success = await handleUpdateClass(titleClass, orderClass);
     if (success) {
       setTitleClass("");
     }
@@ -112,7 +125,10 @@ const Class = () => {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline"><Edit className="w-4 h-4 mr-2" /> Editar</Button>
+                <Button variant="outline" onClick={() => {
+                  setTitleClass(_class?.title || "");
+                  setOrderClass(_class?.order || 0);
+                }}><Edit className="w-4 h-4 mr-2" /> Editar</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -133,6 +149,17 @@ const Class = () => {
                         onChange={(e) => setTitleClass(e.target.value)}
                         type="text"
                         placeholder="Digite o título"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <label className="text-sm font-medium text-gray-700">
+                        Ordem (Posição)
+                      </label>
+                      <Input
+                        value={orderClass}
+                        onChange={(e) => setOrderClass(parseInt(e.target.value) || 0)}
+                        type="number"
+                        placeholder="Ex: 1"
                       />
                     </div>
                     <DialogClose asChild>
@@ -183,16 +210,37 @@ const Class = () => {
       </div>
 
       <div className="flex flex-col gap-8 w-full">
-        {loading ? (
+        {topicsLoading ? (
           <div className="flex flex-col gap-4">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
           </div>
         ) : (
           <section>
             {topics?.length ? (
-              <Topics topics={topics} />
+              <>
+                <Topics topics={topics} onReorder={handleReorderTopic} />
+                <div className="flex justify-center items-center gap-4 mt-8">
+                  <Button
+                    variant="outline"
+                    onClick={() => setPage((p: number) => Math.max(1, p - 1))}
+                    disabled={page === 1 || topicsLoading}
+                  >
+                    Anterior
+                  </Button>
+                  <span className="text-sm font-medium text-slate-600">
+                    Página {page} de {Math.max(1, totalPages)}
+                  </span>
+                  <Button
+                    variant="outline"
+                    onClick={() => setPage((p: number) => Math.min(totalPages, p + 1))}
+                    disabled={page >= totalPages || topicsLoading}
+                  >
+                    Próxima
+                  </Button>
+                </div>
+              </>
             ) : (
               <div className="py-12 bg-white rounded-xl border border-border flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">

@@ -57,6 +57,7 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
         content: topic.content,
         path: generateSlug(topic.title),
         classID: topic.classId, // sending classID for the backend
+        order: topic.order,
       });
 
       if (data.status === 200) {

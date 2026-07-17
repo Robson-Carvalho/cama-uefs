@@ -4,6 +4,7 @@ import { GetById } from "../../core/use-cases/topic/GetById";
 import { Create } from "../../core/use-cases/topic/Create";
 import { Delete } from "../../core/use-cases/topic/Delete";
 import { Update } from "../../core/use-cases/topic/Update";
+import { Reorder } from "../../core/use-cases/topic/Reorder";
 import { GetByPath } from "../../core/use-cases/topic/GetByPath";
 import { GetTopicByClassAndPath } from "../../core/use-cases/topic/GetTopicByClassAndPath";
 import { GetByClassId } from "../../core/use-cases/topic/GetByClassId";
@@ -45,6 +46,10 @@ class TopicFactory {
 
   static getDeleteUseCase() {
     return new Delete(this._topicRepository);
+  }
+
+  static getReorderUseCase() {
+    return new Reorder(this._topicRepository);
   }
 }
 

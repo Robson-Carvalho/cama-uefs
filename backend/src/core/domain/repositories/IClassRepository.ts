@@ -4,7 +4,7 @@ import { IContentMap } from "../../interfaces/IContentMap";
 interface IClassRepository {
   create(title: string, path: string): Promise<IClass | null>;
 
-  get(): Promise<IClass[] | []>;
+  get(skip?: number, take?: number): Promise<{ data: IClass[]; total: number }>;
 
   getByPath(path: string): Promise<IClass | null>;
 
@@ -14,7 +14,9 @@ interface IClassRepository {
 
   getLastCreated(): Promise<IClass | null>;
 
-  update(id: string, title: string, path: string): Promise<void>;
+  update(id: string, title: string, path: string, order: number): Promise<void>;
+
+  updateOrder(items: { id: string; order: number }[]): Promise<void>;
 
   delete(id: string): Promise<void>;
 }

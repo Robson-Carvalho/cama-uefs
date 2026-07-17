@@ -128,8 +128,22 @@ const Topic = () => {
                     />
                   </div>
 
-
-
+                  <div className="flex flex-col gap-3">
+                    <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                      Ordem (Posição)
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Ex: 1"
+                      value={topic.order}
+                      className="text-base py-6 px-4 bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-xl transition-all"
+                      onChange={(e) =>
+                        setTopic({ ...topic, order: parseInt(e.target.value) || 0 })
+                      }
+                    />
+                  </div>
+                  
                   <div className="flex flex-col gap-3">
                     <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>

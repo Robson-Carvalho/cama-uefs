@@ -4,6 +4,7 @@ interface ITopic {
   title: string;
   path: string;
   content: string;
+  order: number;
   createdAt: string;
   updatedAt: string;
 }

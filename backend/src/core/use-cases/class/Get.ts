@@ -4,8 +4,9 @@ import { IClass } from "../../dtos/ClassDTOs";
 class Get {
   constructor(private _classRepository: ClassRepository) {}
 
-  async execute(): Promise<IClass[] | []> {
-    return await this._classRepository.get();
+  async execute(page: number = 1, limit: number = 10): Promise<{ data: IClass[]; total: number }> {
+    const skip = (page - 1) * limit;
+    return await this._classRepository.get(skip, limit);
   }
 }
 

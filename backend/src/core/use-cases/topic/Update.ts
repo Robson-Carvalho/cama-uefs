@@ -9,14 +9,16 @@ class Update {
     title: string,
     content: string,
     path: string,
-    classID: string
+    classID: string,
+    order: number
   ): Promise<ITopic | null> {
     return await this._topicRepository.update(
       id,
       title,
       content,
       path,
-      classID
+      classID,
+      order
     );
   }
 }

@@ -3,21 +3,25 @@ import { ITopic } from "../../core/dtos/TopicDTOs";
 import { prisma } from "../databases/prismaClient";
 
 class TopicRepository implements ITopicRepository {
-  async getByClassId(id: string): Promise<ITopic[] | []> {
+  async getByClassId(id: string, skip?: number, take?: number): Promise<{ data: ITopic[]; total: number }> {
     try {
-      return await prisma.topic.findMany({
+      const total = await prisma.topic.count({ where: { classId: id } });
+      const data = await prisma.topic.findMany({
         where: { classId: id },
-        orderBy: { createdAt: "asc" },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        skip: skip || 0,
+        take: take || 10,
       });
+      return { data, total };
     } catch (error) {
       console.error("Error fetching topics by classId:", error);
-      return [];
+      return { data: [], total: 0 };
     }
   }
 
   async get(): Promise<ITopic[] | []> {
     try {
-      return await prisma.topic.findMany({ orderBy: { createdAt: "asc" } });
+      return await prisma.topic.findMany({ orderBy: [{ order: "asc" }, { createdAt: "asc" }] });
     } catch (error) {
       console.error("Error fetching topics:", error);
       return [];
@@ -85,16 +89,33 @@ class TopicRepository implements ITopicRepository {
     title: string,
     content: string,
     path: string,
-    classId: string
+    classId: string,
+    order: number
   ): Promise<ITopic | null> {
     try {
       return await prisma.topic.update({
         where: { id },
-        data: { title, content, path, classId },
+        data: { title, content, path, classId, order },
       });
     } catch (error) {
       console.error("Error updating topic:", error);
       return null;
+    }
+  }
+
+  async updateOrder(items: { id: string; order: number }[]): Promise<void> {
+    try {
+      await prisma.$transaction(
+        items.map((item) =>
+          prisma.topic.update({
+            where: { id: item.id },
+            data: { order: item.order },
+          })
+        )
+      );
+    } catch (error) {
+      console.error("Error updating topic orders:", error);
+      throw error;
     }
   }
 

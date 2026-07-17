@@ -11,14 +11,17 @@ class TopicController {
   private _getByPath = TopicFactory.getGetByPathUseCase();
   private _update = TopicFactory.getUpdateUseCase();
   private _delete = TopicFactory.getDeleteUseCase();
+  private _reorder = TopicFactory.getReorderUseCase();
   private _getTopicByClassAndPath =
     TopicFactory.getTopicByClassAndPathUseCase();
 
   async getByClassId(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
 
-      const topics = await this._getByClassId.execute(id);
+      const topics = await this._getByClassId.execute(id, page, limit);
 
       return res.status(200).json(topics);
     } catch (e) {
@@ -139,7 +142,7 @@ class TopicController {
     try {
       const { id } = req.params;
 
-      const { title, content, path, classID } = req.body;
+      const { title, content, path, classID, order } = req.body;
 
       if (!title) {
         throw new ValidationError("Title class required");
@@ -157,12 +160,15 @@ class TopicController {
         throw new ValidationError("ClassID class required");
       }
 
+      const orderValue = order !== undefined ? parseInt(order, 10) : 0;
+
       const updatedTopic = await this._update.execute(
         id,
         title,
         content,
         path,
-        classID
+        classID,
+        orderValue
       );
 
       return res.status(200).json(updatedTopic);
@@ -182,6 +188,26 @@ class TopicController {
       await this._delete.execute(id);
 
       return res.status(204).send();
+    } catch (e: any) {
+      if (!(e instanceof InternalServerError)) {
+        return next(e);
+      }
+
+      return next(new InternalServerError(e.message));
+    }
+  }
+
+  async reorder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { items } = req.body;
+
+      if (!items || !Array.isArray(items)) {
+        throw new ValidationError("Items required for reorder");
+      }
+
+      await this._reorder.execute(items);
+
+      return res.status(200).json({ message: "Topics reordered successfully" });
     } catch (e: any) {
       if (!(e instanceof InternalServerError)) {
         return next(e);

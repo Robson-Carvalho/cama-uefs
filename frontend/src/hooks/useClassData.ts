@@ -3,7 +3,7 @@ import { api } from "@/services/api";
 import { IClass } from "@/interfaces/IClass";
 import { ITopic } from "@/interfaces/ITopic";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
 interface UseClassDataProps {
   id: string | undefined;
@@ -13,7 +13,18 @@ export const useClassData = ({ id }: UseClassDataProps) => {
   const [_class, setClass] = useState<IClass | null>(null);
   const [topics, setTopics] = useState<ITopic[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [topicsLoading, setTopicsLoading] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const setPage = (newPageOrFn: number | ((p: number) => number)) => {
+    const newPage = typeof newPageOrFn === 'function' ? newPageOrFn(page) : newPageOrFn;
+    setSearchParams({ page: newPage.toString() });
+  };
+  
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const limit = 6;
 
   const navigate = useNavigate();
 
@@ -24,10 +35,7 @@ export const useClassData = ({ id }: UseClassDataProps) => {
       setLoading(true);
       try {
         const res = await api.get(`/class/${id}`);
-        const _res = await api.get(`/topic/class/${id}`);
-
         setClass(res.data);
-        setTopics(_res.data);
       } catch (error: any) {
         if (error.status === 404) {
           toast.warning("Aula não encontrada");
@@ -41,6 +49,25 @@ export const useClassData = ({ id }: UseClassDataProps) => {
 
     getContent();
   }, [id, reload]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const getTopics = async () => {
+      setTopicsLoading(true);
+      try {
+        const _res = await api.get(`/topic/class/${id}?page=${page}&limit=${limit}`);
+        setTopics(_res.data.data);
+        setTotalPages(Math.ceil(_res.data.total / limit));
+      } catch (error: any) {
+        // Handle error quietly or show a generic toast
+      } finally {
+        setTopicsLoading(false);
+      }
+    };
+
+    getTopics();
+  }, [id, page, reload]);
 
   const generateSlug = (str: string) => {
     return str
@@ -79,11 +106,12 @@ export const useClassData = ({ id }: UseClassDataProps) => {
     }
   };
 
-  const handleUpdateClass = async (titleClass: string) => {
+  const handleUpdateClass = async (titleClass: string, orderClass?: number) => {
     try {
       await api.put(`/class/${_class?.id}`, {
         title: titleClass,
         path: generateSlug(titleClass),
+        order: orderClass !== undefined ? orderClass : _class?.order,
       });
 
       toast.success("Aula atualizada com sucesso!");
@@ -107,12 +135,34 @@ export const useClassData = ({ id }: UseClassDataProps) => {
     }
   };
 
+  const handleReorderTopic = async (reorderedTopics: ITopic[]) => {
+    setTopics(reorderedTopics);
+    
+    const offset = (page - 1) * limit;
+    const items = reorderedTopics.map((t, index) => ({
+      id: t.id,
+      order: offset + index,
+    }));
+    
+    try {
+      await api.put('/topic/reorder', { items });
+    } catch (error) {
+      toast.error('Erro ao reordenar tópicos');
+      setReload(prev => !prev);
+    }
+  };
+
   return {
     _class,
     topics,
     loading,
+    topicsLoading,
+    page,
+    setPage,
+    totalPages,
     handleCreateTopic,
     handleUpdateClass,
     handleDeleteClass,
+    handleReorderTopic,
   };
 };

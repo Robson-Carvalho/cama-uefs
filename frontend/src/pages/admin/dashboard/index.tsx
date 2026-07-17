@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { useDashboardData } from "@/hooks/useDashboardData";
 
 const AdminDashboard = () => {
-  const { classes, loading, handleCreateClass } = useDashboardData();
+  const { classes, loading, page, setPage, totalPages, handleCreateClass, handleReorderClass } = useDashboardData();
 
   const [title, setTitle] = useState<string>("");
 
@@ -76,15 +76,36 @@ const AdminDashboard = () => {
       <div className="flex flex-col gap-8 w-full">
         {loading ? (
           <div className="flex flex-col gap-4">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
           </div>
         ) : (
           <section>
             {classes.length ? (
-              <Classes classes={classes} />
+              <>
+                <Classes classes={classes} onReorder={handleReorderClass} />
+                <div className="flex justify-center items-center gap-4 mt-8">
+                  <Button
+                    variant="outline"
+                    onClick={() => setPage((p: number) => Math.max(1, p - 1))}
+                    disabled={page === 1 || loading}
+                  >
+                    Anterior
+                  </Button>
+                  <span className="text-sm font-medium text-slate-600">
+                    Página {page} de {Math.max(1, totalPages)}
+                  </span>
+                  <Button
+                    variant="outline"
+                    onClick={() => setPage((p: number) => Math.min(totalPages, p + 1))}
+                    disabled={page >= totalPages || loading}
+                  >
+                    Próxima
+                  </Button>
+                </div>
+              </>
             ) : (
               <div className="py-12 bg-white rounded-xl border border-border flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">

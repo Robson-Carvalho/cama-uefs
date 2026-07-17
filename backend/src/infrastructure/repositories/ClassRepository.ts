@@ -14,9 +14,15 @@ class ClassRepository implements IClassRepository {
     }
   }
 
-  async get(): Promise<IClass[] | []> {
+  async get(skip?: number, take?: number): Promise<{ data: IClass[]; total: number }> {
     try {
-      return await prisma.class.findMany({ orderBy: { createdAt: "asc" } });
+      const total = await prisma.class.count();
+      const data = await prisma.class.findMany({
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        skip: skip || 0,
+        take: take || 10,
+      });
+      return { data, total };
     } catch (error) {
       console.error("Error fetching classes:", error);
       throw new InternalServerError("Internal Server Error");
@@ -35,11 +41,11 @@ class ClassRepository implements IClassRepository {
   async getContentMap(): Promise<IContentMap[] | []> {
     try {
       const classes = await prisma.class.findMany({
-        orderBy: { createdAt: "asc" },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
         include: {
           topics: {
             select: { id: true, title: true, path: true },
-            orderBy: { createdAt: "asc" },
+            orderBy: [{ order: "asc" }, { createdAt: "asc" }],
           },
         },
       });
@@ -78,11 +84,27 @@ class ClassRepository implements IClassRepository {
     }
   }
 
-  async update(id: string, title: string, path: string): Promise<void> {
+  async update(id: string, title: string, path: string, order: number): Promise<void> {
     try {
-      await prisma.class.update({ where: { id }, data: { title, path } });
+      await prisma.class.update({ where: { id }, data: { title, path, order } });
     } catch (error) {
       console.error("Error updating class:", error);
+      throw new InternalServerError("Internal Server Error");
+    }
+  }
+
+  async updateOrder(items: { id: string; order: number }[]): Promise<void> {
+    try {
+      await prisma.$transaction(
+        items.map((item) =>
+          prisma.class.update({
+            where: { id: item.id },
+            data: { order: item.order },
+          })
+        )
+      );
+    } catch (error) {
+      console.error("Error updating class orders:", error);
       throw new InternalServerError("Internal Server Error");
     }
   }

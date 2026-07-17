@@ -4,6 +4,7 @@ import { Get } from "../../core/use-cases/class/Get";
 import { GetById } from "../../core/use-cases/class/GetById";
 import { GetContentMap } from "../../core/use-cases/class/GetContentMap";
 import { Update } from "../../core/use-cases/class/Update";
+import { Reorder } from "../../core/use-cases/class/Reorder";
 import { ClassRepository } from "../../infrastructure/repositories/ClassRepository";
 
 class ClassFactory {
@@ -35,6 +36,10 @@ class ClassFactory {
 
   static getDeleteUseCase() {
     return new Delete(this._classRepository);
+  }
+
+  static getReorderUseCase() {
+    return new Reorder(this._classRepository);
   }
 }
 

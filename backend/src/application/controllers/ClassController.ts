@@ -10,10 +10,14 @@ class ClassController {
     ClassFactory.getGetContentMapUseCase();
   private _update = ClassFactory.getUpdateUseCase();
   private _delete = ClassFactory.getDeleteUseCase();
+  private _reorder = ClassFactory.getReorderUseCase();
 
   async get(req: Request, res: Response, next: NextFunction) {
     try {
-      const classes = await this._get.execute();
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+
+      const classes = await this._get.execute(page, limit);
 
       return res.status(200).json(classes);
     } catch (e: any) {
@@ -91,7 +95,7 @@ class ClassController {
     try {
       const { id } = req.params;
 
-      const { title, path } = req.body;
+      const { title, path, order } = req.body;
 
       if (!title) {
         throw new ValidationError("Title class required");
@@ -101,7 +105,9 @@ class ClassController {
         throw new ValidationError("Path class required");
       }
 
-      await this._update.execute(id, title, path);
+      const orderValue = order !== undefined ? parseInt(order, 10) : 0;
+
+      await this._update.execute(id, title, path, orderValue);
 
       return res.status(200).json({ message: "Class updated successfully" });
     } catch (e: any) {
@@ -120,6 +126,26 @@ class ClassController {
       await this._delete.execute(id);
 
       return res.status(200).json({ message: "Class deleted successfully" });
+    } catch (e: any) {
+      if (!(e instanceof InternalServerError)) {
+        return next(e);
+      }
+
+      return next(new InternalServerError("Internal server error"));
+    }
+  }
+
+  async reorder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { items } = req.body;
+
+      if (!items || !Array.isArray(items)) {
+        throw new ValidationError("Items required for reorder");
+      }
+
+      await this._reorder.execute(items);
+
+      return res.status(200).json({ message: "Classes reordered successfully" });
     } catch (e: any) {
       if (!(e instanceof InternalServerError)) {
         return next(e);

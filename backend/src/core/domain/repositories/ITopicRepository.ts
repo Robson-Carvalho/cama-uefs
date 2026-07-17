@@ -1,7 +1,7 @@
 import { ITopic } from "../../dtos/TopicDTOs";
 
 interface ITopicRepository {
-  getByClassId(id: string): Promise<ITopic[] | []>;
+  getByClassId(id: string, skip?: number, take?: number): Promise<{ data: ITopic[]; total: number }>;
   get(): Promise<ITopic[] | []>;
   getById(id: string): Promise<ITopic | null>;
   getByPath(path: string): Promise<ITopic | null>;
@@ -20,8 +20,10 @@ interface ITopicRepository {
     title: string,
     content: string,
     path: string,
-    classId: string
+    classId: string,
+    order: number
   ): Promise<ITopic | null>;
+  updateOrder(items: { id: string; order: number }[]): Promise<void>;
   delete(id: string): Promise<void>;
 }
 

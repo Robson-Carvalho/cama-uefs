@@ -38,6 +38,14 @@ router.get(
 );
 
 router.put(
+  "/reorder",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    classController.reorder(req, res, next);
+  }
+);
+
+router.put(
   "/:id",
   AuthMiddleware,
   (req: Request, res: Response, next: NextFunction) => {

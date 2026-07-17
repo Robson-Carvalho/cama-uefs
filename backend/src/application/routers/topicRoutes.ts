@@ -53,6 +53,14 @@ router.post(
 );
 
 router.put(
+  "/reorder",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    topicController.reorder(req, res, next);
+  }
+);
+
+router.put(
   "/:id",
   AuthMiddleware,
   (req: Request, res: Response, next: NextFunction) => {
