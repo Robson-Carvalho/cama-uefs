@@ -1,19 +1,7 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { MarkdownRenderer } from "@/components/markdownRenderer";
 import { BookOpen, Map, Target, ExternalLink } from "lucide-react";
 
-const markdownContent = `
-## Nossa Missão
-O **CAMA UEFS** foi desenvolvido para democratizar o acesso ao treinamento para a Olimpíada Brasileira de Informática (OBI). A iniciativa surge da necessidade de oferecer um ambiente unificado e intuitivo, onde qualquer estudante possa encontrar materiais teóricos, dicas práticas e listas de exercícios direcionadas.
-
-## Como funciona?
-O projeto é integrado ao programa de treinamento da Universidade Estadual de Feira de Santana (UEFS), apoiado pelo edital da PROEX. O foco do portal não é apenas preparar para a competição, mas também construir uma base sólida de raciocínio algorítmico que o acompanhará por toda a sua carreira em Computação.
-
-- **Aulas e Estruturas**: Explicações didáticas desde Lógica Básica até Grafos e Programação Dinâmica.
-- **Questões Focadas**: Problemas retirados diretamente das edições anteriores da OBI.
-- **Dicas de Competição**: Dicas de C/C++, otimização de tempo e estratégias de prova.
-`;
 
 const About = () => {
   return (
@@ -49,8 +37,41 @@ const About = () => {
         </div>
 
         {/* Content Section */}
-        <div className="prose dark:prose-invert max-w-none prose-p:text-lg prose-p:leading-relaxed prose-headings:font-heading prose-headings:text-foreground prose-a:text-primary">
-          <MarkdownRenderer content={markdownContent} />
+        <div className="space-y-12 mb-16 px-2">
+          <section>
+            <h2 className="text-3xl font-bold font-heading text-foreground mb-4 tracking-tight">Nossa Missão</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              O <strong className="font-bold text-foreground">CAMA UEFS</strong> foi desenvolvido para democratizar o acesso ao treinamento para a Olimpíada Brasileira de Informática (OBI). A iniciativa surge da necessidade de oferecer um ambiente unificado e intuitivo, onde qualquer estudante possa encontrar materiais teóricos, dicas práticas e listas de exercícios direcionadas.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-3xl font-bold font-heading text-foreground mb-4 tracking-tight">Como funciona?</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+              O projeto é integrado ao programa de treinamento da Universidade Estadual de Feira de Santana (UEFS), apoiado pelo edital da PROEX. O foco do portal não é apenas preparar para a competição, mas também construir uma base sólida de raciocínio algorítmico que o acompanhará por toda a sua carreira em Computação.
+            </p>
+            
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3 text-lg">
+                <span className="text-primary font-bold mt-1.5 h-2 w-2 rounded-full bg-primary flex-shrink-0"></span>
+                <p className="text-muted-foreground">
+                  <strong className="text-foreground">Aulas e Estruturas:</strong> Explicações didáticas desde Lógica Básica até Grafos e Programação Dinâmica.
+                </p>
+              </li>
+              <li className="flex items-start gap-3 text-lg">
+                <span className="text-primary font-bold mt-1.5 h-2 w-2 rounded-full bg-primary flex-shrink-0"></span>
+                <p className="text-muted-foreground">
+                  <strong className="text-foreground">Questões Focadas:</strong> Problemas retirados diretamente das edições anteriores da OBI.
+                </p>
+              </li>
+              <li className="flex items-start gap-3 text-lg">
+                <span className="text-primary font-bold mt-1.5 h-2 w-2 rounded-full bg-primary flex-shrink-0"></span>
+                <p className="text-muted-foreground">
+                  <strong className="text-foreground">Dicas de Competição:</strong> Dicas de C/C++, otimização de tempo e estratégias de prova.
+                </p>
+              </li>
+            </ul>
+          </section>
         </div>
 
         {/* Credits */}

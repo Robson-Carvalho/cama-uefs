@@ -1,129 +1,16 @@
-import { handleApiError } from "@/utils/errorHandler";
-import { useAuth } from "@/contexts/auth/useAuth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FormEvent, useState } from "react";
-import { toast } from "react-toastify";
-import { api } from "@/services/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lock, Mail, User } from "lucide-react";
+import { useSettings } from "@/hooks/useSettings";
 
 const AdminSettings = () => {
-  const { payload } = useAuth();
-  
-  // State for Name
-  const [loadingName, setLoadingName] = useState<boolean>(false);
-  const [name, setName] = useState<string>(payload?.admin.name || "");
-
-  // States for password change
-  const [loadingPassword, setLoadingPassword] = useState<boolean>(false);
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-
-  // States for email change
-  const [loadingEmail, setLoadingEmail] = useState<boolean>(false);
-  const [newEmail, setNewEmail] = useState<string>(payload?.admin.email || "");
-
-  const handlePasswordSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoadingPassword(true);
-
-    try {
-      if (!password) {
-        toast.warning("Senha não informada.");
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        toast.warning("As senhas não coincidem.");
-        return;
-      }
-
-      const data = await api.put(`/admin/${payload?.admin.id}`, {
-        name: payload?.admin.name,
-        email: payload?.admin.email, // Kept the same because we change email in another endpoint
-        password: password,
-      });
-
-      if (data.status === 200) {
-        toast.success("Senha alterada com sucesso!");
-        setPassword("");
-        setConfirmPassword("");
-        return;
-      }
-    } catch (error: any) {
-      if (error.response?.status === 404) {
-        toast.warning("Admin não encontrado.");
-      } else {
-        handleApiError(error, "Erro inesperado ao alterar senha.");
-      }
-    } finally {
-      setLoadingPassword(false);
-    }
-  };
-
-  const handleNameSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoadingName(true);
-
-    try {
-      if (!name) {
-        toast.warning("Nome não pode ficar em branco.");
-        return;
-      }
-
-      const data = await api.put(`/admin/${payload?.admin.id}`, {
-        name: name,
-        email: payload?.admin.email,
-      });
-
-      if (data.status === 200) {
-        toast.success("Nome atualizado com sucesso!");
-        
-        // Update local storage so it persists without forcing relogin
-        const storageData = localStorage.getItem("cama-uefs-admin");
-        if (storageData) {
-          const parsed = JSON.parse(storageData);
-          parsed.admin.name = name;
-          localStorage.setItem("cama-uefs-admin", JSON.stringify(parsed));
-        }
-
-        // Slight delay before reload to let the toast show
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-      }
-    } catch (error: any) {
-      handleApiError(error, "Erro ao atualizar o nome.");
-    } finally {
-      setLoadingName(false);
-    }
-  };
-
-  const handleEmailRequest = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoadingEmail(true);
-
-    try {
-      if (!newEmail || newEmail === payload?.admin.email) {
-        toast.warning("Insira um novo e-mail.");
-        return;
-      }
-
-      const data = await api.post(`/admin/${payload?.admin.id}/request-email-change`, {
-        newEmail,
-      });
-
-      if (data.status === 200) {
-        toast.success("Link de confirmação enviado para o novo e-mail!");
-        setNewEmail(payload?.admin.email || ""); // Reset after request
-      }
-    } catch (error: any) {
-      handleApiError(error, "Erro ao solicitar troca de e-mail.");
-    } finally {
-      setLoadingEmail(false);
-    }
-  };
+  const {
+    payload,
+    name, setName, loadingName, handleNameSubmit,
+    password, setPassword, confirmPassword, setConfirmPassword, loadingPassword, handlePasswordSubmit,
+    newEmail, setNewEmail, loadingEmail, handleEmailRequest
+  } = useSettings();
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-fade-in-up pb-12">
@@ -154,6 +41,14 @@ const AdminSettings = () => {
           </CardHeader>
           <CardContent className="pt-6">
             <div className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700">Nível de Acesso</label>
+                <div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase ${payload?.admin.role === 'ADMIN' ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'}`}>
+                    {payload?.admin.role === 'ADMIN' ? 'Administrador' : 'Instrutor'}
+                  </span>
+                </div>
+              </div>
               
               <form onSubmit={handleNameSubmit} className="space-y-4">
                 <div className="space-y-2">

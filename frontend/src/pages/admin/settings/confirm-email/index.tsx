@@ -1,53 +1,13 @@
-import { handleApiError } from "@/utils/errorHandler";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useEffect, useState } from "react";
-import { api } from "@/services/api";
-import { toast } from "react-toastify";
-import { useNavigate, useSearchParams } from "react-router";
-import { useAuth } from "@/contexts/auth/useAuth";
+import { useNavigate } from "react-router";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { useConfirmEmailChange } from "@/hooks/useConfirmEmailChange";
 
 const ConfirmEmailChange = () => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [success, setSuccess] = useState<boolean>(false);
-  const { authenticated } = useAuth();
+  const { loading, success, authenticated } = useConfirmEmailChange();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
-
-  useEffect(() => {
-    // We only execute once
-    const confirmToken = async () => {
-      if (!token) {
-        toast.warn("Token não encontrado na URL.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const data = await api.post("/admin/confirm-email-change", { token });
-        
-        if (data.status === 200) {
-          setSuccess(true);
-          toast.success("E-mail alterado com sucesso!");
-          // Clean storage to force relogin and update context
-          setTimeout(() => {
-            localStorage.clear();
-            navigate("/admin/login");
-          }, 3000);
-        }
-      } catch (error: any) {
-      handleApiError(error, "Token inválido ou expirado.");
-        setSuccess(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    confirmToken();
-  }, [token, navigate]);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col relative overflow-hidden">

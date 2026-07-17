@@ -2,54 +2,18 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router";
-import { FormEvent, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { useAuth } from "@/contexts/auth/useAuth";
-
+import { Link } from "react-router";
 import { Eye, EyeOff } from "lucide-react";
+import { useSignIn } from "@/hooks/useSignIn";
 
 const AdminSignIn = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const { authenticated } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (authenticated) {
-      navigate("/admin");
-    }
-  }, []);
-
-  const { login } = useAuth();
-
-  const handleLogin = async (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!email) {
-      toast.warning("E-mail não informado.");
-      return;
-    }
-
-    if (!password) {
-      toast.warning("Senha não informada.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const status = (await login(email, password)) as number;
-
-      if (status === 200) {
-        navigate("/admin");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    email, setEmail,
+    password, setPassword,
+    loading,
+    showPassword, setShowPassword,
+    handleLogin
+  } = useSignIn();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col relative overflow-hidden">

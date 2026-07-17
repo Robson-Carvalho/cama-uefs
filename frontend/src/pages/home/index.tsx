@@ -7,7 +7,6 @@ import { BookOpen, LogIn, Code2 } from "lucide-react";
 const Home = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col relative overflow-hidden">
-      {/* Background gradients */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-pulse" style={{ animationDelay: '2s' }}></div>
 
@@ -25,7 +24,7 @@ const Home = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
             <Button asChild size="lg" className="w-full sm:w-auto text-lg h-14 px-8 rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all gap-2">
-              <Link to="/estudos">
+              <Link to="/studies">
                 <BookOpen size={20} />
                 Acessar Plataforma
               </Link>

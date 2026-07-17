@@ -1,7 +1,7 @@
 import { Mailer } from "../../../infrastructure/services/email/Mailer";
 import { JWT } from "../../../infrastructure/utils/JWT";
 import { IAdminRepository } from "../../domain/repositories/IAdminRepository";
-import { NotFoundError } from "../../errors/Errors";
+import { NotFoundError, ValidationError } from "../../errors/Errors";
 
 class RequestEmailChange {
   constructor(
@@ -15,6 +15,11 @@ class RequestEmailChange {
 
     if (!admin) {
       throw new NotFoundError("Instrutor não encontrado.");
+    }
+
+    const emailInUse = await this._adminRepository.getByEmail(newEmail);
+    if (emailInUse) {
+      throw new ValidationError("Este e-mail já está em uso por outro instrutor.");
     }
 
     const token = this._jwt.signWithExpiration({ id: admin.id, newEmail, action: 'change_email' }, "15m");

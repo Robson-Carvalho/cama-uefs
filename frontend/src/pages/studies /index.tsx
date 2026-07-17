@@ -3,7 +3,7 @@ import { Footer } from "@/components/footer";
 import { BodyLayout } from "@/layouts/BodyLayout";
 import { BookOpen } from "lucide-react";
 
-const Estudos = () => {
+const Studies = () => {
   return (
     <>
       <Header />
@@ -23,4 +23,4 @@ const Estudos = () => {
   );
 };
 
-export { Estudos };
+export { Studies };

@@ -15,11 +15,11 @@ import { Menu as MenuIcon, UserCog } from "lucide-react";
 
 const Header = () => {
   const location = useLocation();
-  
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       <nav className="max-w-screen-2xl w-full mx-auto flex h-16 items-center justify-between px-4 sm:px-6 md:px-8">
-        
+
         {/* Left Side - Logo */}
         <div className="flex items-center">
           <Link id="logo" to="/" className="min-w-0 shrink-0 flex items-center gap-2 group transition-all duration-300">
@@ -38,7 +38,7 @@ const Header = () => {
         <div className="flex items-center gap-3 sm:gap-6">
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6">
-            <Link to="/estudos" className={`text-sm font-medium transition-colors hover:text-primary ${location.pathname === '/estudos' ? 'text-foreground' : 'text-muted-foreground'}`}>Plataforma</Link>
+            <Link to="/studies" className={`text-sm font-medium transition-colors hover:text-primary ${location.pathname === '/studies' ? 'text-foreground' : 'text-muted-foreground'}`}>Plataforma</Link>
             <Link to="/about" className={`text-sm font-medium transition-colors hover:text-primary ${location.pathname === '/about' ? 'text-foreground' : 'text-muted-foreground'}`}>Sobre o Projeto</Link>
           </div>
 
@@ -78,10 +78,10 @@ const Menu = ({ className }: { className: string }) => {
             </DrawerDescription>
           </DrawerHeader>
           <ScrollArea className="h-[65vh] w-full px-4 pb-4">
-            
+
             {/* Global Links for Mobile */}
             <div className="flex flex-col gap-3 py-4 border-b border-border/40 mb-4">
-              <Link onClick={() => setOpen(false)} to="/estudos" className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${location.pathname === '/estudos' ? 'bg-primary/10 text-primary font-bold' : 'text-muted-foreground hover:bg-muted'}`}>
+              <Link onClick={() => setOpen(false)} to="/studies" className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${location.pathname === '/studies' ? 'bg-primary/10 text-primary font-bold' : 'text-muted-foreground hover:bg-muted'}`}>
                 <span className="text-base">Plataforma de Estudos</span>
               </Link>
               <Link onClick={() => setOpen(false)} to="/about" className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${location.pathname === '/about' ? 'bg-primary/10 text-primary font-bold' : 'text-muted-foreground hover:bg-muted'}`}>

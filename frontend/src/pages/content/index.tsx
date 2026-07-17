@@ -1,5 +1,5 @@
 import { Header } from "@/components/header";
-import { MarkdownRenderer } from "@/components/markdownRenderer";
+import MDEditor from '@uiw/react-md-editor';
 import { BodyLayout } from "@/layouts/BodyLayout";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
@@ -46,9 +46,12 @@ const Content = () => {
             <Skeleton className="h-24 w-max-[1440px]" />
           </div>
         ) : (
-          <MarkdownRenderer
-            content={content.length >= 2 ? content : `## Em construção! 🚧`}
-          />
+          <div data-color-mode="light" className="bg-transparent">
+            <MDEditor.Markdown 
+              source={content.length >= 2 ? content : `## Em construção! 🚧`} 
+              style={{ backgroundColor: 'transparent' }} 
+            />
+          </div>
         )}
       </BodyLayout>
     </>

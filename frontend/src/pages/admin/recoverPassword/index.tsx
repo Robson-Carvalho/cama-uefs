@@ -1,56 +1,12 @@
-import { handleApiError } from "@/utils/errorHandler";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormEvent, useEffect, useState } from "react";
-import { api } from "@/services/api";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router";
-import { useAuth } from "@/contexts/auth/useAuth";
+import { Link } from "react-router";
+import { useRecoverPassword } from "@/hooks/useRecoverPassword";
 
 const RecoverPassword = () => {
-  const [email, setEmail] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const { authenticated } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (authenticated) {
-      navigate("/admin");
-    }
-  }, []);
-
-  const recoverPassword = async (e: FormEvent) => {
-    e.preventDefault();
-
-    setLoading(true);
-
-    try {
-      if (!email) {
-        toast.warning("E-mail não informado.");
-        return;
-      }
-
-      const data = await api.post("/auth/recover/password", { email });
-
-      if (data.status === 200) {
-        toast.success("Verifique seu e-mail.");
-        return;
-      }
-    } catch (error: any) {
-      if (error.status === 404) {
-        toast.warning("E-mail inválido.");
-        return;
-      }
-      if (error.status === 500) {
-        handleApiError(error, "Erro inesperado.");
-        return;
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { email, setEmail, loading, recoverPassword } = useRecoverPassword();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col relative overflow-hidden">

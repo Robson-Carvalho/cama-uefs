@@ -19,7 +19,7 @@ const Navigation = ({ styles, onClose }: INavigationProps) => {
       <div className="w-full flex flex-col justify-center gap-8">
         <ul className="flex flex-col gap-y-0.5 sidebar-list-line:border-l border-dark/3 dark:border-light/2">
           <li className="flex flex-col">
-            <Anchor path="/estudos" text="Início da Plataforma" />
+            <Anchor path="/studies" text="Início da Plataforma" />
           </li>
 
           {data.length > 0 ? (

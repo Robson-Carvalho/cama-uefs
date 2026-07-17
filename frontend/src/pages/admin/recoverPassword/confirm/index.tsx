@@ -1,69 +1,12 @@
-import { handleApiError } from "@/utils/errorHandler";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormEvent, useEffect, useState } from "react";
-import { api } from "@/services/api";
-import { toast } from "react-toastify";
-import { Link, useNavigate, useSearchParams } from "react-router";
-import { useAuth } from "@/contexts/auth/useAuth";
+import { Link } from "react-router";
+import { useConfirmRecoverPassword } from "@/hooks/useConfirmRecoverPassword";
 
 const ConfirmRecoverPassword = () => {
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const { authenticated } = useAuth();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
-
-  useEffect(() => {
-    if (authenticated) {
-      navigate("/admin");
-    }
-  }, [authenticated, navigate]);
-
-  const resetPassword = async (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!token) {
-      toast.warn("Token não encontrado na URL.");
-      return;
-    }
-
-    if (!password) {
-      toast.warning("Digite a nova senha.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast.warning("As senhas não coincidem.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const data = await api.post("/auth/reset/password", { token, newPassword: password });
-
-      if (data.status === 200) {
-        toast.success("Senha alterada com sucesso!");
-        // Limpar o localStorage de qualquer lixo anterior, como o usuário pediu
-        localStorage.clear();
-        navigate("/admin/login");
-        return;
-      }
-    } catch (error: any) {
-      if (error.response?.status === 400 || error.response?.status === 401) {
-        handleApiError(error, "Token inválido ou expirado.");
-        return;
-      }
-      handleApiError(error, "Erro inesperado ao alterar senha.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { password, setPassword, confirmPassword, setConfirmPassword, loading, resetPassword } = useConfirmRecoverPassword();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col relative overflow-hidden">

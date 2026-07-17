@@ -1,7 +1,7 @@
 import { IAdmin, IGetAdmins, IResponseAdminById } from "../../dtos/AdminDTOs";
 
 interface IAdminRepository {
-  get(): Promise<IGetAdmins[] | []>;
+  get(skip?: number, take?: number): Promise<{ data: IGetAdmins[]; total: number }>;
   create(name: string, email: string, password: string): Promise<string | null>;
   getById(id: string): Promise<IResponseAdminById | null>;
   getByEmail(email: string): Promise<IAdmin | null>;

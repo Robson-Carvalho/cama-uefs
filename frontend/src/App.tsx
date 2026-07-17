@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import { ToastContainer } from "react-toastify";
 import { Home } from "./pages/home";
-import { Estudos } from "./pages/estudos";
 import { Content } from "./pages/content";
 import { NotFound } from "./pages/notFound";
 import { About } from "./pages/about";
@@ -20,6 +19,7 @@ import { Topic } from "./pages/admin/topic";
 import { Class } from "./pages/admin/class";
 import { LoadPage } from "./components/loadPage";
 import { AdminLayout } from "./pages/admin/components/layout";
+import { Studies } from "./pages/studies ";
 
 const App = () => {
   return (
@@ -29,7 +29,7 @@ const App = () => {
           <Routes>
             <Route element={<LoadPage />}>
               <Route index element={<Home />} />
-              <Route path="/estudos" element={<Estudos />} />
+              <Route path="/studies" element={<Studies />} />
 
               <Route path="/:class/:topic" element={<Content />} />
 

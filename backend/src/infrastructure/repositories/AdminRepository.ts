@@ -8,13 +8,16 @@ import { InternalServerError, NotFoundError, ValidationError } from "../../core/
 import { prisma } from "../databases/prismaClient";
 
 class AdminRepository implements IAdminRepository {
-  async get(): Promise<IGetAdmins[] | []> {
+  async get(skip?: number, take?: number): Promise<{ data: IGetAdmins[]; total: number }> {
     try {
+      const total = await prisma.admin.count();
       const admins = await prisma.admin.findMany({
         select: { id: true, name: true, email: true, role: true, active: true },
         orderBy: { name: "asc" },
+        skip,
+        take,
       });
-      return admins as unknown as IGetAdmins[];
+      return { data: admins as unknown as IGetAdmins[], total };
     } catch (error) {
       console.error(error);
       throw new InternalServerError("Erro ao buscar instrutores.");

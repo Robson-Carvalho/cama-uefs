@@ -16,9 +16,12 @@ class AdminController {
 
   async get(req: Request, res: Response, next: NextFunction) {
     try {
-      const admins = await this._get.execute();
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+      
+      const result = await this._get.execute(page, limit);
 
-      return res.status(200).json(admins);
+      return res.status(200).json(result);
     } catch (e: any) {
       if (!(e instanceof InternalServerError)) {
         return next(e);
@@ -118,6 +121,12 @@ class AdminController {
 
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
+      const { user_role } = req as any;
+
+      if (user_role !== "ADMIN") {
+        throw new ForbiddenError("Apenas administradores podem excluir instrutores.");
+      }
+
       const { id } = req.params;
 
       await this._delete.execute(id);

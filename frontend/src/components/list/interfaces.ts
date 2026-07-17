@@ -5,8 +5,7 @@ export interface ITopic {
 }
 
 export interface IClassItem {
-  id: string;
-  classId: string;
+  classID: string;
   className: string;
   classPath: string;
   topics: ITopic[];

@@ -140,6 +140,12 @@ clean-all: ## Para containers e remove TODOS os volumes (incluindo dados do banc
 	@sleep 3
 	$(DC) down -v
 
-.PHONY: prune
-prune: ## Remove imagens, containers e cache não utilizados pelo Docker
-	docker system prune -f
+.PHONY: prune-safe
+prune-safe: ## Limpeza segura: Remove apenas imagens órfãs (<none>) que ocupam espaço sem risco
+	docker image prune -f
+
+.PHONY: prune-all
+prune-all: ## Limpeza agressiva: Remove TUDO que não está em uso no momento (cuidado na VPS)
+	@echo "⚠️  Isso vai apagar containers parados e redes não usadas. Pressione Ctrl+C para cancelar."
+	@sleep 10
+	docker system prune -af

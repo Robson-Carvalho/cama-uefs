@@ -9,12 +9,9 @@ interface IContainerList {
 const ContainerList = ({ data, onClose }: IContainerList) => {
   return (
     <>
-      {data.map((data) => {
-        if ("order" in data) {
-          return <Wrapper onClose={onClose} key={data.id} data={data} />;
-        }
-        return <Wrapper onClose={onClose} key={data.id} data={data} />;
-      })}
+      {data.map((item) => (
+        <Wrapper onClose={onClose} key={item.classID} data={item} />
+      ))}
     </>
   );
 };
