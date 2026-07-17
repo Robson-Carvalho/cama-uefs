@@ -98,8 +98,15 @@ export const useClassData = ({ id }: UseClassDataProps) => {
 
       toast.success("Tópico criado com sucesso!");
       return true;
-    } catch (error) {
-      toast.warning("Erro ao criar tópico.");
+    } catch (error: any) {
+      const status = error.response?.status;
+      const message = error.response?.data?.message || "Erro ao criar tópico.";
+      
+      if (status >= 400 && status < 500) {
+        toast.warning(message);
+      } else {
+        toast.error("Erro interno. Tente novamente mais tarde.");
+      }
       return false;
     } finally {
       setReload((prev) => !prev);
@@ -116,8 +123,15 @@ export const useClassData = ({ id }: UseClassDataProps) => {
 
       toast.success("Aula atualizada com sucesso!");
       return true;
-    } catch (error) {
-      toast.warning("Erro ao atualizar aula.");
+    } catch (error: any) {
+      const status = error.response?.status;
+      const message = error.response?.data?.message || "Erro ao atualizar aula.";
+      
+      if (status >= 400 && status < 500) {
+        toast.warning(message);
+      } else {
+        toast.error("Erro interno. Tente novamente mais tarde.");
+      }
       return false;
     } finally {
       setReload((prev) => !prev);

@@ -1,6 +1,7 @@
 import { ITopicRepository } from "../../core/domain/repositories/ITopicRepository";
 import { ITopic } from "../../core/dtos/TopicDTOs";
 import { prisma } from "../databases/prismaClient";
+import { ValidationError } from "../../core/errors/Errors";
 
 class TopicRepository implements ITopicRepository {
   async getByClassId(id: string, skip?: number, take?: number): Promise<{ data: ITopic[]; total: number }> {
@@ -78,8 +79,11 @@ class TopicRepository implements ITopicRepository {
       return await prisma.topic.create({
         data: { title, content, path, classId },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating topic:", error);
+      if (error.code === "P2002") {
+        throw new ValidationError("Já existe um tópico com este título nesta aula (o caminho gerado já está em uso).");
+      }
       throw error;
     }
   }
@@ -97,8 +101,11 @@ class TopicRepository implements ITopicRepository {
         where: { id },
         data: { title, content, path, classId, order },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating topic:", error);
+      if (error.code === "P2002") {
+        throw new ValidationError("Já existe um tópico com este título nesta aula (o caminho gerado já está em uso).");
+      }
       return null;
     }
   }

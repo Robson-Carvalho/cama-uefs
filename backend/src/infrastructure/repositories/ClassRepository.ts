@@ -1,15 +1,18 @@
 import { IClassRepository } from "../../core/domain/repositories/IClassRepository";
 import { IClass } from "../../core/dtos/ClassDTOs";
 import { IContentMap } from "../../core/interfaces/IContentMap";
-import { InternalServerError } from "../../core/errors/Errors";
+import { InternalServerError, ValidationError } from "../../core/errors/Errors";
 import { prisma } from "../databases/prismaClient";
 
 class ClassRepository implements IClassRepository {
   async create(title: string, path: string): Promise<IClass | null> {
     try {
       return await prisma.class.create({ data: { title, path } });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating class:", error);
+      if (error.code === "P2002") {
+        throw new ValidationError("Já existe uma aula com este título.");
+      }
       throw new InternalServerError("Internal Server Error");
     }
   }
@@ -87,8 +90,11 @@ class ClassRepository implements IClassRepository {
   async update(id: string, title: string, path: string, order: number): Promise<void> {
     try {
       await prisma.class.update({ where: { id }, data: { title, path, order } });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating class:", error);
+      if (error.code === "P2002") {
+        throw new ValidationError("Já existe uma aula com este título.");
+      }
       throw new InternalServerError("Internal Server Error");
     }
   }

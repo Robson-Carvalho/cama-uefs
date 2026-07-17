@@ -48,17 +48,17 @@ class ClassController {
       const { title, path } = req.body;
 
       if (!title) {
-        throw new ValidationError("Title class required");
+        throw new ValidationError("O título da aula é obrigatório.");
       }
 
       if (!path) {
-        throw new ValidationError("Path class required");
+        throw new ValidationError("O caminho da aula é obrigatório.");
       }
 
       const newClass = await this._create.execute(title, path);
 
       if (!newClass) {
-        throw new ValidationError("Failed to create class");
+        throw new ValidationError("Falha ao criar a aula.");
       }
 
       return res.status(201).json(newClass);
@@ -98,11 +98,11 @@ class ClassController {
       const { title, path, order } = req.body;
 
       if (!title) {
-        throw new ValidationError("Title class required");
+        throw new ValidationError("O título da aula é obrigatório.");
       }
 
       if (!path) {
-        throw new ValidationError("Path class required");
+        throw new ValidationError("O caminho da aula é obrigatório.");
       }
 
       const orderValue = order !== undefined ? parseInt(order, 10) : 0;
@@ -140,7 +140,7 @@ class ClassController {
       const { items } = req.body;
 
       if (!items || !Array.isArray(items)) {
-        throw new ValidationError("Items required for reorder");
+        throw new ValidationError("Itens são obrigatórios para reordenação.");
       }
 
       await this._reorder.execute(items);

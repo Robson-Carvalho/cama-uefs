@@ -65,10 +65,13 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
         return true;
       }
     } catch (error: any) {
-      if (error.status === 400) {
-        toast.warning("Dados inválidos.");
-      } else if (error.status === 500) {
-        toast.error("Erro inesperado.");
+      const status = error.response?.status;
+      const message = error.response?.data?.message || "Dados inválidos.";
+      
+      if (status >= 400 && status < 500) {
+        toast.warning(message);
+      } else {
+        toast.error("Erro interno. Tente novamente mais tarde.");
       }
       return false;
     }

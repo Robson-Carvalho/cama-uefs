@@ -61,8 +61,15 @@ export const useDashboardData = () => {
       await api.post("/class", { title, path });
       toast.success("Aula criada com sucesso.");
       return true;
-    } catch (error) {
-      toast.warning("Erro ao criar aula.");
+    } catch (error: any) {
+      const status = error.response?.status;
+      const message = error.response?.data?.message || "Erro ao criar aula.";
+      
+      if (status >= 400 && status < 500) {
+        toast.warning(message);
+      } else {
+        toast.error("Erro interno. Tente novamente mais tarde.");
+      }
       return false;
     } finally {
       setReload((prev) => !prev);

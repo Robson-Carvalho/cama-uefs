@@ -111,19 +111,19 @@ class TopicController {
       const { title, content, path, classID } = req.body;
 
       if (!title) {
-        throw new ValidationError("Title class required");
+        throw new ValidationError("O título do tópico é obrigatório.");
       }
 
       if (!content) {
-        throw new ValidationError("Content class required");
+        throw new ValidationError("O conteúdo do tópico é obrigatório.");
       }
 
       if (!path) {
-        throw new ValidationError("Path class required");
+        throw new ValidationError("O caminho do tópico é obrigatório.");
       }
 
       if (!classID) {
-        throw new ValidationError("ClassID class required");
+        throw new ValidationError("A ID da aula é obrigatória.");
       }
 
       const topic = await this._create.execute(title, content, path, classID);
@@ -145,19 +145,19 @@ class TopicController {
       const { title, content, path, classID, order } = req.body;
 
       if (!title) {
-        throw new ValidationError("Title class required");
+        throw new ValidationError("O título do tópico é obrigatório.");
       }
 
       if (!content) {
-        throw new ValidationError("Content class required");
+        throw new ValidationError("O conteúdo do tópico é obrigatório.");
       }
 
       if (!path) {
-        throw new ValidationError("Path class required");
+        throw new ValidationError("O caminho do tópico é obrigatório.");
       }
 
       if (!classID) {
-        throw new ValidationError("ClassID class required");
+        throw new ValidationError("A ID da aula é obrigatória.");
       }
 
       const orderValue = order !== undefined ? parseInt(order, 10) : 0;
@@ -202,7 +202,7 @@ class TopicController {
       const { items } = req.body;
 
       if (!items || !Array.isArray(items)) {
-        throw new ValidationError("Items required for reorder");
+        throw new ValidationError("Itens são obrigatórios para reordenação.");
       }
 
       await this._reorder.execute(items);
