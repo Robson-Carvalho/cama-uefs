@@ -95,7 +95,7 @@ class ClassController {
     try {
       const { id } = req.params;
 
-      const { title, path, order } = req.body;
+      const { title, path, order, isPublished } = req.body;
 
       if (!title) {
         throw new ValidationError("O título da aula é obrigatório.");
@@ -107,7 +107,7 @@ class ClassController {
 
       const orderValue = order !== undefined ? parseInt(order, 10) : 0;
 
-      await this._update.execute(id, title, path, orderValue);
+      await this._update.execute(id, title, path, orderValue, isPublished);
 
       return res.status(200).json({ message: "Class updated successfully" });
     } catch (e: any) {

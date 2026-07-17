@@ -10,7 +10,8 @@ class Update {
     content: string,
     path: string,
     classID: string,
-    order: number
+    order: number,
+    isPublished?: boolean
   ): Promise<ITopic | null> {
     return await this._topicRepository.update(
       id,
@@ -18,7 +19,8 @@ class Update {
       content,
       path,
       classID,
-      order
+      order,
+      isPublished
     );
   }
 }

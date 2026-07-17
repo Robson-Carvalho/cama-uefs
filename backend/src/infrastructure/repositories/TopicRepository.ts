@@ -52,15 +52,14 @@ class TopicRepository implements ITopicRepository {
     topicPath: string
   ): Promise<ITopic | null> {
     try {
-      const classData = await prisma.class.findUnique({
-        where: { path: classPath },
-        select: { id: true },
-      });
-      if (!classData) return null;
-
-      return await prisma.topic.findUnique({
+      return await prisma.topic.findFirst({
         where: {
-          classId_path: { classId: classData.id, path: topicPath },
+          path: topicPath,
+          isPublished: true,
+          class: {
+            path: classPath,
+            isPublished: true,
+          },
         },
       });
     } catch (error) {
@@ -94,12 +93,13 @@ class TopicRepository implements ITopicRepository {
     content: string,
     path: string,
     classId: string,
-    order: number
+    order: number,
+    isPublished?: boolean
   ): Promise<ITopic | null> {
     try {
       return await prisma.topic.update({
         where: { id },
-        data: { title, content, path, classId, order },
+        data: { title, content, path, classId, order, ...(isPublished !== undefined && { isPublished }) },
       });
     } catch (error: any) {
       console.error("Error updating topic:", error);

@@ -142,7 +142,7 @@ class TopicController {
     try {
       const { id } = req.params;
 
-      const { title, content, path, classID, order } = req.body;
+      const { title, content, path, classID, order, isPublished } = req.body;
 
       if (!title) {
         throw new ValidationError("O título do tópico é obrigatório.");
@@ -168,7 +168,8 @@ class TopicController {
         content,
         path,
         classID,
-        orderValue
+        orderValue,
+        isPublished
       );
 
       return res.status(200).json(updatedTopic);

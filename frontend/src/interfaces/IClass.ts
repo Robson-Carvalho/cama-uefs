@@ -3,6 +3,6 @@ export interface IClass {
   title: string;
   path: string;
   order: number;
-  is_published: boolean;
+  isPublished: boolean;
   topics?: any[];
 }

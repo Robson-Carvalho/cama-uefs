@@ -21,7 +21,8 @@ interface ITopicRepository {
     content: string,
     path: string,
     classId: string,
-    order: number
+    order: number,
+    isPublished?: boolean
   ): Promise<ITopic | null>;
   updateOrder(items: { id: string; order: number }[]): Promise<void>;
   delete(id: string): Promise<void>;

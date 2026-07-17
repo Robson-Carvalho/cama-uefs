@@ -113,12 +113,13 @@ export const useClassData = ({ id }: UseClassDataProps) => {
     }
   };
 
-  const handleUpdateClass = async (titleClass: string, orderClass?: number) => {
+  const handleUpdateClass = async (titleClass: string, orderClass?: number, isPublishedClass?: boolean) => {
     try {
       await api.put(`/class/${_class?.id}`, {
         title: titleClass,
         path: generateSlug(titleClass),
         order: orderClass !== undefined ? orderClass : _class?.order,
+        isPublished: isPublishedClass !== undefined ? isPublishedClass : _class?.isPublished,
       });
 
       toast.success("Aula atualizada com sucesso!");

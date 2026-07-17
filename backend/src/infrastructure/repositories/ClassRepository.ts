@@ -44,9 +44,11 @@ class ClassRepository implements IClassRepository {
   async getContentMap(): Promise<IContentMap[] | []> {
     try {
       const classes = await prisma.class.findMany({
+        where: { isPublished: true },
         orderBy: [{ order: "asc" }, { createdAt: "asc" }],
         include: {
           topics: {
+            where: { isPublished: true },
             select: { id: true, title: true, path: true },
             orderBy: [{ order: "asc" }, { createdAt: "asc" }],
           },
@@ -87,9 +89,12 @@ class ClassRepository implements IClassRepository {
     }
   }
 
-  async update(id: string, title: string, path: string, order: number): Promise<void> {
+  async update(id: string, title: string, path: string, order: number, isPublished?: boolean): Promise<IClass | null> {
     try {
-      await prisma.class.update({ where: { id }, data: { title, path, order } });
+      return await prisma.class.update({
+        where: { id },
+        data: { title, path, order, ...(isPublished !== undefined && { isPublished }) },
+      });
     } catch (error: any) {
       console.error("Error updating class:", error);
       if (error.code === "P2002") {

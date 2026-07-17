@@ -5,6 +5,7 @@ interface ITopic {
   path: string;
   content: string;
   order: number;
+  isPublished: boolean;
   createdAt: string;
   updatedAt: string;
 }

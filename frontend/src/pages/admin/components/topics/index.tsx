@@ -92,6 +92,11 @@ const Topics = ({ topics, onReorder, onMoveToPage, page = 1, totalPages = 1 }: I
                         </div>
                       </div>
                       <div className="flex items-center gap-1 text-slate-400 group-hover:text-indigo-500 transition-colors shrink-0 ml-4">
+                        {!topic.isPublished && (
+                          <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold mr-2">
+                            Rascunho
+                          </span>
+                        )}
                         <span className="text-sm font-medium hidden sm:block">Editar tópico</span>
                         <ChevronRight className="h-5 w-5" />
                       </div>

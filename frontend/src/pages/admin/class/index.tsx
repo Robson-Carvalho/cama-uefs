@@ -35,9 +35,9 @@ const Class = () => {
   } = useClassData({ id });
 
   const [titleTopic, setTitleTopic] = useState<string>("");
-
   const [titleClass, setTitleClass] = useState<string>("");
   const [orderClass, setOrderClass] = useState<number>(0);
+  const [isPublishedClass, setIsPublishedClass] = useState<boolean>(true);
 
   const onSubmitCreateTopic = async (e: FormEvent) => {
     e.preventDefault();
@@ -47,12 +47,11 @@ const Class = () => {
     }
   };
 
-  const onSubmitUpdateClass = async (e: FormEvent) => {
+  const onSubmitUpdateClass = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await handleUpdateClass(titleClass, orderClass);
-    if (success) {
-      setTitleClass("");
-    }
+    if (!titleClass) return;
+
+    await handleUpdateClass(titleClass, orderClass, isPublishedClass);
   };
 
   return (
@@ -129,6 +128,7 @@ const Class = () => {
                 <Button variant="outline" onClick={() => {
                   setTitleClass(_class?.title || "");
                   setOrderClass(_class?.order || 0);
+                  setIsPublishedClass(_class?.isPublished ?? true);
                 }}><Edit className="w-4 h-4 mr-2" /> Editar</Button>
               </DialogTrigger>
               <DialogContent>
@@ -162,6 +162,18 @@ const Class = () => {
                         type="number"
                         placeholder="Ex: 1"
                       />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="checkbox" 
+                        id="isPublishedClass" 
+                        checked={isPublishedClass}
+                        onChange={(e) => setIsPublishedClass(e.target.checked)}
+                        className="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500"
+                      />
+                      <label htmlFor="isPublishedClass" className="text-sm font-medium text-gray-700 cursor-pointer">
+                        Publicado (visível para os alunos)
+                      </label>
                     </div>
                     <DialogClose asChild>
                       <div className="flex flex-col-reverse sm:flex-row gap-3 justify-end items-center mt-4 w-full">

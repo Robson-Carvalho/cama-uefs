@@ -14,7 +14,7 @@ interface IClassRepository {
 
   getLastCreated(): Promise<IClass | null>;
 
-  update(id: string, title: string, path: string, order: number): Promise<void>;
+  update(id: string, title: string, path: string, order: number, isPublished?: boolean): Promise<void | any>;
 
   updateOrder(items: { id: string; order: number }[]): Promise<void>;
 

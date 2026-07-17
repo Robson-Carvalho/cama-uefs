@@ -143,6 +143,20 @@ const Topic = () => {
                       }
                     />
                   </div>
+
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="checkbox" 
+                      id="isPublishedTopic" 
+                      checked={topic.isPublished ?? true}
+                      onChange={(e) => setTopic({ ...topic, isPublished: e.target.checked })}
+                      className="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                    <label htmlFor="isPublishedTopic" className="text-sm font-medium text-slate-700 cursor-pointer flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                      Publicado (visível para os alunos)
+                    </label>
+                  </div>
                   
                   <div className="flex flex-col gap-3">
                     <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
