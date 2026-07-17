@@ -1,8 +1,5 @@
-import { ITopic } from "@/interfaces/ITopic";
-import { api } from "@/services/api";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent } from "react";
 import { useNavigate, useParams } from "react-router";
-import { toast } from "react-toastify";
 import { Header } from "../components/header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -21,79 +18,18 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { MarkdownRenderer } from "@/components/markdownRenderer";
+import MDEditor from '@uiw/react-md-editor';
+import { useTopicData } from "@/hooks/useTopicData";
 
 const Topic = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  
+  const { topic, setTopic, loading, handleUpdate, handleDelete } = useTopicData({ id });
 
-  const [topic, setTopic] = useState<ITopic | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    setLoading(true);
-
-    const getContent = async () => {
-      try {
-        const { data } = await api.get(`/topic/${id}`);
-
-        setTopic(data);
-      } catch (error: any) {
-        if (error.status === 404) {
-          toast.warning("Tópico não encontrado.");
-        }
-
-        if (error.status === 500) {
-          toast.error("Erro interno,");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getContent();
-  }, []);
-
-  const handleUpdate = async (e: FormEvent) => {
+  const onSubmitUpdate = async (e: FormEvent) => {
     e.preventDefault();
-
-    try {
-      const data = await api.put(`/topic/${topic?._id}`, {
-        title: topic?.title,
-        content: topic?.content,
-        path: topic?.path,
-        classID: topic?.classID,
-      });
-
-      if (data.status === 200) {
-        toast.success("Atualizado com sucesso!");
-      }
-    } catch (error: any) {
-      if (error.status === 400) {
-        toast.warning("Dados inválidos.");
-        return;
-      }
-      if (error.status === 500) {
-        toast.error("Erro inesperado.");
-        return;
-      }
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      const data = await api.delete(`/topic/${topic?._id}`);
-
-      if (data.status === 204) {
-        toast.success("Apagado com sucesso!");
-      }
-
-      navigate(`/admin/class/${topic?.classID}`);
-    } catch (error: any) {
-      if (error.status === 500) {
-        toast.error("Erro inesperado.");
-        return;
-      }
-    }
+    await handleUpdate();
   };
 
   return (
@@ -131,9 +67,9 @@ const Topic = () => {
                 </section>
 
                 <section>
-                  <form onSubmit={handleUpdate} className="flex flex-col gap-6">
+                  <form onSubmit={onSubmitUpdate} className="flex flex-col gap-6">
                     <div className="flex flex-col gap-4">
-                      <label className="text-sm font-medium text-gray-700">
+                      <label className="text-sm font-medium text-foreground">
                         Título
                       </label>
                       <Input
@@ -147,7 +83,7 @@ const Topic = () => {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                      <label className="text-sm font-medium text-gray-700">
+                      <label className="text-sm font-medium text-foreground">
                         Path
                       </label>
                       <Input
@@ -161,27 +97,20 @@ const Topic = () => {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                      <label className="text-sm font-medium text-gray-700">
+                      <label className="text-sm font-medium text-foreground">
                         Conteúdo
                       </label>
 
-                      <div className="flex gap-4 justify-between items-center  flex-wrap lg:flex-nowrap">
-                        <Textarea
+                      <div data-color-mode="light">
+                        <MDEditor
                           value={topic.content}
-                          onChange={(e) =>
-                            setTopic({ ...topic, content: e.target.value })
+                          onChange={(val) =>
+                            setTopic({ ...topic, content: val || "" })
                           }
-                          placeholder="Digite o conteúdo"
-                          className="flex-grow h-64 w-32 md:w-1/2 resize-none"
+                          height={500}
+                          preview="live"
+                          className="w-full"
                         />
-
-                        {topic.content && (
-                          <div className="flex-grow shadow-sm p-4 rounded-md border border-gray-200 h-64 w-full md:w-1/2 overflow-auto">
-                            <MarkdownRenderer
-                              content={topic.content as string}
-                            />
-                          </div>
-                        )}
                       </div>
                     </div>
 

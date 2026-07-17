@@ -1,12 +1,8 @@
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { Header } from "../components/header";
-import { FormEvent, useEffect, useState } from "react";
-import { api } from "@/services/api";
-import { IClass } from "@/interfaces/IClass";
-import { toast } from "react-toastify";
+import { FormEvent, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { ITopic } from "@/interfaces/ITopic";
 import { Topics } from "../components/topics";
 import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import {
@@ -18,12 +14,11 @@ import {
 } from "@/components/ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Input } from "@/components/ui/input";
+import { useClassData } from "@/hooks/useClassData";
 
 const Class = () => {
   const { id } = useParams();
-  const [_class, setClass] = useState<IClass | null>(null);
-  const [topics, setTopics] = useState<ITopic[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const { _class, topics, loading, handleCreateTopic, handleUpdateClass, handleDeleteClass } = useClassData({ id });
 
   const [titleTopic, setTitleTopic] = useState<string>("");
   const [pathTopic, setPathTopic] = useState<string>("");
@@ -31,96 +26,21 @@ const Class = () => {
   const [titleClass, setTitleClass] = useState<string>("");
   const [pathClass, setPathClass] = useState<string>("");
 
-  const navigate = useNavigate();
-
-  const [reload, setReload] = useState<boolean>(false);
-
-  useEffect(() => {
-    setLoading(true);
-
-    const getContent = async () => {
-      try {
-        const res = await api.get(`/class/${id}`);
-        const _res = await api.get(`/topic/class/${id}`);
-
-        setClass(res.data);
-        setTopics(_res.data);
-      } catch (error: any) {
-        if (error.status === 404) {
-          toast.warning("Aula não encontrada");
-        }
-
-        if (error.status === 500) {
-          toast.error("Erro interno.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getContent();
-  }, [reload]);
-
-  const handleCreateTopic = async (e: FormEvent) => {
+  const onSubmitCreateTopic = async (e: FormEvent) => {
     e.preventDefault();
-
-    if (!titleTopic) {
-      toast.warning("Título não informado.");
-      return;
-    }
-
-    if (!pathTopic) {
-      toast.warning("Path não informado.");
-      return;
-    }
-
-    try {
-      const data = await api.post("/topic", {
-        title: titleTopic,
-        content: " ",
-        path: pathTopic,
-        classID: _class?._id,
-      });
-
-      console.log(data.headers);
-
-      setPathTopic("");
+    const success = await handleCreateTopic(titleTopic, pathTopic);
+    if (success) {
       setTitleTopic("");
-      toast.success("Tópico criado com sucesso!");
-    } catch (error) {
-      toast.warning("Erro ao criar tópico.");
-    } finally {
-      setReload(!reload);
+      setPathTopic("");
     }
   };
 
-  const handleUpdateClass = async (e: FormEvent) => {
+  const onSubmitUpdateClass = async (e: FormEvent) => {
     e.preventDefault();
-
-    try {
-      await api.put(`/class/${_class?._id}`, {
-        title: titleClass,
-        path: pathClass,
-      });
-
-      setPathTopic("");
-      setTitleTopic("");
-      toast.success("Tópico criado com sucesso!");
-    } catch (error) {
-      toast.warning("Erro ao atulizar aula.");
-    } finally {
-      setReload(!reload);
-    }
-  };
-
-  const handleDeleteClass = async () => {
-    try {
-      await api.delete(`/class/${_class?._id}`);
-      navigate("/admin");
-    } catch (error: any) {
-      if (error.status) {
-        toast.warning("Erro inesperado");
-      }
+    const success = await handleUpdateClass(titleClass, pathClass);
+    if (success) {
+      setTitleClass("");
+      setPathClass("");
     }
   };
 
@@ -158,7 +78,7 @@ const Class = () => {
                         </DialogDescription>
 
                         <form
-                          onSubmit={handleCreateTopic}
+                          onSubmit={onSubmitCreateTopic}
                           className="pt-4 flex flex-col gap-6"
                         >
                           <div className="flex flex-col gap-4">
@@ -224,7 +144,7 @@ const Class = () => {
                         </DialogDescription>
 
                         <form
-                          onSubmit={handleUpdateClass}
+                          onSubmit={onSubmitUpdateClass}
                           className="pt-4 flex flex-col gap-6"
                         >
                           <div className="flex flex-col gap-4">

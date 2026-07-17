@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from "express";
-import { DependecyInjectionClassRepository } from "../containers/DependecyInjectionClassRepository";
+import { ClassFactory } from "../factories/ClassFactory";
 import { InternalServerError, ValidationError } from "../../core/errors/Errors";
 
 class ClassController {
-  private _get = DependecyInjectionClassRepository.getGetUseCase();
-  private _create = DependecyInjectionClassRepository.getCreateUseCase();
-  private _getById = DependecyInjectionClassRepository.getGetByIdUseCase();
+  private _get = ClassFactory.getGetUseCase();
+  private _create = ClassFactory.getCreateUseCase();
+  private _getById = ClassFactory.getGetByIdUseCase();
   private _getContentMap =
-    DependecyInjectionClassRepository.getGetContentMapUseCase();
-  private _update = DependecyInjectionClassRepository.getUpdateUseCase();
-  private _delete = DependecyInjectionClassRepository.getDeleteUseCase();
+    ClassFactory.getGetContentMapUseCase();
+  private _update = ClassFactory.getUpdateUseCase();
+  private _delete = ClassFactory.getDeleteUseCase();
 
   async get(req: Request, res: Response, next: NextFunction) {
     try {

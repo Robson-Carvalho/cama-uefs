@@ -6,10 +6,8 @@ services:
     image: postgres:16-alpine
     container_name: obi-uefs-postgres
     restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-obi_uefs}
-      POSTGRES_USER: ${POSTGRES_USER:-obi_admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-obi_secret}
+    env_file:
+      - ./backend/.env
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
@@ -31,20 +29,8 @@ services:
       dockerfile: Dockerfile
     container_name: obi-uefs-backend
     restart: unless-stopped
-    environment:
-      NODE_ENV: ${NODE_ENV:-development}
-      PORT: ${BACKEND_PORT:-3001}
-      DATABASE_URL: postgres://${POSTGRES_USER:-obi_admin}:${POSTGRES_PASSWORD:-obi_secret}@postgres:5432/${POSTGRES_DB:-obi_uefs}
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: ${POSTGRES_DB:-obi_uefs}
-      POSTGRES_USER: ${POSTGRES_USER:-obi_admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-obi_secret}
-      JWT_SECRET: ${JWT_SECRET:-change_me_in_production}
-      SALT_ROUNDS: ${SALT_ROUNDS:-10}
-      NODEMAILER_EMAIL_USER: ${NODEMAILER_EMAIL_USER:-}
-      NODEMAILER_PASSWORD: ${NODEMAILER_PASSWORD:-}
-      EMAIL_USER: ${EMAIL_USER:-}
+    env_file:
+      - ./backend/.env
     ports:
       - "${BACKEND_PORT:-3001}:3001"
     volumes:
@@ -67,8 +53,8 @@ services:
       dockerfile: Dockerfile
     container_name: obi-uefs-frontend
     restart: unless-stopped
-    environment:
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
+    env_file:
+      - ./frontend/.env.local
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
     volumes:

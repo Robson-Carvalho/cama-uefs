@@ -1,4 +1,4 @@
-require("./infrastructure/config/env/config");
+import "dotenv/config";
 
 import { app } from "./app";
 

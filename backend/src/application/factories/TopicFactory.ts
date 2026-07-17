@@ -8,7 +8,7 @@ import { GetByPath } from "../../core/use-cases/topic/GetByPath";
 import { GetTopicByClassAndPath } from "../../core/use-cases/topic/GetTopicByClassAndPath";
 import { GetByClassId } from "../../core/use-cases/topic/GetByClassId";
 
-class DependecyInjectionTopicRepository {
+class TopicFactory {
   private static _topicRepository = new TopicRepository();
 
   static getClassRepository() {
@@ -48,4 +48,4 @@ class DependecyInjectionTopicRepository {
   }
 }
 
-export { DependecyInjectionTopicRepository };
+export { TopicFactory };

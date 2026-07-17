@@ -8,7 +8,11 @@ import { IPayload } from "../../dtos/AuthDTOs";
 import { NotFoundError, UnauthorizedError } from "../../errors/Errors";
 
 class SignIn {
-  constructor(private _adminRepository: AdminRepository) {}
+  constructor(
+    private _adminRepository: AdminRepository,
+    private _encryption: Encryption,
+    private _jwt: JWT
+  ) {}
 
   async execute(email: string, password: string): Promise<IPayload | null> {
     const admin: IAdmin | null = await this._adminRepository.getByEmail(email);
@@ -17,7 +21,7 @@ class SignIn {
       throw new NotFoundError("Admin not found.");
     }
 
-    const auth: boolean = await Encryption.getInstance().compare(
+    const auth: boolean = await this._encryption.compare(
       password,
       admin.password
     );
@@ -26,7 +30,7 @@ class SignIn {
       throw new UnauthorizedError("E-mail and/or password invalid.");
     }
 
-    const token: string = (await JWT.getInstance().sign(
+    const token: string = (await this._jwt.sign(
       admin.id
     )) as string;
 

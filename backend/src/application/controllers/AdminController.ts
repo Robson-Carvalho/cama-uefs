@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from "express";
-import { DependecyInjectionAdminRepository } from "../containers/DependecyInjectionAdminRepository";
+import { AdminFactory } from "../factories/AdminFactory";
 import { InternalServerError, ValidationError } from "../../core/errors/Errors";
 
 class AdminController {
-  private _get = DependecyInjectionAdminRepository.getGetUseCase();
-  private _getById = DependecyInjectionAdminRepository.getGetByIdUseCase();
+  private _get = AdminFactory.getGetUseCase();
+  private _getById = AdminFactory.getGetByIdUseCase();
   private _getByEmail =
-    DependecyInjectionAdminRepository.getGetByEmailUseCase();
-  private _create = DependecyInjectionAdminRepository.getCreateUseCase();
-  private _update = DependecyInjectionAdminRepository.getUpdateUseCase();
-  private _delete = DependecyInjectionAdminRepository.getDeleteUseCase();
+    AdminFactory.getGetByEmailUseCase();
+  private _create = AdminFactory.getCreateUseCase();
+  private _update = AdminFactory.getUpdateUseCase();
+  private _delete = AdminFactory.getDeleteUseCase();
 
   async get(req: Request, res: Response, next: NextFunction) {
     try {

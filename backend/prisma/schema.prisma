@@ -18,25 +18,29 @@ model Admin {
 }
 
 model Class {
-  id        String   @id @default(uuid())
-  title     String
-  path      String   @unique
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  topics    Topic[]
+  id          String   @id @default(uuid())
+  title       String
+  path        String   @unique
+  order       Int      @default(0)
+  isPublished Boolean  @default(true) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  topics      Topic[]
 
   @@map("classes")
 }
 
 model Topic {
-  id        String   @id @default(uuid())
-  classId   String   @map("class_id")
-  title     String
-  path      String
-  content   String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  classId     String   @map("class_id")
+  title       String
+  path        String
+  content     String
+  order       Int      @default(0)
+  isPublished Boolean  @default(true) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  class       Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   @@unique([classId, path])
   @@map("topics")

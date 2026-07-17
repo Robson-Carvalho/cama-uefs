@@ -5,7 +5,11 @@ import { IAdmin } from "../../dtos/AdminDTOs";
 import { NotFoundError } from "../../errors/Errors";
 
 class RecoverPassword {
-  constructor(private _adminRepository: IAdminRepository) {}
+  constructor(
+    private _adminRepository: IAdminRepository,
+    private _mailer: Mailer,
+    private _encryption: Encryption
+  ) {}
 
   async execute(email: string): Promise<void> {
     const admin: IAdmin | null = await this._adminRepository.getByEmail(email);
@@ -16,7 +20,7 @@ class RecoverPassword {
 
     const newPassword = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const newPasswordHash = await Encryption.getInstance().hash(newPassword);
+    const newPasswordHash = await this._encryption.hash(newPassword);
 
     await this._adminRepository.update(
       admin.id,
@@ -25,7 +29,7 @@ class RecoverPassword {
       newPasswordHash
     );
 
-    await Mailer.getInstance().recoverPassword(
+    await this._mailer.recoverPassword(
       admin.name,
       admin.email,
       newPassword

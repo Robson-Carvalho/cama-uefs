@@ -1,18 +1,18 @@
 import { Request, Response, NextFunction } from "express";
-import { DependecyInjectionTopicRepository } from "../containers/DependecyInjectionTopicRepository";
+import { TopicFactory } from "../factories/TopicFactory";
 import { InternalServerError, ValidationError } from "../../core/errors/Errors";
 
 class TopicController {
-  private _get = DependecyInjectionTopicRepository.getGetUseCase();
+  private _get = TopicFactory.getGetUseCase();
   private _getByClassId =
-    DependecyInjectionTopicRepository.getGetByClassIdUseCase();
-  private _create = DependecyInjectionTopicRepository.getCreateUseCase();
-  private _getById = DependecyInjectionTopicRepository.getGetByIdUseCase();
-  private _getByPath = DependecyInjectionTopicRepository.getGetByPathUseCase();
-  private _update = DependecyInjectionTopicRepository.getUpdateUseCase();
-  private _delete = DependecyInjectionTopicRepository.getDeleteUseCase();
+    TopicFactory.getGetByClassIdUseCase();
+  private _create = TopicFactory.getCreateUseCase();
+  private _getById = TopicFactory.getGetByIdUseCase();
+  private _getByPath = TopicFactory.getGetByPathUseCase();
+  private _update = TopicFactory.getUpdateUseCase();
+  private _delete = TopicFactory.getDeleteUseCase();
   private _getTopicByClassAndPath =
-    DependecyInjectionTopicRepository.getTopicByClassAndPathUseCase();
+    TopicFactory.getTopicByClassAndPathUseCase();
 
   async getByClassId(req: Request, res: Response, next: NextFunction) {
     try {

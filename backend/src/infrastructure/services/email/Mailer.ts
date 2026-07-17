@@ -1,26 +1,12 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { InternalServerError } from "../../../core/errors/Errors";
 import { recoverPasswordTemplate } from "./templates/recoverPasswordTemplate";
 
 class Mailer {
-  private static instance: Mailer;
+  private resend: Resend;
 
-  private transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.NODEMAILER_EMAIL_USER as string,
-      pass: process.env.NODEMAILER_PASSWORD as string,
-    },
-  });
-
-  private constructor() {}
-
-  public static getInstance(): Mailer {
-    if (!Mailer.instance) {
-      Mailer.instance = new Mailer();
-    }
-
-    return Mailer.instance;
+  constructor() {
+    this.resend = new Resend(process.env.RESEND_API_KEY as string);
   }
 
   public async recoverPassword(
@@ -29,8 +15,8 @@ class Mailer {
     newPassword: string
   ) {
     try {
-      await this.transporter.sendMail({
-        from: `${process.env.EMAIL_USER}`,
+      await this.resend.emails.send({
+        from: process.env.MAIL_FROM || "cama-uefs@safeentrysistemas.com.br",
         to: email,
         subject: "CAMA/UEFS - Recuperação de senha",
         html: recoverPasswordTemplate(name, newPassword),

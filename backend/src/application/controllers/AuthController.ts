@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { ValidationError, InternalServerError } from "../../core/errors/Errors";
-import { DependecyInjectionAuthRepository } from "../containers/DependecyInjectionAuthRepository";
+import { AuthFactory } from "../factories/AuthFactory";
 
 class AuthController {
-  private _signIn = DependecyInjectionAuthRepository.getSignInUseCase();
+  private _signIn = AuthFactory.getSignInUseCase();
   private _recoverPassword =
-    DependecyInjectionAuthRepository.getRecoverPasswordUseCase();
+    AuthFactory.getRecoverPasswordUseCase();
 
   async signIn(req: Request, res: Response, next: NextFunction) {
     try {

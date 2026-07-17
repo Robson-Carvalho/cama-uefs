@@ -6,7 +6,7 @@ import { GetContentMap } from "../../core/use-cases/class/GetContentMap";
 import { Update } from "../../core/use-cases/class/Update";
 import { ClassRepository } from "../../infrastructure/repositories/ClassRepository";
 
-class DependecyInjectionClassRepository {
+class ClassFactory {
   private static _classRepository = new ClassRepository();
 
   static getClassRepository() {
@@ -38,4 +38,4 @@ class DependecyInjectionClassRepository {
   }
 }
 
-export { DependecyInjectionClassRepository };
+export { ClassFactory };

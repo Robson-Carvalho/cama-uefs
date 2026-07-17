@@ -16,7 +16,7 @@ const Home = () => {
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 relative z-10 w-full max-w-7xl mx-auto py-20 lg:py-32">
         <div className="text-center space-y-8 animate-fade-in-up">
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold font-heading text-transparent bg-clip-text bg-gradient-to-br from-foreground to-foreground/60 tracking-tight max-w-4xl mx-auto leading-tight">
-            Domine Algoritmos para a <br className="hidden md:block" /> <span className="text-primary bg-clip-text bg-gradient-to-r from-primary to-blue-500">Olimpíada de Informática</span>
+            Domine Algoritmos para a <br className="hidden md:block" /> <span className="text-primary bg-clip-text bg-gradient-to-r from-primary to-blue-500">Olimpíada Brasileira de Informática</span>.
           </h1>
 
           <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">

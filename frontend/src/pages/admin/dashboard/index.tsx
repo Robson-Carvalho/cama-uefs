@@ -1,9 +1,6 @@
 import { Header } from "../components/header";
-import { FormEvent, useEffect, useState } from "react";
-import { api } from "@/services/api";
-import { toast } from "react-toastify";
+import { FormEvent, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { IClass } from "@/interfaces/IClass";
 import { Classes } from "../components/classes";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,58 +13,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useDashboardData } from "@/hooks/useDashboardData";
 
 const AdminDashboard = () => {
-  const [classes, setClasses] = useState<IClass[] | []>([] as IClass[]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const { classes, loading, handleCreateClass } = useDashboardData();
 
   const [title, setTitle] = useState<string>("");
   const [path, setPath] = useState<string>("");
 
-  const [reload, setReload] = useState<boolean>(false);
-
-  useEffect(() => {
-    setLoading(true);
-
-    const getContent = async () => {
-      try {
-        const response = await api.get("/class");
-        const { data } = response;
-        setClasses(data);
-      } catch (error) {
-        toast.warning("Erro inesperado.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getContent();
-  }, [reload]);
-
-  const handleCreateClass = async (e: FormEvent) => {
+  const onSubmitCreateClass = async (e: FormEvent) => {
     e.preventDefault();
-
-    if (!title) {
-      toast.warning("Título não informado.");
-      return;
-    }
-
-    if (!path) {
-      toast.warning("Path não informado.");
-      return;
-    }
-
-    try {
-      await api.post("/class", {
-        title,
-        path,
-      });
-
-      toast.success("Aula criada com sucesso.");
-    } catch (error) {
-      toast.warning("Erro ao criar aula.");
-    } finally {
-      setReload(!reload);
+    const success = await handleCreateClass(title, path);
+    if (success) {
+      setTitle("");
+      setPath("");
     }
   };
 
@@ -105,7 +64,7 @@ const AdminDashboard = () => {
                         </DialogDescription>
 
                         <form
-                          onSubmit={handleCreateClass}
+                          onSubmit={onSubmitCreateClass}
                           className="pt-4 flex flex-col gap-6"
                         >
                           <div className="flex flex-col gap-4">

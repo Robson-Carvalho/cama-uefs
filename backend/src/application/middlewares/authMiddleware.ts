@@ -9,6 +9,8 @@ type TokenPaylod = {
   exp: number;
 };
 
+const jwtService = new JWT();
+
 const AuthMiddleware = async (
   req: Request,
   res: Response,
@@ -23,7 +25,7 @@ const AuthMiddleware = async (
   const [token, _] = authorization.split(" ");
 
   try {
-    const decoded = await JWT.getInstance().verify(token);
+    const decoded = await jwtService.verify(token);
 
     const { id } = decoded as TokenPaylod;
 

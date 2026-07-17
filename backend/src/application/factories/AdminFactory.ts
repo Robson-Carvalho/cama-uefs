@@ -5,9 +5,11 @@ import { GetByEmail } from "../../core/use-cases/admin/GetByEmail";
 import { GetById } from "../../core/use-cases/admin/GetById";
 import { Update } from "../../core/use-cases/admin/Update";
 import { AdminRepository } from "../../infrastructure/repositories/AdminRepository";
+import { Encryption } from "../../infrastructure/utils/Encryption";
 
-class DependecyInjectionAdminRepository {
+class AdminFactory {
   private static _adminRepository = new AdminRepository();
+  private static _encryption = new Encryption();
 
   static getAdminRepository() {
     return this._adminRepository;
@@ -18,7 +20,7 @@ class DependecyInjectionAdminRepository {
   }
 
   static getCreateUseCase() {
-    return new Create(this._adminRepository);
+    return new Create(this._adminRepository, this._encryption);
   }
 
   static getGetByIdUseCase() {
@@ -34,8 +36,8 @@ class DependecyInjectionAdminRepository {
   }
 
   static getUpdateUseCase() {
-    return new Update(this._adminRepository);
+    return new Update(this._adminRepository, this._encryption);
   }
 }
 
-export { DependecyInjectionAdminRepository };
+export { AdminFactory };

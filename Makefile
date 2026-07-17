@@ -58,6 +58,12 @@ rebuild: ## Para tudo, reconstrói e sobe novamente
 	$(DC) build --no-cache
 	$(DC) up -d
 
+.PHONY: prod
+prod: ## Prepara o ambiente para produção e sobe os containers
+	$(DC) down
+	$(DC) build --no-cache
+	$(DC) up -d
+
 # ------------------------------------------------------------
 # Logs
 # ------------------------------------------------------------
