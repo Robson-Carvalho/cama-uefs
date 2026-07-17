@@ -14,7 +14,7 @@ class RequestEmailChange {
     const admin = await this._adminRepository.getById(adminId);
 
     if (!admin) {
-      throw new NotFoundError("Admin not found.");
+      throw new NotFoundError("Instrutor não encontrado.");
     }
 
     const token = this._jwt.signWithExpiration({ id: admin.id, newEmail, action: 'change_email' }, "15m");

@@ -1,3 +1,4 @@
+import { handleApiError } from "@/utils/errorHandler";
 import { useState, useEffect } from "react";
 import { api } from "@/services/api";
 import { IClass } from "@/interfaces/IClass";
@@ -28,7 +29,7 @@ export const useDashboardData = () => {
         const response = await api.get(`/class?page=${page}&limit=${limit}`);
         setClasses(response.data.data);
         setTotalPages(Math.ceil(response.data.total / limit));
-      } catch (error) {
+      } catch (error: any) {
         toast.warning("Erro inesperado.");
       } finally {
         setLoading(false);
@@ -68,7 +69,7 @@ export const useDashboardData = () => {
       if (status >= 400 && status < 500) {
         toast.warning(message);
       } else {
-        toast.error("Erro interno. Tente novamente mais tarde.");
+        handleApiError(error, "Erro interno. Tente novamente mais tarde.");
       }
       return false;
     } finally {
@@ -87,8 +88,8 @@ export const useDashboardData = () => {
     
     try {
       await api.put('/class/reorder', { items });
-    } catch (error) {
-      toast.error('Erro ao reordenar aulas');
+    } catch (error: any) {
+      handleApiError(error, 'Erro ao reordenar aulas');
       setReload(prev => !prev);
     }
   };
@@ -119,7 +120,7 @@ export const useDashboardData = () => {
       await api.put('/class/reorder', { items });
       toast.success(`Aula movida para a página ${direction === 'prev' ? page - 1 : page + 1}`);
     } catch (error: any) {
-      toast.error('Erro ao mover a aula');
+      handleApiError(error, 'Erro ao mover a aula');
     } finally {
       setReload(prev => !prev);
     }

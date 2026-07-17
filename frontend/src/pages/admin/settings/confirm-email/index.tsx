@@ -1,3 +1,4 @@
+import { handleApiError } from "@/utils/errorHandler";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +21,7 @@ const ConfirmEmailChange = () => {
     // We only execute once
     const confirmToken = async () => {
       if (!token) {
-        toast.error("Token não encontrado na URL.");
+        toast.warn("Token não encontrado na URL.");
         setLoading(false);
         return;
       }
@@ -38,7 +39,7 @@ const ConfirmEmailChange = () => {
           }, 3000);
         }
       } catch (error: any) {
-        toast.error("Token inválido ou expirado.");
+      handleApiError(error, "Token inválido ou expirado.");
         setSuccess(false);
       } finally {
         setLoading(false);

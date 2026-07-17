@@ -8,7 +8,7 @@ class ToggleActive {
     const admin = await this._adminRepository.getById(id);
 
     if (!admin) {
-      throw new NotFoundError("Admin not found.");
+      throw new NotFoundError("Instrutor não encontrado.");
     }
 
     // Protect super admin from being deactivated?

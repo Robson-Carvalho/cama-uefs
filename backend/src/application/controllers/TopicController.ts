@@ -29,7 +29,7 @@ class TopicController {
         return next(e);
       }
 
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 
@@ -56,7 +56,7 @@ class TopicController {
         return next(e);
       }
 
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 

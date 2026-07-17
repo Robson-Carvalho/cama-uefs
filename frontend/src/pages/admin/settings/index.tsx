@@ -1,3 +1,4 @@
+import { handleApiError } from "@/utils/errorHandler";
 import { useAuth } from "@/contexts/auth/useAuth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,7 @@ const AdminSettings = () => {
       if (error.response?.status === 404) {
         toast.warning("Admin não encontrado.");
       } else {
-        toast.error("Erro inesperado ao alterar senha.");
+        handleApiError(error, "Erro inesperado ao alterar senha.");
       }
     } finally {
       setLoadingPassword(false);
@@ -93,7 +94,7 @@ const AdminSettings = () => {
         }, 1500);
       }
     } catch (error: any) {
-      toast.error("Erro ao atualizar o nome.");
+      handleApiError(error, "Erro ao atualizar o nome.");
     } finally {
       setLoadingName(false);
     }
@@ -118,7 +119,7 @@ const AdminSettings = () => {
         setNewEmail(payload?.admin.email || ""); // Reset after request
       }
     } catch (error: any) {
-      toast.error("Erro ao solicitar troca de e-mail.");
+      handleApiError(error, "Erro ao solicitar troca de e-mail.");
     } finally {
       setLoadingEmail(false);
     }

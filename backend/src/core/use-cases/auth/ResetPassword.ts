@@ -21,7 +21,7 @@ class ResetPassword {
       const admin = await this._adminRepository.getByEmail(decoded.email);
 
       if (!admin) {
-        throw new NotFoundError("Admin not found with e-mail.");
+        throw new NotFoundError("Nenhum instrutor encontrado com este e-mail.");
       }
 
       const newPasswordHash = await this._encryption.hash(newPassword);

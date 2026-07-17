@@ -1,3 +1,4 @@
+import { handleApiError } from "@/utils/errorHandler";
 import { useState, useEffect } from "react";
 import { api } from "@/services/api";
 import { ITopic } from "@/interfaces/ITopic";
@@ -27,7 +28,7 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
         if (error.status === 404) {
           toast.warning("Tópico não encontrado.");
         } else if (error.status === 500) {
-          toast.error("Erro interno.");
+          handleApiError(error, "Erro interno.");
         }
       } finally {
         setLoading(false);
@@ -72,7 +73,7 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
       if (status >= 400 && status < 500) {
         toast.warning(message);
       } else {
-        toast.error("Erro interno. Tente novamente mais tarde.");
+        handleApiError(error, "Erro interno. Tente novamente mais tarde.");
       }
       return false;
     }
@@ -92,7 +93,7 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
       return true;
     } catch (error: any) {
       if (error.status === 500) {
-        toast.error("Erro inesperado.");
+        handleApiError(error, "Erro inesperado.");
       }
       return false;
     }

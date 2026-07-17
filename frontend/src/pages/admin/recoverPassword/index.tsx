@@ -1,3 +1,4 @@
+import { handleApiError } from "@/utils/errorHandler";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +44,7 @@ const RecoverPassword = () => {
         return;
       }
       if (error.status === 500) {
-        toast.error("Erro inesperado.");
+        handleApiError(error, "Erro inesperado.");
         return;
       }
     } finally {

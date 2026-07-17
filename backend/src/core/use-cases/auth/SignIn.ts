@@ -18,11 +18,11 @@ class SignIn {
     const admin: IAdmin | null = await this._adminRepository.getByEmail(email);
 
     if (!admin) {
-      throw new NotFoundError("Admin not found.");
+      throw new NotFoundError("Instrutor não encontrado.");
     }
 
     if (!admin.active) {
-      throw new UnauthorizedError("Account disabled.");
+      throw new UnauthorizedError("Sua conta está desativada. Entre em contato com um administrador.");
     }
 
     const auth: boolean = await this._encryption.compare(
@@ -31,7 +31,7 @@ class SignIn {
     );
 
     if (!auth) {
-      throw new UnauthorizedError("E-mail and/or password invalid.");
+      throw new UnauthorizedError("E-mail ou senha inválidos.");
     }
 
     const token: string = (await this._jwt.sign({

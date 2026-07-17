@@ -24,7 +24,7 @@ class AdminController {
         return next(e);
       }
 
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 
@@ -40,7 +40,7 @@ class AdminController {
         return next(e);
       }
 
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 
@@ -56,7 +56,7 @@ class AdminController {
         return next(e);
       }
 
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 
@@ -65,17 +65,17 @@ class AdminController {
       const { user_role } = req as any;
 
       if (user_role !== "ADMIN") {
-        throw new ForbiddenError("Only ADMIN can create new users.");
+        throw new ForbiddenError("Apenas administradores podem realizar esta ação.");
       }
 
       const { name, email } = req.body;
 
       if (!name) {
-        throw new ValidationError("Name required");
+        throw new ValidationError("O nome é obrigatório.");
       }
 
       if (!email) {
-        throw new ValidationError("Email required");
+        throw new ValidationError("O e-mail é obrigatório.");
       }
 
       const _id = await this._create.execute(name, email);
@@ -86,7 +86,7 @@ class AdminController {
         return next(e);
       }
 
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 
@@ -97,11 +97,11 @@ class AdminController {
       const { name, email, password } = req.body;
 
       if (!name) {
-        throw new ValidationError("Name required");
+        throw new ValidationError("O nome é obrigatório.");
       }
 
       if (!email) {
-        throw new ValidationError("Email required");
+        throw new ValidationError("O e-mail é obrigatório.");
       }
 
       await this._update.execute(id, name, email, password);
@@ -112,7 +112,7 @@ class AdminController {
         return next(e);
       }
 
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 
@@ -128,7 +128,7 @@ class AdminController {
         return next(e);
       }
 
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 
@@ -138,7 +138,7 @@ class AdminController {
       const { newEmail } = req.body;
 
       if (!newEmail) {
-        throw new ValidationError("New email required");
+        throw new ValidationError("O novo e-mail é obrigatório.");
       }
 
       await this._requestEmailChange.execute(id, newEmail);
@@ -148,7 +148,7 @@ class AdminController {
       if (!(e instanceof InternalServerError)) {
         return next(e);
       }
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 
@@ -157,7 +157,7 @@ class AdminController {
       const { token } = req.body;
 
       if (!token) {
-        throw new ValidationError("Token required");
+        throw new ValidationError("O token é obrigatório.");
       }
 
       await this._confirmEmailChange.execute(token);
@@ -167,7 +167,7 @@ class AdminController {
       if (!(e instanceof InternalServerError)) {
         return next(e);
       }
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 
@@ -176,14 +176,14 @@ class AdminController {
       const { user_role } = req as any;
 
       if (user_role !== "ADMIN") {
-        throw new ForbiddenError("Only ADMIN can toggle active status.");
+        throw new ForbiddenError("Apenas administradores podem alterar o status.");
       }
 
       const { id } = req.params;
       const { active } = req.body;
 
       if (typeof active !== "boolean") {
-        throw new ValidationError("Active status required");
+        throw new ValidationError("O status (ativo/inativo) é obrigatório.");
       }
 
       await this._toggleActive.execute(id, active);
@@ -193,7 +193,7 @@ class AdminController {
       if (!(e instanceof InternalServerError)) {
         return next(e);
       }
-      return next(new InternalServerError("Internal server error"));
+      return next(new InternalServerError("Erro interno do servidor."));
     }
   }
 }

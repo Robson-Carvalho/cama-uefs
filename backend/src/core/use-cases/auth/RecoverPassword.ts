@@ -15,7 +15,7 @@ class RecoverPassword {
     const admin: IAdmin | null = await this._adminRepository.getByEmail(email);
 
     if (!admin) {
-      throw new NotFoundError("Admin not found with e-mail.");
+      throw new NotFoundError("Nenhum instrutor encontrado com este e-mail.");
     }
 
     const token = this._jwt.signWithExpiration({ email: admin.email, action: 'recover_password' }, "15m");

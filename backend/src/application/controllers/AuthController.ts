@@ -11,9 +11,9 @@ class AuthController {
     try {
       const { email, password } = req.body;
 
-      if (!email) next(new ValidationError("E-mail required."));
+      if (!email) next(new ValidationError("O e-mail é obrigatório."));
 
-      if (!password) next(new ValidationError("Password required."));
+      if (!password) next(new ValidationError("A senha é obrigatória."));
 
       const payload = await this._signIn.execute(email, password);
 
@@ -31,7 +31,7 @@ class AuthController {
     try {
       const { email } = req.body;
 
-      if (!email) next(new ValidationError("E-mail required."));
+      if (!email) next(new ValidationError("O e-mail é obrigatório."));
 
       await this._recoverPassword.execute(email);
 
@@ -49,8 +49,8 @@ class AuthController {
     try {
       const { token, newPassword } = req.body;
 
-      if (!token) next(new ValidationError("Token is required."));
-      if (!newPassword) next(new ValidationError("New password is required."));
+      if (!token) next(new ValidationError("O token é obrigatório."));
+      if (!newPassword) next(new ValidationError("A nova senha é obrigatória."));
 
       await this._resetPassword.execute(token, newPassword);
 

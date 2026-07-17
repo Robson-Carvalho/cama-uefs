@@ -1,7 +1,8 @@
 import { ITopicRepository } from "../../core/domain/repositories/ITopicRepository";
 import { ITopic } from "../../core/dtos/TopicDTOs";
 import { prisma } from "../databases/prismaClient";
-import { ValidationError } from "../../core/errors/Errors";
+import { ValidationError, InternalServerError } from "../../core/errors/Errors";
+import { cacheService } from "../services/RedisCacheService";
 
 class TopicRepository implements ITopicRepository {
   async getByClassId(id: string, skip?: number, take?: number): Promise<{ data: ITopic[]; total: number }> {
@@ -52,7 +53,13 @@ class TopicRepository implements ITopicRepository {
     topicPath: string
   ): Promise<ITopic | null> {
     try {
-      return await prisma.topic.findFirst({
+      const cacheKey = `site:topic:${classPath}:${topicPath}`;
+      const cached = await cacheService.get<ITopic>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
+      const topic = await prisma.topic.findFirst({
         where: {
           path: topicPath,
           isPublished: true,
@@ -62,9 +69,14 @@ class TopicRepository implements ITopicRepository {
           },
         },
       });
+      
+      if (topic) {
+        await cacheService.set(cacheKey, topic, 300); // Cache de 5 minutos
+      }
+      return topic;
     } catch (error) {
       console.error("Error fetching topic by class and path:", error);
-      throw new Error("Database query error");
+      throw new InternalServerError("Erro na consulta ao banco de dados.");
     }
   }
 
@@ -75,9 +87,12 @@ class TopicRepository implements ITopicRepository {
     classId: string
   ): Promise<ITopic | null> {
     try {
-      return await prisma.topic.create({
+      const newTopic = await prisma.topic.create({
         data: { title, content, path, classId },
       });
+      await cacheService.del("site:contentMap"); // O menu lateral (mapa) precisa ser atualizado
+      await cacheService.delByPrefix("site:topic:"); // Invalida todos os tópicos (garante consistência imediata)
+      return newTopic;
     } catch (error: any) {
       console.error("Error creating topic:", error);
       if (error.code === "P2002") {
@@ -97,10 +112,13 @@ class TopicRepository implements ITopicRepository {
     isPublished?: boolean
   ): Promise<ITopic | null> {
     try {
-      return await prisma.topic.update({
+      const updatedTopic = await prisma.topic.update({
         where: { id },
         data: { title, content, path, classId, order, ...(isPublished !== undefined && { isPublished }) },
       });
+      await cacheService.del("site:contentMap");
+      await cacheService.delByPrefix("site:topic:");
+      return updatedTopic;
     } catch (error: any) {
       console.error("Error updating topic:", error);
       if (error.code === "P2002") {
@@ -120,6 +138,8 @@ class TopicRepository implements ITopicRepository {
           })
         )
       );
+      await cacheService.del("site:contentMap");
+      await cacheService.delByPrefix("site:topic:");
     } catch (error) {
       console.error("Error updating topic orders:", error);
       throw error;
@@ -129,6 +149,8 @@ class TopicRepository implements ITopicRepository {
   async delete(id: string): Promise<void> {
     try {
       await prisma.topic.delete({ where: { id } });
+      await cacheService.del("site:contentMap");
+      await cacheService.delByPrefix("site:topic:");
     } catch (error) {
       console.error("Error deleting topic:", error);
       throw error;

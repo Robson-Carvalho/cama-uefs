@@ -19,7 +19,6 @@ class Create {
 
     const id = await this._adminRepository.create(name, email, hashPassword);
     
-    // Send email to new instructor
     await this._mailer.welcomeInstructor(name, email, tempPassword);
 
     return id;

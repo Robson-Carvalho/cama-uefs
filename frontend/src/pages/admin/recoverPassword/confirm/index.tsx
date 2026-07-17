@@ -1,3 +1,4 @@
+import { handleApiError } from "@/utils/errorHandler";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +28,7 @@ const ConfirmRecoverPassword = () => {
     e.preventDefault();
 
     if (!token) {
-      toast.error("Token não encontrado na URL.");
+      toast.warn("Token não encontrado na URL.");
       return;
     }
 
@@ -55,10 +56,10 @@ const ConfirmRecoverPassword = () => {
       }
     } catch (error: any) {
       if (error.response?.status === 400 || error.response?.status === 401) {
-        toast.error("Token inválido ou expirado.");
+        handleApiError(error, "Token inválido ou expirado.");
         return;
       }
-      toast.error("Erro inesperado ao alterar senha.");
+      handleApiError(error, "Erro inesperado ao alterar senha.");
     } finally {
       setLoading(false);
     }

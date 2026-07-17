@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
+import { handleApiError } from "@/utils/errorHandler";
 import { api } from "@/services/api";
 import { Plus, ToggleRight, UserX, Loader2 } from "lucide-react";
 
@@ -26,8 +27,8 @@ const Instructors = () => {
     try {
       const { data } = await api.get("/admin");
       setInstructors(data);
-    } catch (error) {
-      toast.error("Erro ao buscar instrutores.");
+    } catch (error: any) {
+      handleApiError(error, "Erro ao buscar instrutores.");
     } finally {
       setLoading(false);
     }
@@ -51,10 +52,10 @@ const Instructors = () => {
         toast.success("Instrutor criado e e-mail enviado com sucesso!");
         setName("");
         setEmail("");
-        fetchInstructors();
+        await fetchInstructors();
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Erro ao criar instrutor.");
+      handleApiError(error, "Erro ao criar instrutor.");
     } finally {
       setSubmitting(false);
     }
@@ -70,8 +71,8 @@ const Instructors = () => {
         toast.success(`Acesso ${!currentStatus ? 'ativado' : 'desativado'} com sucesso.`);
         fetchInstructors();
       }
-    } catch (error) {
-      toast.error("Erro ao alterar o status do instrutor.");
+    } catch (error: any) {
+      handleApiError(error, "Erro ao alterar o status do instrutor.");
     }
   };
 

@@ -3,17 +3,20 @@ import { IClass } from "../../core/dtos/ClassDTOs";
 import { IContentMap } from "../../core/interfaces/IContentMap";
 import { InternalServerError, ValidationError } from "../../core/errors/Errors";
 import { prisma } from "../databases/prismaClient";
+import { cacheService } from "../services/RedisCacheService";
 
 class ClassRepository implements IClassRepository {
   async create(title: string, path: string): Promise<IClass | null> {
     try {
-      return await prisma.class.create({ data: { title, path } });
+      const newClass = await prisma.class.create({ data: { title, path } });
+      await cacheService.del("site:contentMap");
+      return newClass;
     } catch (error: any) {
       console.error("Error creating class:", error);
       if (error.code === "P2002") {
         throw new ValidationError("Já existe uma aula com este título.");
       }
-      throw new InternalServerError("Internal Server Error");
+      throw new InternalServerError("Erro interno do servidor.");
     }
   }
 
@@ -28,7 +31,7 @@ class ClassRepository implements IClassRepository {
       return { data, total };
     } catch (error) {
       console.error("Error fetching classes:", error);
-      throw new InternalServerError("Internal Server Error");
+      throw new InternalServerError("Erro interno do servidor.");
     }
   }
 
@@ -37,12 +40,18 @@ class ClassRepository implements IClassRepository {
       return await prisma.class.findUnique({ where: { path } });
     } catch (error) {
       console.error("Error fetching class by path:", error);
-      throw new InternalServerError("Internal Server Error");
+      throw new InternalServerError("Erro interno do servidor.");
     }
   }
 
   async getContentMap(): Promise<IContentMap[] | []> {
     try {
+      const cacheKey = "site:contentMap";
+      const cached = await cacheService.get<IContentMap[]>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
       const classes = await prisma.class.findMany({
         where: { isPublished: true },
         orderBy: [{ order: "asc" }, { createdAt: "asc" }],
@@ -55,7 +64,7 @@ class ClassRepository implements IClassRepository {
         },
       });
 
-      return classes.map((c) => ({
+      const result = classes.map((c) => ({
         classID: c.id,
         className: c.title,
         classPath: c.path,
@@ -65,9 +74,12 @@ class ClassRepository implements IClassRepository {
           path: t.path,
         })),
       }));
+
+      await cacheService.set(cacheKey, result, 3600); // Cache por 1 hora
+      return result;
     } catch (error) {
       console.error("Error fetching content map:", error);
-      throw new InternalServerError("Internal Server Error");
+      throw new InternalServerError("Erro interno do servidor.");
     }
   }
 
@@ -76,7 +88,7 @@ class ClassRepository implements IClassRepository {
       return await prisma.class.findUnique({ where: { id } });
     } catch (error) {
       console.error("Error fetching class by ID:", error);
-      throw new InternalServerError("Internal Server Error");
+      throw new InternalServerError("Erro interno do servidor.");
     }
   }
 
@@ -85,22 +97,25 @@ class ClassRepository implements IClassRepository {
       return await prisma.class.findFirst({ orderBy: { createdAt: "desc" } });
     } catch (error) {
       console.error("Error fetching last created class:", error);
-      throw new InternalServerError("Internal Server Error");
+      throw new InternalServerError("Erro interno do servidor.");
     }
   }
 
   async update(id: string, title: string, path: string, order: number, isPublished?: boolean): Promise<IClass | null> {
     try {
-      return await prisma.class.update({
+      const updatedClass = await prisma.class.update({
         where: { id },
         data: { title, path, order, ...(isPublished !== undefined && { isPublished }) },
       });
+      await cacheService.del("site:contentMap");
+      await cacheService.delByPrefix("site:topic:");
+      return updatedClass;
     } catch (error: any) {
       console.error("Error updating class:", error);
       if (error.code === "P2002") {
         throw new ValidationError("Já existe uma aula com este título.");
       }
-      throw new InternalServerError("Internal Server Error");
+      throw new InternalServerError("Erro interno do servidor.");
     }
   }
 
@@ -114,9 +129,10 @@ class ClassRepository implements IClassRepository {
           })
         )
       );
+      await cacheService.del("site:contentMap");
     } catch (error) {
       console.error("Error updating class orders:", error);
-      throw new InternalServerError("Internal Server Error");
+      throw new InternalServerError("Erro interno do servidor.");
     }
   }
 
@@ -124,9 +140,11 @@ class ClassRepository implements IClassRepository {
     try {
       // onDelete: Cascade no schema garante que os topics são deletados automaticamente
       await prisma.class.delete({ where: { id } });
+      await cacheService.del("site:contentMap");
+      await cacheService.delByPrefix("site:topic:");
     } catch (error) {
       console.error("Error deleting class:", error);
-      throw new InternalServerError("Internal Server Error");
+      throw new InternalServerError("Erro interno do servidor.");
     }
   }
 }

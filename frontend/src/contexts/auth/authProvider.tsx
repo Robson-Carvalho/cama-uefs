@@ -1,3 +1,4 @@
+import { handleApiError } from "@/utils/errorHandler";
 import { useEffect, useState } from "react";
 import { AuthContext } from "./authContext";
 import { IPayload } from "@/interfaces/IPayload";
@@ -58,11 +59,11 @@ const AuthProvider = ({ children }: IAuthProvider) => {
       }
 
       if (status === 500) {
-        toast.error("Erro interno no servidor.");
+        handleApiError(error, "Erro interno no servidor.");
         return status;
       }
 
-      toast.error("Erro inesperado.");
+      handleApiError(error, "Erro inesperado.");
       throw error;
     }
   };

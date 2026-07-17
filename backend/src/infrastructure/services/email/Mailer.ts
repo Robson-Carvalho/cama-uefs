@@ -25,7 +25,7 @@ class Mailer {
       });
     } catch (error) {
       console.error("Error send email: ", error);
-      throw new InternalServerError("Internal Server Error.");
+      throw new InternalServerError("Erro interno do servidor ao enviar e-mail.");
     }
   }
 
@@ -43,7 +43,7 @@ class Mailer {
       });
     } catch (error) {
       console.error("Error send email: ", error);
-      throw new InternalServerError("Internal Server Error.");
+      throw new InternalServerError("Erro interno do servidor ao enviar e-mail.");
     }
   }
 
@@ -61,7 +61,7 @@ class Mailer {
       });
     } catch (error) {
       console.error("Error send email: ", error);
-      throw new InternalServerError("Internal Server Error.");
+      throw new InternalServerError("Erro interno do servidor ao enviar e-mail.");
     }
   }
 }

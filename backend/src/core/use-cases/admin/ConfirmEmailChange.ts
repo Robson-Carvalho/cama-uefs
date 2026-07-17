@@ -19,7 +19,7 @@ class ConfirmEmailChange {
       const admin = await this._adminRepository.getById(decoded.id);
 
       if (!admin) {
-        throw new NotFoundError("Admin not found.");
+        throw new NotFoundError("Instrutor não encontrado.");
       }
 
       await this._adminRepository.update(

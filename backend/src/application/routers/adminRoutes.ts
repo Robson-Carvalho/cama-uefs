@@ -30,9 +30,13 @@ router.get(
   }
 );
 
-router.post("/", (req: Request, res: Response, next: NextFunction) => {
-  adminController.create(req, res, next);
-});
+router.post(
+  "/",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    adminController.create(req, res, next);
+  }
+);
 
 router.delete(
   "/:id",

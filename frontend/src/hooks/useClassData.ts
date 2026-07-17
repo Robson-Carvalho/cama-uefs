@@ -1,3 +1,4 @@
+import { handleApiError } from "@/utils/errorHandler";
 import { useState, useEffect } from "react";
 import { api } from "@/services/api";
 import { IClass } from "@/interfaces/IClass";
@@ -40,7 +41,7 @@ export const useClassData = ({ id }: UseClassDataProps) => {
         if (error.status === 404) {
           toast.warning("Aula não encontrada");
         } else if (error.status === 500) {
-          toast.error("Erro interno.");
+          handleApiError(error, "Erro interno.");
         }
       } finally {
         setLoading(false);
@@ -105,7 +106,7 @@ export const useClassData = ({ id }: UseClassDataProps) => {
       if (status >= 400 && status < 500) {
         toast.warning(message);
       } else {
-        toast.error("Erro interno. Tente novamente mais tarde.");
+        handleApiError(error, "Erro interno. Tente novamente mais tarde.");
       }
       return false;
     } finally {
@@ -131,7 +132,7 @@ export const useClassData = ({ id }: UseClassDataProps) => {
       if (status >= 400 && status < 500) {
         toast.warning(message);
       } else {
-        toast.error("Erro interno. Tente novamente mais tarde.");
+        handleApiError(error, "Erro interno. Tente novamente mais tarde.");
       }
       return false;
     } finally {
@@ -161,8 +162,8 @@ export const useClassData = ({ id }: UseClassDataProps) => {
     
     try {
       await api.put('/topic/reorder', { items });
-    } catch (error) {
-      toast.error('Erro ao reordenar tópicos');
+    } catch (error: any) {
+      handleApiError(error, 'Erro ao reordenar tópicos');
       setReload(prev => !prev);
     }
   };
@@ -195,7 +196,7 @@ export const useClassData = ({ id }: UseClassDataProps) => {
       await api.put('/topic/reorder', { items });
       toast.success(`Tópico movido para a página ${direction === 'prev' ? page - 1 : page + 1}`);
     } catch (error: any) {
-      toast.error('Erro ao mover o tópico');
+      handleApiError(error, 'Erro ao mover o tópico');
     } finally {
       setReload(prev => !prev);
     }

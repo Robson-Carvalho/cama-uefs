@@ -4,7 +4,7 @@ import {
   IGetAdmins,
   IResponseAdminById,
 } from "../../core/dtos/AdminDTOs";
-import { InternalServerError, NotFoundError } from "../../core/errors/Errors";
+import { InternalServerError, NotFoundError, ValidationError } from "../../core/errors/Errors";
 import { prisma } from "../databases/prismaClient";
 
 class AdminRepository implements IAdminRepository {
@@ -17,7 +17,7 @@ class AdminRepository implements IAdminRepository {
       return admins as unknown as IGetAdmins[];
     } catch (error) {
       console.error(error);
-      throw new InternalServerError("Error fetching admins.");
+      throw new InternalServerError("Erro ao buscar instrutores.");
     }
   }
 
@@ -32,9 +32,12 @@ class AdminRepository implements IAdminRepository {
         select: { id: true },
       });
       return admin.id;
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        throw new ValidationError("Este e-mail já está cadastrado para outro instrutor.");
+      }
       console.error(error);
-      throw new InternalServerError("Error creating admin.");
+      throw new InternalServerError("Erro ao criar instrutor.");
     }
   }
 
@@ -45,13 +48,13 @@ class AdminRepository implements IAdminRepository {
         select: { id: true, name: true, email: true, role: true, active: true },
       });
 
-      if (!admin) throw new NotFoundError("Admin not found.");
+      if (!admin) throw new NotFoundError("Instrutor não encontrado.");
 
       return admin as unknown as IResponseAdminById;
     } catch (error) {
       if (error instanceof NotFoundError) throw error;
       console.error(error);
-      throw new InternalServerError("Error getting admin by id.");
+      throw new InternalServerError("Erro ao buscar instrutor por ID.");
     }
   }
 
@@ -60,7 +63,7 @@ class AdminRepository implements IAdminRepository {
       return await prisma.admin.findUnique({ where: { email } }) as unknown as IAdmin | null;
     } catch (error) {
       console.error(error);
-      throw new InternalServerError("Error getting admin by email.");
+      throw new InternalServerError("Erro ao buscar instrutor por e-mail.");
     }
   }
 
@@ -75,9 +78,12 @@ class AdminRepository implements IAdminRepository {
         where: { id },
         data: { name, email, password },
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        throw new ValidationError("Este e-mail já está cadastrado para outro instrutor.");
+      }
       console.error(error);
-      throw new InternalServerError("Error updating admin.");
+      throw new InternalServerError("Erro ao atualizar instrutor.");
     }
   }
 
@@ -89,7 +95,7 @@ class AdminRepository implements IAdminRepository {
       });
     } catch (error) {
       console.error(error);
-      throw new InternalServerError("Error toggling admin active status.");
+      throw new InternalServerError("Erro ao alterar status do instrutor.");
     }
   }
 
@@ -98,7 +104,7 @@ class AdminRepository implements IAdminRepository {
       await prisma.admin.delete({ where: { id } });
     } catch (error) {
       console.error(error);
-      throw new InternalServerError("Error deleting admin.");
+      throw new InternalServerError("Erro ao deletar instrutor.");
     }
   }
 }
