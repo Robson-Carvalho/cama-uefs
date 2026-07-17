@@ -1,5 +1,4 @@
 import { useAuth } from "@/contexts/auth/useAuth";
-import { Header } from "../components/header";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormEvent, useState } from "react";
@@ -53,13 +52,12 @@ const AdminSettings = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <Header />
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Configurações</h1>
+      </div>
 
-      <main className="flex flex-col gap-4 max-w-[1536px] w-full mx-auto py-3 px-4 sm:px-6 md:px-8 p-4">
-        <section className="mt-8">
-          <h2 className="text-2xl font-semibold">Configurações</h2>
-        </section>
+      <div className="flex flex-col gap-8 w-full max-w-3xl">
 
         <section className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
@@ -130,8 +128,8 @@ const AdminSettings = () => {
             </div>
           </form>
         </section>
-      </main>
-    </div>
+      </div>
+    </>
   );
 };
 

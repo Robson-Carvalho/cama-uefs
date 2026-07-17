@@ -1,9 +1,8 @@
-interface IClass {
-  _id: string;
+export interface IClass {
+  id: string;
   title: string;
   path: string;
-  createdAt: string;
-  updatedAt: string;
+  order: number;
+  is_published: boolean;
+  topics?: any[];
 }
-
-export type { IClass };

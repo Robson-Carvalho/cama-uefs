@@ -1,12 +1,12 @@
 export interface ITopic {
-  _id: string;
+  id: string;
   name: string;
   path: string;
 }
 
 export interface IClassItem {
-  _id: string;
-  classID: string;
+  id: string;
+  classId: string;
   className: string;
   classPath: string;
   topics: ITopic[];

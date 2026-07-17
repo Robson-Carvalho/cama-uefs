@@ -1,6 +1,6 @@
 interface ITopic {
-  _id: string;
-  classID: string;
+  id: string;
+  classId: string;
   title: string;
   path: string;
   content: string;

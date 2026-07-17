@@ -1,5 +1,6 @@
 import { ITopic } from "@/interfaces/ITopic";
 import { useNavigate } from "react-router";
+import { FileText, ChevronRight } from "lucide-react";
 
 interface ITopicsProps {
   topics: ITopic[] | [];
@@ -9,17 +10,31 @@ const Topics = ({ topics }: ITopicsProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {topics.map((topic) => {
         return (
           <div
-            onClick={() => {
-              navigate(`/admin/topic/${topic._id}`);
-            }}
-            className="bg-[#F6F6F6] hover:bg-slate-200 p-4 cursor-pointer transition-colors flex flex-row justify-between rounded-md straight-corners:rounded-none text-sm font-normal text-balance text-dark/8 hover:text-dark/9 hover:bg-dark/1 hover:before:bg-dark/3 dark:text-light/8 dark:hover:text-light/9 dark:hover:bg-light/1 dark:hover:before:bg-light/3 contrast-more:text-dark contrast-more:dark:text-light hover:contrast-more:text-dark dark:hover:contrast-more:text-light hover:contrast-more:ring-1 hover:contrast-more:ring-dark dark:contrast-more:hover:ring-light before:contents[] before:absolute before:inset-y-0 before:-left-px [&+div_a]:pl-5 sidebar-list-line:before:w-px sidebar-list-default:[&+div_a]:before:w-px sidebar-list-default:[&+div_a]:rounded-l-none sidebar-list-line:rounded-l-none"
-            key={topic._id}
+            onClick={() => navigate(`/admin/topic/${topic.id}`)}
+            className="group flex items-center justify-between w-full bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md p-5 rounded-xl cursor-pointer transition-all duration-200"
+            key={topic.id}
           >
-            {topic.title}
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100 transition-colors">
+                <FileText className="h-5 w-5" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
+                  {topic.title}
+                </span>
+                <span className="text-xs text-slate-400 font-mono truncate">
+                  /{topic.path}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 text-slate-400 group-hover:text-indigo-500 transition-colors shrink-0 ml-4">
+              <span className="text-sm font-medium hidden sm:block">Editar tópico</span>
+              <ChevronRight className="h-5 w-5" />
+            </div>
           </div>
         );
       })}

@@ -42,23 +42,31 @@ export const useClassData = ({ id }: UseClassDataProps) => {
     getContent();
   }, [id, reload]);
 
-  const handleCreateTopic = async (titleTopic: string, pathTopic: string) => {
+  const generateSlug = (str: string) => {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9 -]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  };
+
+  const handleCreateTopic = async (titleTopic: string) => {
     if (!titleTopic) {
       toast.warning("Título não informado.");
       return false;
     }
 
-    if (!pathTopic) {
-      toast.warning("Path não informado.");
-      return false;
-    }
+    const pathTopic = generateSlug(titleTopic);
 
     try {
       await api.post("/topic", {
         title: titleTopic,
         content: " ",
         path: pathTopic,
-        classID: _class?._id,
+        classID: _class?.id,
       });
 
       toast.success("Tópico criado com sucesso!");
@@ -71,11 +79,11 @@ export const useClassData = ({ id }: UseClassDataProps) => {
     }
   };
 
-  const handleUpdateClass = async (titleClass: string, pathClass: string) => {
+  const handleUpdateClass = async (titleClass: string) => {
     try {
-      await api.put(`/class/${_class?._id}`, {
+      await api.put(`/class/${_class?.id}`, {
         title: titleClass,
-        path: pathClass,
+        path: generateSlug(titleClass),
       });
 
       toast.success("Aula atualizada com sucesso!");
@@ -90,7 +98,7 @@ export const useClassData = ({ id }: UseClassDataProps) => {
 
   const handleDeleteClass = async () => {
     try {
-      await api.delete(`/class/${_class?._id}`);
+      await api.delete(`/class/${_class?.id}`);
       navigate("/admin");
     } catch (error: any) {
       if (error.status) {

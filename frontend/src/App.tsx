@@ -16,6 +16,7 @@ import { AdminSettings } from "./pages/admin/settings";
 import { Topic } from "./pages/admin/topic";
 import { Class } from "./pages/admin/class";
 import { LoadPage } from "./components/loadPage";
+import { AdminLayout } from "./pages/admin/components/layout";
 
 const App = () => {
   return (
@@ -46,10 +47,12 @@ const App = () => {
             />
 
             <Route element={<PrivateRoute />}>
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/settings" element={<AdminSettings />} />
-              <Route path="/admin/class/:id" element={<Class />} />
-              <Route path="/admin/topic/:id" element={<Topic />} />
+              <Route element={<AdminLayout />}>
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/settings" element={<AdminSettings />} />
+                <Route path="/admin/class/:id" element={<Class />} />
+                <Route path="/admin/topic/:id" element={<Topic />} />
+              </Route>
             </Route>
           </Routes>
           <ToastContainer />

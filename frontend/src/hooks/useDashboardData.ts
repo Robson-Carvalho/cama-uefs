@@ -25,16 +25,24 @@ export const useDashboardData = () => {
     getContent();
   }, [reload]);
 
-  const handleCreateClass = async (title: string, path: string) => {
+  const generateSlug = (str: string) => {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9 -]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  };
+
+  const handleCreateClass = async (title: string) => {
     if (!title) {
       toast.warning("Título não informado.");
       return false;
     }
 
-    if (!path) {
-      toast.warning("Path não informado.");
-      return false;
-    }
+    const path = generateSlug(title);
 
     try {
       await api.post("/class", { title, path });

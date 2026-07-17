@@ -37,15 +37,26 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
     getContent();
   }, [id]);
 
+  const generateSlug = (str: string) => {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9 -]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  };
+
   const handleUpdate = async () => {
     if (!topic) return false;
 
     try {
-      const data = await api.put(`/topic/${topic._id}`, {
+      const data = await api.put(`/topic/${topic.id}`, {
         title: topic.title,
         content: topic.content,
-        path: topic.path,
-        classID: topic.classID,
+        path: generateSlug(topic.title),
+        classID: topic.classId, // sending classID for the backend
       });
 
       if (data.status === 200) {
@@ -66,13 +77,13 @@ export const useTopicData = ({ id }: UseTopicDataProps) => {
     if (!topic) return false;
 
     try {
-      const data = await api.delete(`/topic/${topic._id}`);
+      const data = await api.delete(`/topic/${topic.id}`);
 
       if (data.status === 204) {
         toast.success("Apagado com sucesso!");
       }
 
-      navigate(`/admin/class/${topic.classID}`);
+      navigate(`/admin/class/${topic.classId}`);
       return true;
     } catch (error: any) {
       if (error.status === 500) {
