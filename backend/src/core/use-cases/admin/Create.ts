@@ -1,20 +1,28 @@
 import { AdminRepository } from "../../../infrastructure/repositories/AdminRepository";
 import { Encryption } from "../../../infrastructure/utils/Encryption";
+import { Mailer } from "../../../infrastructure/services/email/Mailer";
+import crypto from "crypto";
 
 class Create {
   constructor(
     private _adminRepository: AdminRepository,
-    private _encryption: Encryption
+    private _encryption: Encryption,
+    private _mailer: Mailer
   ) {}
 
   async execute(
     name: string,
-    email: string,
-    password: string
+    email: string
   ): Promise<string | null> {
-    const hashPassword = await this._encryption.hash(password);
+    const tempPassword = crypto.randomBytes(6).toString("hex");
+    const hashPassword = await this._encryption.hash(tempPassword);
 
-    return await this._adminRepository.create(name, email, hashPassword);
+    const id = await this._adminRepository.create(name, email, hashPassword);
+    
+    // Send email to new instructor
+    await this._mailer.welcomeInstructor(name, email, tempPassword);
+
+    return id;
   }
 }
 

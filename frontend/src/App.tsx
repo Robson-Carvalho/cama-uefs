@@ -12,6 +12,7 @@ import { AdminDashboard } from "./pages/admin/dashboard";
 import { RecoverPassword } from "./pages/admin/recoverPassword";
 import { ConfirmRecoverPassword } from "./pages/admin/recoverPassword/confirm";
 import { ConfirmEmailChange } from "./pages/admin/settings/confirm-email";
+import { Instructors } from "./pages/admin/instructors";
 import { AuthProvider } from "./contexts/auth/authProvider";
 import { PrivateRoute } from "./components/privateRoute";
 import { AdminSettings } from "./pages/admin/settings";
@@ -61,6 +62,7 @@ const App = () => {
             <Route element={<PrivateRoute />}>
               <Route element={<AdminLayout />}>
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/instructors" element={<Instructors />} />
                 <Route path="/admin/settings" element={<AdminSettings />} />
                 <Route path="/admin/class/:id" element={<Class />} />
                 <Route path="/admin/topic/:id" element={<Topic />} />

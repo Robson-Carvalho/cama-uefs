@@ -4,6 +4,7 @@ import { Get } from "../../core/use-cases/admin/Get";
 import { GetByEmail } from "../../core/use-cases/admin/GetByEmail";
 import { GetById } from "../../core/use-cases/admin/GetById";
 import { Update } from "../../core/use-cases/admin/Update";
+import { ToggleActive } from "../../core/use-cases/admin/ToggleActive";
 import { RequestEmailChange } from "../../core/use-cases/admin/RequestEmailChange";
 import { ConfirmEmailChange } from "../../core/use-cases/admin/ConfirmEmailChange";
 import { AdminRepository } from "../../infrastructure/repositories/AdminRepository";
@@ -26,7 +27,7 @@ class AdminFactory {
   }
 
   static getCreateUseCase() {
-    return new Create(this._adminRepository, this._encryption);
+    return new Create(this._adminRepository, this._encryption, this._mailer);
   }
 
   static getGetByIdUseCase() {
@@ -51,6 +52,10 @@ class AdminFactory {
 
   static getUpdateUseCase() {
     return new Update(this._adminRepository, this._encryption);
+  }
+
+  static getToggleActiveUseCase() {
+    return new ToggleActive(this._adminRepository);
   }
 }
 

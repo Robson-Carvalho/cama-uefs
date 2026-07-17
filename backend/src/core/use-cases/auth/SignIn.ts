@@ -21,6 +21,10 @@ class SignIn {
       throw new NotFoundError("Admin not found.");
     }
 
+    if (!admin.active) {
+      throw new UnauthorizedError("Account disabled.");
+    }
+
     const auth: boolean = await this._encryption.compare(
       password,
       admin.password
@@ -30,15 +34,18 @@ class SignIn {
       throw new UnauthorizedError("E-mail and/or password invalid.");
     }
 
-    const token: string = (await this._jwt.sign(
-      admin.id
-    )) as string;
+    const token: string = (await this._jwt.sign({
+      id: admin.id,
+      role: admin.role,
+    })) as string;
 
     const payload: IPayload = {
       admin: {
         id: admin.id,
         name: admin.name,
         email: admin.email,
+        role: admin.role,
+        active: admin.active,
       },
       token,
     };

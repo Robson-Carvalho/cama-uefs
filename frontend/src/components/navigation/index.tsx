@@ -1,6 +1,3 @@
-import { Link } from "react-router";
-import { Button } from "../ui/button";
-import { ExternalLink } from "lucide-react";
 
 import { Anchor } from "../anchor";
 import { ContainerList } from "../list/containerList";

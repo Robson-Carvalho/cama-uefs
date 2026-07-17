@@ -19,6 +19,7 @@ const seedDefaultAdmin = async () => {
           name: "Administrador Padrão",
           email: defaultEmail,
           password: hashedPassword,
+          role: "ADMIN",
         },
       });
 

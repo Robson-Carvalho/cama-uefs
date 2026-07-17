@@ -6,11 +6,18 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  ADMIN
+  INSTRUCTOR
+}
+
 model Admin {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
+  role      Role     @default(INSTRUCTOR)
+  active    Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

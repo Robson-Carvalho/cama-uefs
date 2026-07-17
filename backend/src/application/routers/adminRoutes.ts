@@ -65,4 +65,12 @@ router.post(
   }
 );
 
+router.put(
+  "/:id/toggle-active",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    adminController.toggleActive(req, res, next);
+  }
+);
+
 export { router as adminRoutes };

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AdminFactory } from "../factories/AdminFactory";
-import { InternalServerError, ValidationError } from "../../core/errors/Errors";
+import { InternalServerError, ValidationError, ForbiddenError } from "../../core/errors/Errors";
 
 class AdminController {
   private _get = AdminFactory.getGetUseCase();
@@ -12,6 +12,7 @@ class AdminController {
   private _delete = AdminFactory.getDeleteUseCase();
   private _requestEmailChange = AdminFactory.getRequestEmailChangeUseCase();
   private _confirmEmailChange = AdminFactory.getConfirmEmailChangeUseCase();
+  private _toggleActive = AdminFactory.getToggleActiveUseCase();
 
   async get(req: Request, res: Response, next: NextFunction) {
     try {
@@ -61,7 +62,13 @@ class AdminController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, email, password } = req.body;
+      const { user_role } = req as any;
+
+      if (user_role !== "ADMIN") {
+        throw new ForbiddenError("Only ADMIN can create new users.");
+      }
+
+      const { name, email } = req.body;
 
       if (!name) {
         throw new ValidationError("Name required");
@@ -71,11 +78,7 @@ class AdminController {
         throw new ValidationError("Email required");
       }
 
-      if (!password) {
-        throw new ValidationError("Password required");
-      }
-
-      const _id = await this._create.execute(name, email, password);
+      const _id = await this._create.execute(name, email);
 
       return res.status(200).json(_id);
     } catch (e: any) {
@@ -158,6 +161,32 @@ class AdminController {
       }
 
       await this._confirmEmailChange.execute(token);
+
+      return res.status(200).send();
+    } catch (e: any) {
+      if (!(e instanceof InternalServerError)) {
+        return next(e);
+      }
+      return next(new InternalServerError("Internal server error"));
+    }
+  }
+
+  async toggleActive(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user_role } = req as any;
+
+      if (user_role !== "ADMIN") {
+        throw new ForbiddenError("Only ADMIN can toggle active status.");
+      }
+
+      const { id } = req.params;
+      const { active } = req.body;
+
+      if (typeof active !== "boolean") {
+        throw new ValidationError("Active status required");
+      }
+
+      await this._toggleActive.execute(id, active);
 
       return res.status(200).send();
     } catch (e: any) {

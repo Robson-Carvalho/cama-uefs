@@ -11,6 +11,7 @@ interface IAdminRepository {
     email: string,
     password?: string
   ): Promise<void>;
+  toggleActive(id: string, active: boolean): Promise<void>;
   delete(id: string): Promise<void>;
 }
 

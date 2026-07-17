@@ -5,8 +5,8 @@ class JWT {
 
   constructor() {}
 
-  public sign(_id: string) {
-    const token = jwt.sign({ id: _id }, this.jwtSecret, {
+  public sign(payload: any) {
+    const token = jwt.sign(payload, this.jwtSecret, {
       expiresIn: "24h",
     });
 

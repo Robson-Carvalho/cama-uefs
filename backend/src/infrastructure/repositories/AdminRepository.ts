@@ -10,10 +10,11 @@ import { prisma } from "../databases/prismaClient";
 class AdminRepository implements IAdminRepository {
   async get(): Promise<IGetAdmins[] | []> {
     try {
-      return await prisma.admin.findMany({
-        select: { name: true },
+      const admins = await prisma.admin.findMany({
+        select: { id: true, name: true, email: true, role: true, active: true },
         orderBy: { name: "asc" },
       });
+      return admins as unknown as IGetAdmins[];
     } catch (error) {
       console.error(error);
       throw new InternalServerError("Error fetching admins.");
@@ -41,12 +42,12 @@ class AdminRepository implements IAdminRepository {
     try {
       const admin = await prisma.admin.findUnique({
         where: { id },
-        select: { id: true, name: true, email: true },
+        select: { id: true, name: true, email: true, role: true, active: true },
       });
 
       if (!admin) throw new NotFoundError("Admin not found.");
 
-      return admin;
+      return admin as unknown as IResponseAdminById;
     } catch (error) {
       if (error instanceof NotFoundError) throw error;
       console.error(error);
@@ -56,7 +57,7 @@ class AdminRepository implements IAdminRepository {
 
   async getByEmail(email: string): Promise<IAdmin | null> {
     try {
-      return await prisma.admin.findUnique({ where: { email } });
+      return await prisma.admin.findUnique({ where: { email } }) as unknown as IAdmin | null;
     } catch (error) {
       console.error(error);
       throw new InternalServerError("Error getting admin by email.");
@@ -77,6 +78,18 @@ class AdminRepository implements IAdminRepository {
     } catch (error) {
       console.error(error);
       throw new InternalServerError("Error updating admin.");
+    }
+  }
+
+  async toggleActive(id: string, active: boolean): Promise<void> {
+    try {
+      await prisma.admin.update({
+        where: { id },
+        data: { active } as any,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerError("Error toggling admin active status.");
     }
   }
 

@@ -5,6 +5,7 @@ import { JWT } from "../../infrastructure/utils/JWT";
 
 type TokenPaylod = {
   id: string;
+  role: string;
   iat: number;
   exp: number;
 };
@@ -27,9 +28,10 @@ const AuthMiddleware = async (
   try {
     const decoded = await jwtService.verify(token);
 
-    const { id } = decoded as TokenPaylod;
+    const { id, role } = decoded as TokenPaylod;
 
     req.user_id = id;
+    (req as any).user_role = role;
 
     next();
   } catch (error) {

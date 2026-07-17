@@ -1,6 +1,5 @@
-import { ReactNode } from "react";
 import { Link, useNavigate, useLocation, Outlet } from "react-router";
-import { Menu, LogOut, Home, Settings } from "lucide-react";
+import { Menu, LogOut, Home, Settings, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -12,7 +11,7 @@ import {
 import { useAuth } from "@/contexts/auth/useAuth";
 
 const AdminLayout = () => {
-  const { logout } = useAuth();
+  const { logout, payload } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -23,6 +22,7 @@ const AdminLayout = () => {
 
   const navItems = [
     { name: "Dashboard", path: "/admin", icon: <Home className="w-5 h-5" /> },
+    ...(payload?.admin?.role === "ADMIN" ? [{ name: "Instrutores", path: "/admin/instructors", icon: <Users className="w-5 h-5" /> }] : []),
     { name: "Configurações", path: "/admin/settings", icon: <Settings className="w-5 h-5" /> },
   ];
 
@@ -43,8 +43,8 @@ const AdminLayout = () => {
               key={item.path}
               to={item.path}
               className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${location.pathname === item.path
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:bg-neutral-100 hover:text-foreground"
+                ? "bg-primary/10 text-primary font-medium"
+                : "text-muted-foreground hover:bg-neutral-100 hover:text-foreground"
                 }`}
             >
               {item.icon}
@@ -97,8 +97,8 @@ const AdminLayout = () => {
                     key={item.path}
                     to={item.path}
                     className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${location.pathname === item.path
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-muted-foreground hover:bg-neutral-100 hover:text-foreground"
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-muted-foreground hover:bg-neutral-100 hover:text-foreground"
                       }`}
                   >
                     {item.icon}
