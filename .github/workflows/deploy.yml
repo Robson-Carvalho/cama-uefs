@@ -34,7 +34,7 @@ jobs:
           echo "MAIL_FROM=${{ secrets.MAIL_FROM }}" >> backend/.env
 
       - name: Create deployment archive
-        run: tar -czf deploy.tar.gz --exclude='.git' --exclude='node_modules' .
+        run: tar -czf deploy.tar.gz --exclude='.git' --exclude='node_modules' --exclude='deploy.tar.gz' .
 
       - name: Copy archive to VPS
         uses: appleboy/scp-action@v0.1.7
