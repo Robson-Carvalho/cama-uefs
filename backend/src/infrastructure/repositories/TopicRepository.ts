@@ -3,6 +3,7 @@ import { ITopic } from "../../core/dtos/TopicDTOs";
 import { prisma } from "../databases/prismaClient";
 import { ValidationError, InternalServerError } from "../../core/errors/Errors";
 import { cacheService } from "../services/RedisCacheService";
+import { Mailer } from "../services/email/Mailer";
 
 class TopicRepository implements ITopicRepository {
   async getByClassId(id: string, skip?: number, take?: number): Promise<{ data: ITopic[]; total: number }> {
@@ -159,6 +160,20 @@ class TopicRepository implements ITopicRepository {
           await tx.topicRevision.create({
             data: { topicId: id, revisorId: userId, title, content, path, status: "PENDING", originalContent: topic.content }
           });
+
+          const author = await tx.admin.findUnique({ where: { id: topic.authorId } });
+          const revisor = await tx.admin.findUnique({ where: { id: userId } });
+          
+          if (author && revisor) {
+            const mailer = new Mailer();
+            mailer.newRevision(
+              author.email,
+              author.name,
+              revisor.name,
+              topic.title
+            );
+          }
+
           return { ...topic, _isRevision: true } as any;
         }
 

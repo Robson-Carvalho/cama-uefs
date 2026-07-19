@@ -1,40 +1,27 @@
+import { baseEmailTemplate } from "./baseEmailTemplate";
+
 const welcomeInstructorTemplate = (name: string, tempPassword: string) => {
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-      <div style="background-color: #2563eb; color: #ffffff; padding: 20px; text-align: center;">
-        <h1 style="margin: 0; font-size: 24px;">Bem-vindo à CAMA/UEFS</h1>
-      </div>
-      <div style="padding: 30px; color: #333333;">
-        <h2 style="margin-top: 0;">Olá, ${name}!</h2>
-        <p style="font-size: 16px; line-height: 1.5;">
-          Você foi convidado(a) para se juntar à plataforma CAMA/UEFS como instrutor(a).
-          Seu cadastro foi criado com sucesso.
-        </p>
-        <p style="font-size: 16px; line-height: 1.5;">
-          Para acessar a plataforma, utilize seu e-mail e a seguinte senha temporária:
-        </p>
-        <div style="text-align: center; margin: 30px 0;">
-          <span style="display: inline-block; padding: 15px 25px; font-size: 18px; font-weight: bold; font-family: monospace; color: #1e40af; background-color: #eff6ff; border-radius: 5px; border: 1px dashed #2563eb;">
-            ${tempPassword}
-          </span>
-        </div>
-        <p style="font-size: 14px; color: #d97706; background-color: #fef3c7; padding: 10px; border-radius: 5px; text-align: center;">
-          <strong>Atenção:</strong> Recomendamos que você acesse as configurações da sua conta e altere essa senha assim que fizer seu primeiro login.
-        </p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.FRONTEND_URL}/admin/login" style="display: inline-block; padding: 12px 24px; font-size: 16px; font-weight: bold; color: #ffffff; background-color: #2563eb; text-decoration: none; border-radius: 5px;">
-            Acessar Plataforma
-          </a>
-        </div>
-        <p style="font-size: 16px; line-height: 1.5; margin-bottom: 0;">
-          Se você não esperava por esse e-mail, por favor ignore.
-        </p>
-      </div>
-      <div style="background-color: #f9fafb; padding: 15px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e0e0e0;">
-        <p style="margin: 0;">&copy; ${new Date().getFullYear()} CAMA/UEFS. Todos os direitos reservados.</p>
-      </div>
+  const content = `
+    <p>Olá, <strong>${name.split(" ")[0]}</strong>,</p>
+    <p>Bem-vindo(a) à plataforma <strong>OBI-UEFS</strong>! Sua conta de instrutor foi criada com sucesso.</p>
+    <p>Para o seu primeiro acesso, utilize a senha temporária gerada automaticamente pelo nosso sistema:</p>
+    
+    <div style="text-align: center; margin: 32px 0;">
+      <span style="display: inline-block; background-color: #f1f5f9; border: 1px dashed #94a3b8; color: #1e293b; padding: 14px 28px; border-radius: 6px; font-weight: 700; font-size: 20px; letter-spacing: 2px;">
+        ${tempPassword}
+      </span>
     </div>
+    
+    <p>Por questões de segurança, recomendamos fortemente que você altere sua senha no primeiro login, acessando a aba <strong>Configurações</strong>.</p>
+    
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="${process.env.FRONTEND_URL || "http://localhost:5173"}/admin/login" style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Acessar Plataforma</a>
+    </div>
+    
+    <p style="margin-bottom: 0;">Se tiver alguma dúvida, nossa equipe está sempre à disposição para ajudar.</p>
   `;
+
+  return baseEmailTemplate("Bem-vindo(a) à OBI-UEFS!", content);
 };
 
 export { welcomeInstructorTemplate };

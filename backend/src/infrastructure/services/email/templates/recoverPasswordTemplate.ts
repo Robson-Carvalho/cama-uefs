@@ -1,31 +1,19 @@
+import { baseEmailTemplate } from "./baseEmailTemplate";
+
 const recoverPasswordTemplate = (name: string, link: string) => {
-  return `
-    <div style="width: 100%; text-align: center; padding: 20px; background-color: #f4f4f4;">
-      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-        <tr>
-          <td align="center">
-            <table role="presentation" width="500px" cellspacing="0" cellpadding="0" border="0" 
-              style="background-color: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px; text-align: left; font-family: Arial, sans-serif;">
-              <tr>
-                <td>
-                  <h2 style="color: #007bff; text-align: center;">Recuperação de Senha</h2>
-                  <p>Olá, <strong>${name.split(" ")[0]}</strong>,</p>
-                  <p>Você solicitou a recuperação de senha. Clique no link abaixo para criar uma nova senha:</p>
-                  <div style="text-align: center; margin: 20px 0;">
-                    <a href="${link}" style="background: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Redefinir Senha</a>
-                  </div>
-                  <p>Este link é válido por apenas 15 minutos.</p>
-                  <p>Se você não solicitou essa alteração, entre em contato com o suporte imediatamente.</p>
-                  <br />
-                  <p style="font-size: 14px; color: #888; text-align: center;">Atenciosamente,<br/>Equipe de Suporte</p>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
+  const content = `
+    <p>Olá, <strong>${name.split(" ")[0]}</strong>,</p>
+    <p>Você solicitou a recuperação de senha. Clique no botão abaixo para criar uma nova senha:</p>
+    
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="${link}" style="display: inline-block; background-color: #4f46e5; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Redefinir Senha</a>
     </div>
+    
+    <p>Este link é válido por apenas 15 minutos.</p>
+    <p style="margin-bottom: 0;">Se você não solicitou essa alteração, nenhuma ação é necessária e sua senha permanecerá segura.</p>
   `;
+
+  return baseEmailTemplate("Recuperação de Senha", content);
 };
 
 export { recoverPasswordTemplate };

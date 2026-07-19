@@ -1,4 +1,5 @@
 import { prisma } from "../databases/prismaClient";
+import { Mailer } from "../services/email/Mailer";
 
 export class TopicRevisionRepository {
   async create(topicId: string, revisorId: string, title: string, content: string, path: string) {
@@ -53,7 +54,7 @@ export class TopicRevisionRepository {
   }
 
   async accept(revisionId: string, authorId: string) {
-    const revision = await prisma.topicRevision.findUnique({ where: { id: revisionId }, include: { topic: { include: { coAuthors: true } } } });
+    const revision = await prisma.topicRevision.findUnique({ where: { id: revisionId }, include: { topic: { include: { coAuthors: true, author: true } }, revisor: true } });
     if (!revision) throw new Error("Revisão não encontrada.");
     if (revision.topic.authorId !== authorId) throw new Error("Apenas o autor original pode aceitar revisões.");
 
@@ -71,19 +72,43 @@ export class TopicRevisionRepository {
     });
 
     // Delete revision instead of keeping history
-    return prisma.topicRevision.delete({
+    const deletedRevision = await prisma.topicRevision.delete({
       where: { id: revisionId }
     });
+
+    if (revision.revisor && revision.topic.author) {
+      const mailer = new Mailer();
+      mailer.revisionAccepted(
+        revision.revisor.email,
+        revision.revisor.name,
+        revision.topic.title,
+        revision.topic.author.name
+      );
+    }
+
+    return deletedRevision;
   }
 
   async reject(revisionId: string, authorId: string) {
-    const revision = await prisma.topicRevision.findUnique({ where: { id: revisionId }, include: { topic: true } });
+    const revision = await prisma.topicRevision.findUnique({ where: { id: revisionId }, include: { topic: { include: { author: true } }, revisor: true } });
     if (!revision) throw new Error("Revisão não encontrada.");
     if (revision.topic.authorId !== authorId) throw new Error("Apenas o autor original pode rejeitar revisões.");
 
     // Delete revision instead of keeping history
-    return prisma.topicRevision.delete({
+    const deletedRevision = await prisma.topicRevision.delete({
       where: { id: revisionId }
     });
+
+    if (revision.revisor && revision.topic.author) {
+      const mailer = new Mailer();
+      mailer.revisionRejected(
+        revision.revisor.email,
+        revision.revisor.name,
+        revision.topic.title,
+        revision.topic.author.name
+      );
+    }
+
+    return deletedRevision;
   }
 }
