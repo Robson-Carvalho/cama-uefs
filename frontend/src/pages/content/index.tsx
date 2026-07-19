@@ -1,4 +1,5 @@
 import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 import MDEditor from '@uiw/react-md-editor';
 import { BodyLayout } from "@/layouts/BodyLayout";
 import { Heart, Link as LinkIcon, Eye, PenLine } from "lucide-react";
@@ -99,6 +100,7 @@ const Content = () => {
           </div>
         )}
       </BodyLayout>
+      <Footer />
     </>
   );
 };
