@@ -1,0 +1,28 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Aciona a action ao criar tags que começam com 'v', como 'v1.0.0'
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permissão necessária para criar o release e adicionar arquivos
+      
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Garante que todo o histórico e tags sejam baixados
+
+      - name: Criar Release Automático
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true # Gera automaticamente um changelog (notas de versão) baseado nos commits/PRs
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
