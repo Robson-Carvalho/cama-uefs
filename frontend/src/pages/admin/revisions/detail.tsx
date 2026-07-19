@@ -106,8 +106,6 @@ const RevisionDetail = () => {
           </div>
           <div>
              {revision.status === "PENDING" && <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">Aguardando Avaliação</span>}
-             {revision.status === "ACCEPTED" && <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">Aprovada</span>}
-             {revision.status === "REJECTED" && <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">Rejeitada</span>}
           </div>
         </div>
         

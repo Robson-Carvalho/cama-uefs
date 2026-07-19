@@ -70,10 +70,9 @@ export class TopicRevisionRepository {
       }
     });
 
-    // Mark as accepted
-    return prisma.topicRevision.update({
-      where: { id: revisionId },
-      data: { status: "ACCEPTED" }
+    // Delete revision instead of keeping history
+    return prisma.topicRevision.delete({
+      where: { id: revisionId }
     });
   }
 
@@ -82,9 +81,9 @@ export class TopicRevisionRepository {
     if (!revision) throw new Error("Revisão não encontrada.");
     if (revision.topic.authorId !== authorId) throw new Error("Apenas o autor original pode rejeitar revisões.");
 
-    return prisma.topicRevision.update({
-      where: { id: revisionId },
-      data: { status: "REJECTED" }
+    // Delete revision instead of keeping history
+    return prisma.topicRevision.delete({
+      where: { id: revisionId }
     });
   }
 }

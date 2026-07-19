@@ -111,8 +111,6 @@ const Revisions = () => {
                   </div>
                   <div className="flex items-center gap-4 shrink-0">
                     {rev.status === "PENDING" && <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">Aguardando Avaliação</span>}
-                    {rev.status === "ACCEPTED" && <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Aprovada</span>}
-                    {rev.status === "REJECTED" && <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Rejeitada</span>}
                     <Button onClick={() => navigate(`/admin/revisions/${rev.id}`)} variant="ghost" size="sm" className="text-indigo-600 hover:bg-indigo-50">
                       <Eye className="w-4 h-4 mr-2" /> Visualizar
                     </Button>
