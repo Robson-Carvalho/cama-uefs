@@ -1,0 +1,68 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create Frontend .env.local
+        run: |
+          echo "VITE_API_URL=https://api.cama-uefs.safeentrysistemas.com.br" > frontend/.env.local
+
+      - name: Create Backend .env
+        run: |
+          echo "BACKEND_PORT=3001" > backend/.env
+          echo "FRONTEND_URL=https://cama-uefs.safeentrysistemas.com.br" >> backend/.env
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> backend/.env
+          echo "DIRECT_URL=${{ secrets.DIRECT_URL }}" >> backend/.env
+          echo "REDIS_PORT=6379" >> backend/.env
+          echo "REDIS_HOST=redis" >> backend/.env
+          echo "REDIS_URL=redis://redis:6379" >> backend/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env
+          echo "SALT_ROUNDS=10" >> backend/.env
+          echo "DEFAULT_ADMIN_EMAIL=${{ secrets.DEFAULT_ADMIN_EMAIL }}" >> backend/.env
+          echo "DEFAULT_ADMIN_PASSWORD=${{ secrets.DEFAULT_ADMIN_PASSWORD }}" >> backend/.env
+          echo "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" >> backend/.env
+          echo "MAIL_FROM=${{ secrets.MAIL_FROM }}" >> backend/.env
+
+      - name: Create deployment archive
+        run: tar -czf deploy.tar.gz --exclude='.git' --exclude='node_modules' .
+
+      - name: Copy archive to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "deploy.tar.gz"
+          target: "/home/UEFS"
+
+      - name: Extract and Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/UEFS
+            
+            # Extrair os arquivos e deletar o arquivo compactado
+            tar -xzf deploy.tar.gz
+            rm deploy.tar.gz
+            
+            # Subir o ambiente reconstruindo a imagem (útil para o frontend pegar o novo código)
+            docker compose up --build -d
+            
+            # Aguarda 5 segundos para garantir que o banco está rodando antes de aplicar migrations
+            sleep 5
+            
+            # Rodar as migrations no Supabase (usando a porta do pool direto - DIRECT_URL)
+            docker compose exec -T backend npx prisma migrate deploy

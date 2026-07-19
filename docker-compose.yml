@@ -55,12 +55,7 @@ services:
     env_file:
       - ./frontend/.env.local
     ports:
-      - "${FRONTEND_PORT:-5173}:5173"
-    volumes:
-      # Código-fonte (hot-reload)
-      - ./frontend:/app
-      # Volume nomeado para node_modules — evita sobrescrever com o host
-      - frontend_node_modules:/app/node_modules
+      - "${FRONTEND_PORT:-5173}:80"
     depends_on:
       - backend
       - redis
@@ -75,8 +70,6 @@ volumes:
     name: obi-uefs-redis-data
   backend_node_modules:
     name: obi-uefs-backend-node-modules
-  frontend_node_modules:
-    name: obi-uefs-frontend-node-modules
 
 # ─────────────────────────────────────────
 # Rede isolada

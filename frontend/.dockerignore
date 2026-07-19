@@ -2,6 +2,7 @@ node_modules
 dist
 dist-ssr
 .env*
+!.env.local
 !.env.example
 *.log
 npm-debug.log*
