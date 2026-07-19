@@ -34,7 +34,9 @@ jobs:
           echo "MAIL_FROM=${{ secrets.MAIL_FROM }}" >> backend/.env
 
       - name: Create deployment archive
-        run: tar -czf deploy.tar.gz --exclude='.git' --exclude='node_modules' --exclude='deploy.tar.gz' .
+        run: |
+          mkdir -p .archive
+          tar -czf .archive/deploy.tar.gz --exclude='.git' --exclude='node_modules' --exclude='.archive' .
 
       - name: Copy archive to VPS
         uses: appleboy/scp-action@v0.1.7
@@ -42,8 +44,9 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: "deploy.tar.gz"
+          source: ".archive/deploy.tar.gz"
           target: "/home/UEFS"
+          strip_components: 1
 
       - name: Extract and Deploy
         uses: appleboy/ssh-action@v1.0.3
