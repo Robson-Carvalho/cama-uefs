@@ -1,21 +1,10 @@
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
-import {
-  DialogHeader,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Modal } from "@/components/ui/modal";
 import MDEditor from '@uiw/react-md-editor';
 import { useTopicData } from "@/hooks/useTopicData";
 import { useAuth } from "@/contexts/auth/useAuth";
@@ -23,6 +12,8 @@ import { useAuth } from "@/contexts/auth/useAuth";
 const Topic = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { topic, setTopic, loading, revisions, handleUpdate, handleDelete, handleUpdateVisibility } = useTopicData({ id });
   const { payload } = useAuth();
@@ -63,36 +54,28 @@ const Topic = () => {
 
         {!loading && topic && (
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 w-full md:w-auto mt-4 md:mt-0">
-            <Dialog>
-              <DialogTrigger asChild>
+            <Modal
+              title="Confirmar deleção"
+              description={
+                <>
+                  Tem certeza de que deseja deletar{" "}
+                  <strong>{topic?.title}</strong>?
+                </>
+              }
+              confirmText="Apagar"
+              confirmVariant="destructive"
+              onConfirm={() => {
+                handleDelete();
+                setIsDeleteOpen(false);
+              }}
+              isOpen={isDeleteOpen}
+              onOpenChange={setIsDeleteOpen}
+              trigger={
                 <Button type="button" variant="destructive" className="w-full sm:w-auto">
                   <Trash2 className="w-4 h-4 mr-2" /> Deletar
                 </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Confirmar deleção</DialogTitle>
-                  <DialogDescription>
-                    Tem certeza de que deseja deletar{" "}
-                    <strong>{topic?.title}</strong>?
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <div className="mt-4 flex flex-col-reverse sm:flex-row w-full justify-end gap-3">
-                      <Button variant="outline" className="w-full sm:w-auto">Cancelar</Button>
-                      <Button
-                        onClick={() => handleDelete()}
-                        variant="destructive"
-                        className="w-full sm:w-auto"
-                      >
-                        Apagar
-                      </Button>
-                    </div>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+              }
+            />
 
             <Button
               type="submit"

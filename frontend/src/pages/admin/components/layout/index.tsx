@@ -8,6 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Modal } from "@/components/ui/modal";
 import { useAuth } from "@/contexts/auth/useAuth";
 
 const AdminLayout = () => {
@@ -56,14 +57,22 @@ const AdminLayout = () => {
         </nav>
 
         <div className="p-4 border-t">
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-            onClick={handleLogout}
-          >
-            <LogOut className="w-5 h-5 mr-3" />
-            Sair
-          </Button>
+          <Modal
+            title="Sair do sistema"
+            description="Tem certeza que deseja encerrar sua sessão atual?"
+            confirmText="Sair"
+            confirmVariant="destructive"
+            onConfirm={handleLogout}
+            trigger={
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
+              >
+                <LogOut className="w-5 h-5 mr-3" />
+                Sair
+              </Button>
+            }
+          />
         </div>
       </aside>
 
@@ -107,14 +116,22 @@ const AdminLayout = () => {
                     <span>{item.name}</span>
                   </Link>
                 ))}
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 mt-4"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="w-5 h-5 mr-3" />
-                  Sair
-                </Button>
+                <Modal
+                  title="Sair do sistema"
+                  description="Tem certeza que deseja encerrar sua sessão atual?"
+                  confirmText="Sair"
+                  confirmVariant="destructive"
+                  onConfirm={handleLogout}
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 mt-4"
+                    >
+                      <LogOut className="w-5 h-5 mr-3" />
+                      Sair
+                    </Button>
+                  }
+                />
               </nav>
             </SheetContent>
           </Sheet>

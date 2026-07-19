@@ -1,17 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  DialogHeader,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { useAuth } from "@/contexts/auth/useAuth";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Modal } from "@/components/ui/modal";
 import { Link, useNavigate } from "react-router";
 import { Menu } from "lucide-react";
 import {
@@ -22,6 +10,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+import { useAuth } from "@/contexts/auth/useAuth";
+import { useState } from "react";
+
 const Logout = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -31,31 +22,19 @@ const Logout = () => {
     navigate("/admin/login");
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="destructive">Sair</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Confirmar Logout</DialogTitle>
-          <DialogDescription>Tem certeza de que deseja sair?</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <DialogClose className="w-full">
-            <div className="mt-6 w-full flex justify-center">
-              <Button
-                variant="destructive"
-                className="flex-grow"
-                onClick={handleLogout}
-              >
-                Sair
-              </Button>
-            </div>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <Modal
+      title="Confirmar Logout"
+      description="Tem certeza de que deseja sair?"
+      confirmText="Sair"
+      confirmVariant="destructive"
+      onConfirm={handleLogout}
+      isOpen={isOpen}
+      onOpenChange={setIsOpen}
+      trigger={<Button variant="destructive">Sair</Button>}
+    />
   );
 };
 

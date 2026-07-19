@@ -59,7 +59,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 403 && !originalRequest._retry) {
       const errorMessage = error.response.data?.message;
 
-      if (errorMessage === "Token expirado") {
+      if (errorMessage === "Token expirado" || errorMessage === "Token invalid" || errorMessage === "Token not provided") {
         if (isRefreshing) {
           return new Promise(function (resolve, reject) {
             failedQueue.push({ resolve, reject });
@@ -106,7 +106,7 @@ api.interceptors.response.use(
             isRefreshing = false;
           }
         }
-      } else if (["Token invalid", "Token not provided", "Token inválido para esta operação."].includes(errorMessage)) {
+      } else if (["Token inválido para esta operação."].includes(errorMessage)) {
         LocalStorage.getInstance().remove("cama-uefs-admin");
         window.dispatchEvent(new CustomEvent("sessionExpired", { detail: "Sessão inválida. Faça login novamente." }));
         return Promise.reject(error);
