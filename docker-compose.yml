@@ -1,25 +1,5 @@
 services:
   # ─────────────────────────────────────────
-  # Banco de dados relacional – PostgreSQL
-  # ─────────────────────────────────────────
-  postgres:
-    image: postgres:16-alpine
-    container_name: obi-uefs-postgres
-    restart: unless-stopped
-    env_file:
-      - ./backend/.env
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-obi_admin} -d ${POSTGRES_DB:-obi_uefs}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - obi-network
-
   # ─────────────────────────────────────────
   # Banco de dados em memória – Redis (Cache)
   # ─────────────────────────────────────────
@@ -58,8 +38,6 @@ services:
       # Volume nomeado para node_modules — evita sobrescrever com o host
       - backend_node_modules:/app/node_modules
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
     networks:
@@ -93,8 +71,6 @@ services:
 # Volumes nomeados
 # ─────────────────────────────────────────
 volumes:
-  postgres_data:
-    name: obi-uefs-postgres-data
   redis_data:
     name: obi-uefs-redis-data
   backend_node_modules:

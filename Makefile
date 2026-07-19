@@ -6,7 +6,6 @@
 DC      := docker compose
 BACKEND  := obi-uefs-backend
 FRONTEND := obi-uefs-frontend
-POSTGRES := obi-uefs-postgres
 
 .DEFAULT_GOAL := help
 
@@ -79,9 +78,6 @@ logs-backend: ## Exibe logs do backend (follow)
 logs-frontend: ## Exibe logs do frontend (follow)
 	$(DC) logs -f frontend
 
-.PHONY: logs-db
-logs-db: ## Exibe logs do PostgreSQL (follow)
-	$(DC) logs -f postgres
 
 # ------------------------------------------------------------
 # Shell / Exec
@@ -94,9 +90,6 @@ sh-backend: ## Abre shell no container do backend
 sh-frontend: ## Abre shell no container do frontend
 	$(DC) exec frontend sh
 
-.PHONY: psql
-psql: ## Abre o psql no container do PostgreSQL
-	$(DC) exec postgres psql -U $${POSTGRES_USER:-obi_admin} -d $${POSTGRES_DB:-obi_uefs}
 
 # ------------------------------------------------------------
 # Status
@@ -129,11 +122,11 @@ db-studio: ## Abre o Prisma Studio (porta 5555)
 # ------------------------------------------------------------
 .PHONY: test
 test: ## Roda todos os testes automatizados isolados no backend
-	$(DC) exec -e DATABASE_URL="postgres://obi_admin:obi_secret@postgres:5432/obi_uefs?schema=test" backend npx vitest run
+	$(DC) exec backend npx vitest run
 
 .PHONY: test-watch
 test-watch: ## Roda os testes no modo watch (desenvolvimento)
-	$(DC) exec -e DATABASE_URL="postgres://obi_admin:obi_secret@postgres:5432/obi_uefs?schema=test" backend npx vitest
+	$(DC) exec backend npx vitest
 
 # ------------------------------------------------------------
 # Limpeza
