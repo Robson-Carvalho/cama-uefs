@@ -48,7 +48,7 @@ class AdminRepository implements IAdminRepository {
     try {
       const admin = await prisma.admin.findUnique({
         where: { id },
-        select: { id: true, name: true, email: true, role: true, active: true },
+        select: { id: true, name: true, email: true, role: true, active: true, sessionVersion: true },
       });
 
       if (!admin) throw new NotFoundError("Instrutor não encontrado.");
@@ -79,7 +79,7 @@ class AdminRepository implements IAdminRepository {
     try {
       await prisma.admin.update({
         where: { id },
-        data: { name, email, password },
+        data: { name, email, password, sessionVersion: { increment: 1 } },
       });
     } catch (error: any) {
       if (error.code === "P2002") {
@@ -94,11 +94,23 @@ class AdminRepository implements IAdminRepository {
     try {
       await prisma.admin.update({
         where: { id },
-        data: { active } as any,
+        data: { active, sessionVersion: { increment: 1 } } as any,
       });
     } catch (error) {
       console.error(error);
       throw new InternalServerError("Erro ao alterar status do instrutor.");
+    }
+  }
+
+  async changeRole(id: string, role: string): Promise<void> {
+    try {
+      await prisma.admin.update({
+        where: { id },
+        data: { role: role as any, sessionVersion: { increment: 1 } },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerError("Erro ao alterar nível de acesso do instrutor.");
     }
   }
 

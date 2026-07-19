@@ -18,11 +18,13 @@ model Admin {
   password  String
   role      Role     @default(INSTRUCTOR)
   active    Boolean  @default(true)
+  sessionVersion Int @default(0) @map("session_version")
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
   authoredTopics   Topic[]         @relation("TopicAuthor")
   coAuthoredTopics Topic[]         @relation("TopicCoAuthors")
   topicRevisions   TopicRevision[] @relation("TopicRevisor")
+  refreshTokens    RefreshToken[]
 
   @@map("admins")
 }
@@ -84,4 +86,15 @@ enum RevisionStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  adminId   String   @map("admin_id")
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("refresh_tokens")
 }

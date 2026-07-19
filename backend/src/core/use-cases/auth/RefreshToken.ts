@@ -1,4 +1,5 @@
 import { AdminRepository } from "../../../infrastructure/repositories/AdminRepository";
+import { RefreshTokenRepository } from "../../../infrastructure/repositories/RefreshTokenRepository";
 import { JWT } from "../../../infrastructure/utils/JWT";
 import { IPayload } from "../../dtos/AuthDTOs";
 import { UnauthorizedError, NotFoundError } from "../../errors/Errors";
@@ -6,6 +7,7 @@ import { UnauthorizedError, NotFoundError } from "../../errors/Errors";
 class RefreshToken {
   constructor(
     private _adminRepository: AdminRepository,
+    private _refreshTokenRepository: RefreshTokenRepository,
     private _jwt: JWT
   ) {}
 
@@ -39,17 +41,36 @@ class RefreshToken {
       throw new UnauthorizedError("Sua conta está desativada. Entre em contato com um administrador.");
     }
 
+    if ((admin as any).sessionVersion !== decoded.sessionVersion) {
+      await this._refreshTokenRepository.deleteAllFromUser(admin.id);
+      throw new UnauthorizedError("Sessão expirada ou invalidada. Faça login novamente.");
+    }
+
+    const savedToken = await this._refreshTokenRepository.getByToken(refreshToken);
+    if (!savedToken) {
+      throw new UnauthorizedError("Refresh token não encontrado no banco ou já utilizado.");
+    }
+    
+    // Deleta o token antigo pois já será substituído
+    await this._refreshTokenRepository.delete(refreshToken);
+
     const newAccessToken: string = this._jwt.signWithExpiration({
       id: admin.id,
       role: admin.role,
-      type: 'access'
+      type: 'access',
+      sessionVersion: (admin as any).sessionVersion
     }, "2h");
 
     const newRefreshToken: string = this._jwt.signWithExpiration({
       id: admin.id,
       role: admin.role,
-      type: 'refresh'
+      type: 'refresh',
+      sessionVersion: (admin as any).sessionVersion
     }, "7d");
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+    await this._refreshTokenRepository.create(admin.id, newRefreshToken, expiresAt);
 
     const payload: IPayload = {
       admin: {

@@ -5,6 +5,7 @@ import { GetByEmail } from "../../core/use-cases/admin/GetByEmail";
 import { GetById } from "../../core/use-cases/admin/GetById";
 import { Update } from "../../core/use-cases/admin/Update";
 import { ToggleActive } from "../../core/use-cases/admin/ToggleActive";
+import { ChangeRole } from "../../core/use-cases/admin/ChangeRole";
 import { RequestEmailChange } from "../../core/use-cases/admin/RequestEmailChange";
 import { ConfirmEmailChange } from "../../core/use-cases/admin/ConfirmEmailChange";
 import { AdminRepository } from "../../infrastructure/repositories/AdminRepository";
@@ -56,6 +57,10 @@ class AdminFactory {
 
   static getToggleActiveUseCase() {
     return new ToggleActive(this._adminRepository);
+  }
+
+  static getChangeRoleUseCase() {
+    return new ChangeRole(this._adminRepository);
   }
 }
 

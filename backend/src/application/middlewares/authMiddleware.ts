@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { prisma } from "../../infrastructure/databases/prismaClient";
 
 import { ForbiddenError } from "../../core/errors/Errors";
 import { JWT } from "../../infrastructure/utils/JWT";
@@ -7,6 +8,7 @@ type TokenPaylod = {
   id: string;
   role: string;
   type?: string;
+  sessionVersion?: number;
   iat: number;
   exp: number;
 };
@@ -29,10 +31,19 @@ const AuthMiddleware = async (
   try {
     const decoded = await jwtService.verify(token);
 
-    const { id, role, type } = decoded as TokenPaylod;
+    const { id, role, type, sessionVersion } = decoded as TokenPaylod;
 
     if (type && type !== 'access') {
       return next(new ForbiddenError("Token inválido para esta operação."));
+    }
+
+    const admin = await prisma.admin.findUnique({
+      where: { id },
+      select: { active: true, sessionVersion: true }
+    });
+
+    if (!admin || !admin.active || admin.sessionVersion !== sessionVersion) {
+      return next(new ForbiddenError("Token invalid"));
     }
 
     req.user_id = id;

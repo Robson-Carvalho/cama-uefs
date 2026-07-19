@@ -30,7 +30,9 @@ export const useDashboardData = () => {
         setClasses(response.data.data);
         setTotalPages(Math.ceil(response.data.total / limit));
       } catch (error: any) {
-        toast.warning("Erro inesperado.");
+        if (error.response?.status !== 401 && error.response?.status !== 403) {
+          toast.warning("Erro inesperado.");
+        }
       } finally {
         setLoading(false);
       }

@@ -77,4 +77,12 @@ router.put(
   }
 );
 
+router.put(
+  "/:id/role",
+  AuthMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    adminController.changeRole(req, res, next);
+  }
+);
+
 export { router as adminRoutes };

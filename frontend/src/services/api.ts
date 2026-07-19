@@ -106,6 +106,10 @@ api.interceptors.response.use(
             isRefreshing = false;
           }
         }
+      } else if (["Token invalid", "Token not provided", "Token inválido para esta operação."].includes(errorMessage)) {
+        LocalStorage.getInstance().remove("cama-uefs-admin");
+        window.dispatchEvent(new CustomEvent("sessionExpired", { detail: "Sessão inválida. Faça login novamente." }));
+        return Promise.reject(error);
       }
     }
 

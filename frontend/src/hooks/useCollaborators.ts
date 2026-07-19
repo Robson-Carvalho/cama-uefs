@@ -23,8 +23,10 @@ export const useCollaborators = () => {
       const { data } = await api.get(`/admin?page=${page}&limit=${itemsPerPage}`);
       setCollaborators(data.data);
       setTotal(data.total);
-    } catch (error) {
-      toast.error("Erro ao buscar colaboradores.");
+    } catch (error: any) {
+      if (error.response?.status !== 401 && error.response?.status !== 403) {
+        toast.error("Erro ao buscar colaboradores.");
+      }
     } finally {
       setLoading(false);
     }
@@ -34,6 +36,16 @@ export const useCollaborators = () => {
     fetchCollaborators(currentPage);
   }, [currentPage]);
 
+  const changeRole = async (id: string, newRole: string) => {
+    try {
+      await api.put(`/admin/${id}/role`, { role: newRole });
+      toast.success("Nível de acesso alterado com sucesso!");
+      fetchCollaborators();
+    } catch (error) {
+      toast.error("Erro ao alterar nível de acesso.");
+    }
+  };
+
   return {
     collaborators,
     loading,
@@ -41,5 +53,6 @@ export const useCollaborators = () => {
     setCurrentPage,
     total,
     itemsPerPage,
+    changeRole,
   };
 };

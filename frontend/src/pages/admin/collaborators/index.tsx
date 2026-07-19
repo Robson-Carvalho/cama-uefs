@@ -3,9 +3,14 @@ import { Users, Shield, GraduationCap } from "lucide-react";
 import { useCollaborators } from "@/hooks/useCollaborators";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/auth/useAuth";
 
 const Collaborators = () => {
-  const { collaborators, loading, currentPage, setCurrentPage, total, itemsPerPage } = useCollaborators();
+  const { collaborators, loading, currentPage, setCurrentPage, total, itemsPerPage, changeRole } = useCollaborators();
+  const { payload } = useAuth();
+  
+  const isAdmin = payload?.admin?.role === 'ADMIN';
+  const currentUserId = payload?.admin?.id;
 
   const totalPages = Math.ceil(total / itemsPerPage);
 
@@ -65,6 +70,16 @@ const Collaborators = () => {
                       {colab.role === 'ADMIN' ? <Shield className="w-3.5 h-3.5" /> : <GraduationCap className="w-3.5 h-3.5" />}
                       {colab.role === 'ADMIN' ? 'Administrador' : 'Instrutor'}
                     </span>
+                    {isAdmin && colab.id !== currentUserId && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => changeRole(colab.id, colab.role === 'ADMIN' ? 'INSTRUCTOR' : 'ADMIN')}
+                        className="ml-2"
+                      >
+                        Tornar {colab.role === 'ADMIN' ? 'Instrutor' : 'Admin'}
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}

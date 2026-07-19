@@ -13,6 +13,7 @@ class AdminController {
   private _requestEmailChange = AdminFactory.getRequestEmailChangeUseCase();
   private _confirmEmailChange = AdminFactory.getConfirmEmailChangeUseCase();
   private _toggleActive = AdminFactory.getToggleActiveUseCase();
+  private _changeRole = AdminFactory.getChangeRoleUseCase();
 
   async get(req: Request, res: Response, next: NextFunction) {
     try {
@@ -196,6 +197,32 @@ class AdminController {
       }
 
       await this._toggleActive.execute(id, active);
+
+      return res.status(200).send();
+    } catch (e: any) {
+      if (!(e instanceof InternalServerError)) {
+        return next(e);
+      }
+      return next(new InternalServerError("Erro interno do servidor."));
+    }
+  }
+
+  async changeRole(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user_role } = req as any;
+
+      if (user_role !== "ADMIN") {
+        throw new ForbiddenError("Apenas administradores podem alterar o nível de acesso.");
+      }
+
+      const { id } = req.params;
+      const { role } = req.body;
+
+      if (!role || (role !== "ADMIN" && role !== "INSTRUCTOR")) {
+        throw new ValidationError("O nível de acesso deve ser ADMIN ou INSTRUCTOR.");
+      }
+
+      await this._changeRole.execute(id, role);
 
       return res.status(200).send();
     } catch (e: any) {

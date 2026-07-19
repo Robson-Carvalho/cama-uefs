@@ -1,4 +1,5 @@
 import { AdminRepository } from "../../../infrastructure/repositories/AdminRepository";
+import { RefreshTokenRepository } from "../../../infrastructure/repositories/RefreshTokenRepository";
 
 import { Encryption } from "../../../infrastructure/utils/Encryption";
 import { JWT } from "../../../infrastructure/utils/JWT";
@@ -10,6 +11,7 @@ import { NotFoundError, UnauthorizedError } from "../../errors/Errors";
 class SignIn {
   constructor(
     private _adminRepository: AdminRepository,
+    private _refreshTokenRepository: RefreshTokenRepository,
     private _encryption: Encryption,
     private _jwt: JWT
   ) {}
@@ -37,14 +39,21 @@ class SignIn {
     const token: string = (await this._jwt.signWithExpiration({
       id: admin.id,
       role: admin.role,
-      type: 'access'
+      type: 'access',
+      sessionVersion: (admin as any).sessionVersion || 0
     }, "2h")) as string;
 
     const refreshToken: string = (await this._jwt.signWithExpiration({
       id: admin.id,
       role: admin.role,
-      type: 'refresh'
+      type: 'refresh',
+      sessionVersion: (admin as any).sessionVersion || 0
     }, "7d")) as string;
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+    
+    await this._refreshTokenRepository.create(admin.id, refreshToken, expiresAt);
 
     const payload: IPayload = {
       admin: {

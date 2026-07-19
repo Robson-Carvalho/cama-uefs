@@ -12,6 +12,7 @@ interface IAdminRepository {
     password?: string
   ): Promise<void>;
   toggleActive(id: string, active: boolean): Promise<void>;
+  changeRole(id: string, role: string): Promise<void>;
   delete(id: string): Promise<void>;
 }
 
