@@ -64,8 +64,7 @@ jobs:
             # Subir o ambiente reconstruindo a imagem (útil para o frontend pegar o novo código)
             docker compose up --build -d
             
-            # Aguarda 5 segundos para garantir que o banco está rodando antes de aplicar migrations
-            sleep 5
-            
-            # Rodar as migrations no Supabase (usando a porta do pool direto - DIRECT_URL)
-            docker compose exec -T backend npx prisma migrate deploy
+            # Observação: O comando de Prisma Migrate foi removido daqui pois a VPS estava sendo
+            # bloqueada ao tentar conectar na porta 5432 (possível bloqueio de IP no Supabase).
+            # Como o Supabase fica na nuvem, você pode rodar 'npx prisma migrate dev' direto
+            # do seu computador local sempre que alterar o schema.prisma!
