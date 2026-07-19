@@ -15,7 +15,7 @@ jobs:
 
       - name: Create Frontend .env.local
         run: |
-          echo "VITE_API_URL=https://api-cama-uefs.safeentrysistemas.com.br" > frontend/.env.local
+          echo "VITE_API_URL=https://api-cama-uefs.safeentrysistemas.com.br/api/v1" > frontend/.env.local
 
       - name: Create Backend .env
         run: |
