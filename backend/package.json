@@ -2,11 +2,11 @@
   "name": "obi-uefs-server",
   "version": "1.0.0",
   "description": "OBI UEFS - Backend API",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "dev": "prisma generate && NODE_ENV=development npx ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },
