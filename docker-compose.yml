@@ -6,8 +6,6 @@ services:
   redis:
     image: redis:7-alpine
     container_name: obi-uefs-redis
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -28,8 +26,6 @@ services:
     container_name: obi-uefs-backend
     env_file:
       - ./backend/.env
-    ports:
-      - "${BACKEND_PORT:-3001}:3001"
     volumes:
       # Código-fonte (hot-reload)
       - ./backend:/app
@@ -51,8 +47,6 @@ services:
     container_name: obi-uefs-frontend
     env_file:
       - ./frontend/.env.local
-    ports:
-      - "${FRONTEND_PORT:-5173}:80"
     depends_on:
       - backend
       - redis
