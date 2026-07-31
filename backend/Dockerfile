@@ -16,6 +16,9 @@ RUN npx prisma generate
 # Copy remaining source
 COPY . .
 
+# Build the TypeScript code
+RUN npm run build
+
 # ---------- Runtime ----------
 FROM node:20-alpine AS runtime
 
@@ -27,7 +30,8 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./
 COPY --from=builder /app/tsconfig.json ./
 COPY --from=builder /app/src ./src
+COPY --from=builder /app/dist ./dist
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "npx prisma generate && npx ts-node-dev --respawn --transpile-only src/server.ts"]
+CMD ["sh", "-c", "npm start"]
