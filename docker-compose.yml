@@ -7,6 +7,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    expose:
+      - "3001"
     container_name: obi-uefs-backend
     env_file:
       - path: ./backend/.env
@@ -21,6 +23,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+    expose:
+      - "80"
     container_name: obi-uefs-frontend
     env_file:
       - path: ./frontend/.env.local

@@ -10,6 +10,10 @@ RUN npm install --prefer-offline --no-audit
 # Copy the rest of the application
 COPY . .
 
+# Pass environment variables for Vite build
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Build the app for production (this uses the env variables available at build time)
 RUN npm run build
 
