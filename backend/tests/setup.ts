@@ -17,11 +17,6 @@ const testDbUrl = new URL(originalUrl);
 testDbUrl.searchParams.set('schema', 'test');
 process.env.DATABASE_URL = testDbUrl.toString();
 
-// 3. Set Redis to use a separate test database (index 1) to avoid clearing dev cache
-const originalRedisUrl = process.env.REDIS_URL || 'redis://redis:6379';
-const testRedisUrl = new URL(originalRedisUrl);
-testRedisUrl.pathname = '/1';
-process.env.REDIS_URL = testRedisUrl.toString();
 
 let prisma: any;
 

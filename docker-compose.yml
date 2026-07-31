@@ -1,22 +1,6 @@
 services:
   # ─────────────────────────────────────────
   # ─────────────────────────────────────────
-  # Banco de dados em memória – Redis (Cache)
-  # ─────────────────────────────────────────
-  redis:
-    image: redis:7-alpine
-    container_name: obi-uefs-redis
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - obi-network
-
-  # ─────────────────────────────────────────
   # Backend – Node.js / Express / TypeScript
   # ─────────────────────────────────────────
   backend:
@@ -24,11 +8,9 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: obi-uefs-backend
-    # env_file:
-    #   - ./backend/.env # No Coolify, as variáveis de ambiente são injetadas automaticamente no painel.
-    depends_on:
-      redis:
-        condition: service_healthy
+    env_file:
+      - path: ./backend/.env
+        required: false
     networks:
       - obi-network
 
@@ -40,20 +22,13 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: obi-uefs-frontend
-    # env_file:
-    #   - ./frontend/.env.local # No Coolify, as variáveis de ambiente são injetadas automaticamente no painel.
+    env_file:
+      - path: ./frontend/.env.local
+        required: false
     depends_on:
       - backend
-      - redis
     networks:
       - obi-network
-
-# ─────────────────────────────────────────
-# Volumes nomeados
-# ─────────────────────────────────────────
-volumes:
-  redis_data:
-    name: obi-uefs-redis-data
 
 # ─────────────────────────────────────────
 # Rede isolada
