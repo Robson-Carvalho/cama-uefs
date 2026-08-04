@@ -1,0 +1,133 @@
+import { ITopic } from "@/interfaces/ITopic";
+import { useNavigate } from "react-router";
+import { FileText, ChevronRight, GripVertical, ChevronUp, ChevronDown } from "lucide-react";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+
+interface ITopicsProps {
+  topics: ITopic[] | [];
+  onReorder?: (topics: ITopic[]) => void;
+  onMoveToPage?: (topicId: string, direction: 'prev' | 'next') => void;
+  page?: number;
+  totalPages?: number;
+}
+
+const Topics = ({ topics, onReorder, onMoveToPage, page = 1, totalPages = 1 }: ITopicsProps) => {
+  const navigate = useNavigate();
+
+  const handleDragEnd = (result: any) => {
+    if (!result.destination) return;
+    
+    if (result.destination.droppableId === 'previous-page' && onMoveToPage) {
+      onMoveToPage(result.draggableId, 'prev');
+      return;
+    }
+    
+    if (result.destination.droppableId === 'next-page' && onMoveToPage) {
+      onMoveToPage(result.draggableId, 'next');
+      return;
+    }
+    
+    if (result.destination.droppableId === 'topics-list' && onReorder) {
+      const items = Array.from(topics);
+      const [reorderedItem] = items.splice(result.source.index, 1);
+      items.splice(result.destination.index, 0, reorderedItem);
+      onReorder(items);
+    }
+  };
+
+  return (
+    <DragDropContext onDragEnd={handleDragEnd}>
+      
+      {page > 1 && (
+        <Droppable droppableId="previous-page">
+          {(provided, snapshot) => (
+            <div 
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={`flex flex-col items-center justify-center p-4 mb-4 rounded-xl border-2 border-dashed transition-all duration-300 ${snapshot.isDraggingOver ? 'bg-indigo-50 border-indigo-500 text-indigo-700 scale-[1.02] shadow-md' : 'bg-slate-50 border-slate-300 text-slate-400'}`}
+            >
+              <ChevronUp className="w-6 h-6 mb-1 opacity-70" />
+              <span className="text-sm font-medium">Solte aqui para enviar para a página anterior</span>
+              <div className="hidden">{provided.placeholder}</div>
+            </div>
+          )}
+        </Droppable>
+      )}
+
+      <Droppable droppableId="topics-list">
+        {(provided) => (
+          <div 
+            className="flex flex-col gap-3" 
+            {...provided.droppableProps} 
+            ref={provided.innerRef}
+          >
+            {topics.map((topic, index) => {
+              return (
+                <Draggable key={topic.id} draggableId={topic.id} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      onClick={() => navigate(`/admin/topic/${topic.id}`)}
+                      className={`group flex items-center justify-between w-full bg-white border border-slate-200 hover:border-indigo-400 p-5 rounded-xl transition-all duration-200 ${snapshot.isDragging ? 'shadow-xl ring-2 ring-indigo-500 scale-[1.02] z-50' : 'hover:shadow-md cursor-pointer'}`}
+                    >
+                      <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                        <div 
+                          {...provided.dragHandleProps}
+                          onClick={(e) => e.stopPropagation()}
+                          className="cursor-grab active:cursor-grabbing p-1.5 -ml-2 rounded text-slate-300 hover:text-slate-500 hover:bg-slate-100 transition-colors"
+                        >
+                          <GripVertical className="h-5 w-5" />
+                        </div>
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100 transition-colors">
+                          <FileText className="h-5 w-5" />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
+                            {topic.title}
+                          </span>
+                          <span className="text-xs text-slate-400 font-mono truncate">
+                            /{topic.path}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-400 group-hover:text-indigo-500 transition-colors shrink-0 ml-4">
+                        {!topic.isPublished && (
+                          <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold mr-2">
+                            Rascunho
+                          </span>
+                        )}
+                        <span className="text-sm font-medium hidden sm:block">Editar tópico</span>
+                        <ChevronRight className="h-5 w-5" />
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              );
+            })}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+
+      {page < totalPages && (
+        <Droppable droppableId="next-page">
+          {(provided, snapshot) => (
+            <div 
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={`flex flex-col items-center justify-center p-4 mt-4 rounded-xl border-2 border-dashed transition-all duration-300 ${snapshot.isDraggingOver ? 'bg-indigo-50 border-indigo-500 text-indigo-700 scale-[1.02] shadow-md' : 'bg-slate-50 border-slate-300 text-slate-400'}`}
+            >
+              <ChevronDown className="w-6 h-6 mb-1 opacity-70" />
+              <span className="text-sm font-medium">Solte aqui para enviar para a próxima página</span>
+              <div className="hidden">{provided.placeholder}</div>
+            </div>
+          )}
+        </Droppable>
+      )}
+
+    </DragDropContext>
+  );
+};
+
+export { Topics };

@@ -1,0 +1,34 @@
+services:
+  # ─────────────────────────────────────────
+  # ─────────────────────────────────────────
+  # Backend – Node.js / Express / TypeScript
+  # ─────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    expose:
+      - "3001"
+    container_name: obi-uefs-backend
+    env_file:
+      - path: ./backend/.env
+        required: false
+
+  # ─────────────────────────────────────────
+  # Frontend – React / Vite / TypeScript
+  # ─────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+    expose:
+      - "80"
+    container_name: obi-uefs-frontend
+    env_file:
+      - path: ./frontend/.env.local
+        required: false
+    depends_on:
+      - backend
+

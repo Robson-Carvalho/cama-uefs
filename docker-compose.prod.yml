@@ -1,0 +1,10 @@
+services:
+  frontend:
+    environment:
+      - NODE_ENV=production
+    command: sh -c "npm run build && npm start"
+
+  backend:
+    environment:
+      - NODE_ENV=production
+    command: sh -c "npm run build && npm start"
