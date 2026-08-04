@@ -13,8 +13,6 @@ services:
     env_file:
       - path: ./backend/.env
         required: false
-    networks:
-      - obi-network
 
   # ─────────────────────────────────────────
   # Frontend – React / Vite / TypeScript
@@ -33,13 +31,4 @@ services:
         required: false
     depends_on:
       - backend
-    networks:
-      - obi-network
 
-# ─────────────────────────────────────────
-# Rede isolada
-# ─────────────────────────────────────────
-networks:
-  obi-network:
-    name: obi-uefs-network
-    driver: bridge
